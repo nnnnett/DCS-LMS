@@ -18,7 +18,7 @@
           />
         </div>
         <q-toolbar-title class="text-primary text-h6 text-weight-medium">
-          DCS Pixel Hub
+          DCS Pixel Hubwewe
         </q-toolbar-title>
         <div>
           <userProfie />
