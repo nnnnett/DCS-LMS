@@ -25,14 +25,14 @@
         style="
           display: flex;
           flex-wrap: wrap;
-          column-gap: 50px;
-          row-gap: 24px;
+          column-gap: 100px;
+          row-gap: 35px;
 
           width: 100%;
           height: auto;
         "
       >
-        <div class="enrolledCoursesContainer col-2">
+        <div class="enrolledCoursesContainer col-3">
           <div
             class="enrolledCourses"
             style="
@@ -93,7 +93,7 @@
             </q-card-section>
           </div>
         </div>
-        <div class="enrolledCoursesContainer col-2">
+        <div class="enrolledCoursesContainer col-3">
           <div
             class="enrolledCourses"
             style="
@@ -154,7 +154,7 @@
             </q-card-section>
           </div>
         </div>
-        <div class="enrolledCoursesContainer col-2">
+        <div class="enrolledCoursesContainer col-3">
           <div
             class="enrolledCourses"
             style="
@@ -215,7 +215,7 @@
             </q-card-section>
           </div>
         </div>
-        <div class="enrolledCoursesContainer col-2">
+        <div class="enrolledCoursesContainer col-3">
           <div
             class="enrolledCourses"
             style="
@@ -276,7 +276,7 @@
             </q-card-section>
           </div>
         </div>
-        <div class="enrolledCoursesContainer col-2">
+        <div class="enrolledCoursesContainer col-3">
           <div
             class="enrolledCourses"
             style="

@@ -1,6 +1,7 @@
 <template>
   <q-page class=" ">
     <!-- main container -->
+
     <div class="main-container q-px-xl">
       <!-- Overview Text -->
       <q-card-section class="q-mt-lg">
@@ -35,12 +36,12 @@
           </div>
           <!-- under sub content 1 -->
           <div class="sub-content-1-2 q-mt-lg">
-            <q-card-section class="flex q-px-none">
+            <q-card-section class="flex q-px-none" style="max-width: 929px">
               <div class="text-h6">Enrolled Courses</div>
               <q-space />
               <router-link
                 class="text-h6"
-                to="enrolledCourses"
+                to="/main/enrolledCourses"
                 style="color: #2584e9; text-decoration: none"
               >
                 See more
@@ -50,24 +51,25 @@
               style="
                 display: flex;
                 flex-wrap: wrap;
-                gap: 16px;
+                column-gap: 70px;
                 width: 100%;
                 row-gap: 150px;
                 height: 400px;
                 max-height: 500px;
                 overflow: hidden;
               "
-              class="q-px-none"
+              class="q-px-none row"
             >
               <!-- Courses -->
               <div
-                class="enrolledCoursesContainer"
-                style="width: calc(50% - 8px); box-sizing: border-box"
+                class="enrolledCoursesContainer col-3"
+                style="box-sizing: border-box"
               >
                 <div
                   class="enrolledCourses"
                   style="
-                    width: 100%;
+                    width: 275px;
+                    max-width: 275px;
                     height: 180px;
                     background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
                     background-size: cover;
@@ -129,13 +131,81 @@
               </div>
 
               <div
-                class="enrolledCoursesContainer"
-                style="width: calc(50% - 8px); box-sizing: border-box"
+                class="enrolledCoursesContainer col-3"
+                style="box-sizing: border-box"
               >
                 <div
                   class="enrolledCourses"
                   style="
-                    width: 100%;
+                    width: 275px;
+                    max-width: 275px;
+                    height: 180px;
+                    background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
+                    background-size: cover;
+                    background-position: center;
+                    position: relative;
+                    border-radius: 14px 14px 0px 0px;
+                    overflow: hidden;
+                  "
+                >
+                  <q-btn-dropdown
+                    flat
+                    color="white"
+                    dropdown-icon="more_vert"
+                    style="position: absolute; top: 8px; right: 8px"
+                  >
+                    <q-list>
+                      <q-item clickable>
+                        <q-item-section>
+                          <q-item-label>View Details</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <div class="course-info col-3">
+                    <div>
+                      <div>Capstone 2</div>
+                      <div style="font-size: 12px; opacity: 0.8">
+                        John D. Smith
+                      </div>
+                    </div>
+                    <q-img
+                      src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                      style="width: 50px; height: 50px; border-radius: 50%"
+                    />
+                  </div>
+                </div>
+                <div class="course-Schedule">
+                  <q-card-section class="q-pb-none">
+                    <div>Due Tomorrow</div>
+                    <div>Chapter 3: Methodology</div>
+                  </q-card-section>
+                  <q-card-section>
+                    <div>Due Next Week</div>
+                    <div>Chapter 4: Data Analysis</div>
+                  </q-card-section>
+                  <q-card-section
+                    style="
+                      display: flex;
+                      justify-content: flex-end;
+                      padding: 8px;
+                    "
+                  >
+                    <q-btn style="border: 1px solid #4b4b4b">
+                      <q-icon name="chevron_right" />
+                    </q-btn>
+                  </q-card-section>
+                </div>
+              </div>
+              <div
+                class="enrolledCoursesContainer col-3"
+                style="box-sizing: border-box"
+              >
+                <div
+                  class="enrolledCourses"
+                  style="
+                    width: 275px;
+                    max-width: 275px;
                     height: 180px;
                     background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
                     background-size: cover;
@@ -204,15 +274,6 @@
             style="display: flex; align-items: center"
           >
             <div class="text-h6">Notification</div>
-            <q-space />
-            <div style="width: 150px">
-              <q-input
-                borderless
-                type="date"
-                v-model="notifDate"
-                label="Select Date"
-              />
-            </div>
           </q-card-section>
           <!-- notification container -->
           <div style="height: auto">
@@ -254,28 +315,29 @@
 .main-container
   width: 100%
   height: auto
-
 .main-content
-
   display: flex
   justify-content: space-between
   height: auto
 .sub-content-1
 
-  width: 48%
+  width: 60%
   height: auto
 .active-pendingTask-container
   border: 1px solid #46AF4B
   color: #4B4B4B
   display: flex
-  width: 49%
+  width: 460px
+  max-width: 500px
   align-items: center
   border-radius: 14px
 .sub-content-1-1
   display: flex
-  justify-content: space-between
+
+  column-gap: 10px
 .sub-content-1-2
   color: #4B4B4B
+
 .course-info
   display: flex
   position: absolute
@@ -289,8 +351,9 @@
   align-items: center
 .course-Schedule
   border: 1px solid #8F9BB3
-  width: 100%
   height: auto
+  width: 275px
+  max-width: 275px
   border-radius: 0px 0px 14px 14px
   overflow: hidden
   white-space: nowrap
@@ -299,7 +362,8 @@
 .sub-content-2
   color: #4B4B4B
   border: 1px solid #46AF4B
-  width: 48%
+  width: 35%
+
   max-height: 550px
   border-radius: 24px
 </style>
@@ -309,6 +373,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
+const loading = ref(true);
 const notifDate = ref("");
 const router = useRouter();
 
