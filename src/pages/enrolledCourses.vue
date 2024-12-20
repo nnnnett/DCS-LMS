@@ -391,4 +391,39 @@
   font-size: 0.9rem
 </style>
 
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+
+const notifDate = ref("");
+const router = useRouter();
+
+async function isLogin() {
+  const token = localStorage.getItem("authToken");
+
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/users/tokenValidation`,
+      {
+        headers: {
+          authorization: token,
+        },
+      }
+    );
+
+    const isLogin = response.data.isValid === true;
+    if (!isLogin) {
+      router.replace(`/`);
+    }
+
+    return isLogin;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+onMounted(() => {
+  isLogin();
+});
+</script>
