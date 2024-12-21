@@ -26,7 +26,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" side="left" bordered>
+    <q-drawer v-model="leftDrawerOpen" side="left" bordered overlay>
       <q-list>
         <EssentialLink />
       </q-list>
@@ -46,7 +46,7 @@ defineOptions({
   name: "MainLayout",
 });
 
-const leftDrawerOpen = ref(true);
+const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

@@ -123,7 +123,10 @@
                       padding: 8px;
                     "
                   >
-                    <q-btn style="border: 1px solid #4b4b4b">
+                    <q-btn
+                      to="/main/coursePage"
+                      style="border: 1px solid #4b4b4b"
+                    >
                       <q-icon name="chevron_right" />
                     </q-btn>
                   </q-card-section>
@@ -345,7 +348,7 @@
   width: 100%
   background-color: rgba(0, 0, 0, 0.6)
   color: white
-  padding: 8px
+  padding: 8px 16px
   display: flex
   justify-content: space-between
   align-items: center

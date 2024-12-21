@@ -357,7 +357,7 @@
   width: 100%
   background-color: rgba(0, 0, 0, 0.6)
   color: white
-  padding: 8px
+  padding: 8px 16px
   justify-content: space-between
   align-items: center
 .course-title
