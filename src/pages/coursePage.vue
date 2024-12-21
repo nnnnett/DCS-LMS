@@ -223,7 +223,76 @@
           </q-card-section>
         </div>
         <!-- task tab -->
-        <div v-if="taskLink">task</div>
+        <div v-if="taskLink" class="task-container">
+          <!-- Course Materials-->
+          <q-card-section class="flex flex-center courseMaterials">
+            <q-card class="materialsContent q-px-lg">
+              <q-card-section class="row materialsAssignment-container">
+                <div class="col-1">
+                  <q-img
+                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                    style="width: 50px; height: 50px; border-radius: 50%"
+                  />
+                </div>
+                <div class="col-10">
+                  <div style="height: auto">
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    Fuga itaque harum tempora quas dolores voluptatibus optio
+                    rem praesentium qui non deserunt maiores quam voluptas
+                    eveniet quasi, repellat voluptate, similique laudantium.
+                  </div>
+                  <div class="text-caption">December 12, 2024</div>
+                </div>
+
+                <div
+                  class="flex flex-center icon"
+                  style="
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background-color: #46af4b;
+                  "
+                >
+                  <q-icon name="library_books" color="white" size="24px" />
+                </div>
+              </q-card-section>
+            </q-card>
+          </q-card-section>
+          <!-- Course Assignment  -->
+          <q-card-section class="flex flex-center courseAssignment">
+            <q-card class="assignmentContent q-px-lg">
+              <q-card-section class="row materialsAssignment-container">
+                <div class="col-1">
+                  <q-img
+                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                    style="width: 50px; height: 50px; border-radius: 50%"
+                  />
+                </div>
+                <div class="col-10">
+                  <div style="height: auto">
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    Fuga itaque harum tempora quas dolores voluptatibus optio
+                    rem praesentium qui non deserunt maiores quam voluptas
+                    eveniet quasi, repellat voluptate, similique laudantium.
+                  </div>
+                  <div class="text-caption">December 12, 2024</div>
+                </div>
+
+                <div
+                  class="flex flex-center icon"
+                  style="
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background-color: #46af4b;
+                  "
+                >
+                  <q-icon name="edit_square" color="white" size="24px" />
+                </div>
+              </q-card-section>
+            </q-card>
+          </q-card-section>
+        </div>
         <!-- my works tab -->
         <div v-if="myWorksLink">my works</div>
       </q-card-section>
@@ -234,7 +303,6 @@
 .main-container
   width: 100vw
   height: auto
-
 .headerNav
   font-size: 1rem
   display: flex
@@ -252,6 +320,7 @@
   right: 0
   height: 3px
   background-color: #28a745
+  // feed container
 .feed-container
   height: auto
 .courseInstructor
@@ -293,8 +362,8 @@
   box-shadow: none
   width: 70vw
   height: auto
+// course materials and assignment for feed and task
 .courseMaterials
-
   height: auto
 .materialsContent
   width: 70vw
@@ -310,6 +379,8 @@
   border-radius: 14px
   box-shadow: none
   height: auto
+// task container
+// for now nothing to add for task container
 @media (max-width:1004px)
   .courseDescUpcoming
     display: flex
@@ -377,8 +448,8 @@
 <script setup>
 import { ref } from "vue";
 
-const feedLink = ref(true);
-const taskLink = ref(false);
+const feedLink = ref(false);
+const taskLink = ref(true);
 const myWorksLink = ref(false);
 
 const showFeed = () => {
