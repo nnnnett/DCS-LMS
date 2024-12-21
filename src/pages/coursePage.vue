@@ -163,8 +163,8 @@
                     style="width: 50px; height: 50px; border-radius: 50%"
                   />
                 </div>
-                <div class="col-10">
-                  <div style="height: auto">
+                <div class="col-9">
+                  <div style="height: auto; text-align: justify">
                     Lorem ipsum dolor, sit amet consectetur adipisicing elit.
                     Fuga itaque harum tempora quas dolores voluptatibus optio
                     rem praesentium qui non deserunt maiores quam voluptas
@@ -172,9 +172,8 @@
                   </div>
                   <div class="text-caption">December 12, 2024</div>
                 </div>
-
                 <div
-                  class="flex flex-center icon"
+                  class="flex flex-center icon q-ml-md"
                   style="
                     width: 50px;
                     height: 50px;
@@ -197,8 +196,8 @@
                     style="width: 50px; height: 50px; border-radius: 50%"
                   />
                 </div>
-                <div class="col-10">
-                  <div style="height: auto">
+                <div class="col-9">
+                  <div style="height: auto; text-align: justify">
                     Lorem ipsum dolor, sit amet consectetur adipisicing elit.
                     Fuga itaque harum tempora quas dolores voluptatibus optio
                     rem praesentium qui non deserunt maiores quam voluptas
@@ -208,7 +207,7 @@
                 </div>
 
                 <div
-                  class="flex flex-center icon"
+                  class="flex flex-center icon q-ml-md"
                   style="
                     width: 50px;
                     height: 50px;
@@ -234,8 +233,8 @@
                     style="width: 50px; height: 50px; border-radius: 50%"
                   />
                 </div>
-                <div class="col-10">
-                  <div style="height: auto">
+                <div class="col-9">
+                  <div style="height: auto; text-align: justify">
                     Lorem ipsum dolor, sit amet consectetur adipisicing elit.
                     Fuga itaque harum tempora quas dolores voluptatibus optio
                     rem praesentium qui non deserunt maiores quam voluptas
@@ -245,7 +244,7 @@
                 </div>
 
                 <div
-                  class="flex flex-center icon"
+                  class="flex flex-center icon q-ml-md"
                   style="
                     width: 50px;
                     height: 50px;
@@ -268,8 +267,8 @@
                     style="width: 50px; height: 50px; border-radius: 50%"
                   />
                 </div>
-                <div class="col-10">
-                  <div style="height: auto">
+                <div class="col-9">
+                  <div style="height: auto; text-align: justify">
                     Lorem ipsum dolor, sit amet consectetur adipisicing elit.
                     Fuga itaque harum tempora quas dolores voluptatibus optio
                     rem praesentium qui non deserunt maiores quam voluptas
@@ -279,7 +278,7 @@
                 </div>
 
                 <div
-                  class="flex flex-center icon"
+                  class="flex flex-center icon q-ml-md"
                   style="
                     width: 50px;
                     height: 50px;
@@ -294,7 +293,78 @@
           </q-card-section>
         </div>
         <!-- my works tab -->
-        <div v-if="myWorksLink">my works</div>
+        <div v-if="myWorksLink" class="myWorks-container">
+          <q-card-section class="q-ml-xl filter-container">
+            <div class="filterSelect">
+              <q-select
+                outlined
+                label="Filter"
+                v-model="filter"
+                :options="selectMyWorks.options"
+              />
+            </div>
+          </q-card-section>
+          <!-- Submitted status -->
+          <q-card-section class="flex flex-center courseMyWorks">
+            <q-card class="myWorksContent q-pr-lg">
+              <q-card-section class="row statusWorks-container q-px-md">
+                <div class="col-9">
+                  <div style="height: auto; text-align: justify">
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    Fuga itaque harum tempora quas dolores voluptatibus optio
+                    rem praesentium qui non deserunt maiores quam voluptas
+                    eveniet quasi, repellat voluptate, similique laudantium.
+                  </div>
+                  <div class="text-caption">December 12, 2024</div>
+                </div>
+                <q-space></q-space>
+                <div class="flex flex-center submittedStatus q-ml-md">
+                  Submitted
+                </div>
+              </q-card-section>
+            </q-card>
+          </q-card-section>
+          <!-- Pending status -->
+          <q-card-section class="flex flex-center courseMyWorks">
+            <q-card class="myWorksContent q-pr-lg">
+              <q-card-section class="row statusWorks-container q-px-md">
+                <div class="col-9">
+                  <div style="height: auto; text-align: justify">
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    Fuga itaque harum tempora quas dolores voluptatibus optio
+                    rem praesentium qui non deserunt maiores quam voluptas
+                    eveniet quasi, repellat voluptate, similique laudantium.
+                  </div>
+                  <div class="text-caption">December 12, 2024</div>
+                </div>
+                <q-space></q-space>
+                <div class="flex flex-center pendingStatus q-ml-md">
+                  Pending
+                </div>
+              </q-card-section>
+            </q-card>
+          </q-card-section>
+          <!-- Missing Status -->
+          <q-card-section class="flex flex-center courseMyWorks">
+            <q-card class="myWorksContent q-pr-lg">
+              <q-card-section class="row statusWorks-container q-px-md">
+                <div class="col-9">
+                  <div style="height: auto; text-align: justify">
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    Fuga itaque harum tempora quas dolores voluptatibus optio
+                    rem praesentium qui non deserunt maiores quam voluptas
+                    eveniet quasi, repellat voluptate, similique laudantium.
+                  </div>
+                  <div class="text-caption">December 12, 2024</div>
+                </div>
+                <q-space></q-space>
+                <div class="flex flex-center missingStatus q-ml-md">
+                  Missing
+                </div>
+              </q-card-section>
+            </q-card>
+          </q-card-section>
+        </div>
       </q-card-section>
     </div>
   </q-page>
@@ -380,7 +450,39 @@
   box-shadow: none
   height: auto
 // task container
-// for now nothing to add for task container
+.task-container
+  height: auto
+// my works container
+.myWorks-container
+  height: auto
+// .courseMyWorks
+//   border: 1px solid black
+.myWorksContent
+  width: 70vw
+  border: 1px solid #D9D9D9
+  border-radius: 14px
+  box-shadow: none
+  height: auto
+.submittedStatus
+  background-color: #46af4b
+  border-radius: 14px
+  height: 50px
+  width: 100px
+  color: #ffffffff
+.pendingStatus
+  background-color: #FFCF32
+  border-radius: 14px
+  height: 50px
+  width: 100px
+  color: #ffffffff
+.missingStatus
+  background-color: #FF7070
+  border-radius: 14px
+  height: 50px
+  width: 100px
+  color: #ffffffff
+.filterSelect
+  width: 350px
 @media (max-width:1004px)
   .courseDescUpcoming
     display: flex
@@ -399,9 +501,28 @@
     position: relative
   .icon
     position: absolute
-    bottom: 10px /* Adjust this value to control the spacing */
-    right: 5px /* Adjust this value to control the spacing */
+    bottom: 10px
+    right: 5px
     float: none
+  .submittedStatus
+    position: absolute
+    bottom: 10px
+    right: 5px
+    float: none
+  .pendingStatus
+    position: absolute
+    bottom: 10px
+    right: 5px
+    float: none
+  .missingStatus
+    position: absolute
+    bottom: 10px
+    right: 5px
+    float: none
+  .statusWorks-container
+    display: flex
+    flex-direction: column
+    position: relative
 @media (max-width:547px)
   .main-container
     width: 100%
@@ -409,7 +530,6 @@
   .feed-container
     width: 80vw
     margin: 20px
-
   .courseDescUpcoming
     margin: 0px
     padding: 0px
@@ -427,7 +547,6 @@
     width: 100%
   .courseAssignment
     padding: 16px 0px
-
   .assignmentContent
     margin: 0px
     padding: 0px
@@ -438,19 +557,32 @@
     margin: 0px
     padding: 0px
     width: 100%
+  .myWorksContent
+    margin: 0px
+    padding: 0px
+    width: 100%
   .sampleCoursetxt
     font-size: 1rem
     margin-left: 20px
   .headerNav
     padding: 0px
+  .filter-container
+    margin-left: 0px
+  .filterSelect
+    width: 250px
 </style>
 
 <script setup>
 import { ref } from "vue";
 
 const feedLink = ref(false);
-const taskLink = ref(true);
-const myWorksLink = ref(false);
+const taskLink = ref(false);
+const myWorksLink = ref(true);
+
+const filter = ref("");
+const selectMyWorks = ref({
+  options: ["All", "Submitted", "Missing", "Pending"],
+});
 
 const showFeed = () => {
   feedLink.value = true;
