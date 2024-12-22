@@ -24,6 +24,10 @@ const routes = [
         path: "settings",
         component: () => import("pages/settingsPage.vue"),
       },
+      {
+        path: "archivedPage",
+        component: () => import("pages/archivedPage.vue"),
+      },
     ],
   },
   {

@@ -20,7 +20,7 @@
     </q-item>
   </div>
   <div class="q-py-sm">
-    <q-item clickable>
+    <q-item clickable @click="router.replace(`/main/archivedPage`)">
       <q-item-section avatar>
         <q-icon name="archive" />
       </q-item-section>

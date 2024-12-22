@@ -4,16 +4,16 @@
       <!-- Enrolled Courses Text -->
       <q-card-section class="q-mt-lg flex q-px-none">
         <div class="text-h5 text-weight-medium" style="color: #4b4b4b">
-          Enrolled Courses
+          Archived Courses
         </div>
       </q-card-section>
       <!-- Main Content -->
-      <q-card-section class="enrolled-container">
-        <!-- erolled list -->
+      <q-card-section class="archived-container">
+        <!-- archived list -->
 
-        <div class="enrolledCoursesContainer">
+        <div class="archivedCoursesContainer">
           <div
-            class="enrolledCourses"
+            class="archivedCourses"
             style="
               width: 100%;
               height: 180px;
@@ -50,23 +50,13 @@
               />
             </div>
           </div>
-          <div class="course-Schedule">
-            <q-card-section class="q-pb-none" style="overflow: hidden">
-              <div class="due-text">Due Today</div>
-              <div class="chapter-text">Chapter 1: Introduction</div>
-            </q-card-section>
-
-            <q-card-section style="overflow: hidden">
-              <div class="due-text">Due Friday</div>
-              <div class="chapter-text">
-                Chapter 2: Review of Related Literature
-              </div>
-            </q-card-section>
-
+          <div class="seeYourWork">
             <q-card-section
               style="display: flex; justify-content: flex-end; padding: 8px"
             >
-              <q-btn to="/main/coursePage" style="border: 1px solid #4b4b4b">
+              <div style="align-self: center">See your works</div>
+              <q-space></q-space>
+              <q-btn to="/main/coursePage" style="border: 1px solid #46af4b">
                 <q-icon name="chevron_right" />
               </q-btn>
             </q-card-section>
@@ -81,14 +71,14 @@
 .main-container
   width: 100%
   height: auto
-.enrolled-container
+.archived-container
   width: 100%
   height: auto
   display: flex
   column-gap: 50px
   row-gap: 30px
   flex-wrap: wrap
-.enrolledCoursesContainer
+.archivedCoursesContainer
   width: 300px
 .course-info
   display: flex
@@ -111,11 +101,12 @@
   white-space: nowrap
   overflow: hidden
   text-overflow: ellipsis
-.course-Schedule
+.seeYourWork
   border: 1px solid #8f9bb3
   border-radius: 0px 0px 14px 14px
   overflow: hidden
   padding: 8px
+  color: #46AF4B
 
 .due-text,
 .chapter-text
@@ -132,10 +123,10 @@
     display: flex
     flex-direction: column
     align-items: center
-  .enrolled-container
+  .archived-container
     width: 700px
 @media (max-width:722px)
-  .enrolled-container
+  .archived-container
     width: 350px
 </style>
 
