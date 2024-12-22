@@ -16,6 +16,10 @@ const routes = [
         path: "materialsPage",
         component: () => import("pages/materialsPage.vue"),
       },
+      {
+        path: "activityPage",
+        component: () => import("pages/activityPage.vue"),
+      },
     ],
   },
   {

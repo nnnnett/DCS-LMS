@@ -192,7 +192,11 @@
           </q-card-section>
           <!-- Course Assignment  -->
           <q-card-section class="flex flex-center courseAssignment">
-            <q-card class="assignmentContent q-px-lg">
+            <q-card
+              class="assignmentContent q-px-lg"
+              clickable
+              @click="gotoActivityPage"
+            >
               <q-card-section class="row materialsAssignment-container">
                 <div class="col-1">
                   <q-img
@@ -229,7 +233,11 @@
         <div v-if="taskLink" class="task-container">
           <!-- Course Materials-->
           <q-card-section class="flex flex-center courseMaterials">
-            <q-card class="materialsContent q-px-lg">
+            <q-card
+              class="materialsContent q-px-lg"
+              clickable
+              @click="goToMaterialPage"
+            >
               <q-card-section class="row materialsAssignment-container">
                 <div class="col-1">
                   <q-img
@@ -263,7 +271,11 @@
           </q-card-section>
           <!-- Course Assignment  -->
           <q-card-section class="flex flex-center courseAssignment">
-            <q-card class="assignmentContent q-px-lg">
+            <q-card
+              class="assignmentContent q-px-lg"
+              clickable
+              @click="gotoActivityPage"
+            >
               <q-card-section class="row materialsAssignment-container">
                 <div class="col-1">
                   <q-img
@@ -457,6 +469,9 @@
   border-radius: 14px
   box-shadow: none
   height: auto
+.assignmentContent:hover
+  background-color: #D9D9D9
+  cursor: pointer
 // task container
 .task-container
   height: auto
@@ -615,5 +630,9 @@ const showMyWorks = () => {
 
 async function goToMaterialPage() {
   router.replace(`/main/materialsPage`);
+}
+
+async function gotoActivityPage() {
+  router.replace(`/main/activityPage`);
 }
 </script>
