@@ -12,6 +12,10 @@ const routes = [
         path: "coursePage",
         component: () => import("pages/coursePage.vue"),
       },
+      {
+        path: "materialsPage",
+        component: () => import("pages/materialsPage.vue"),
+      },
     ],
   },
   {

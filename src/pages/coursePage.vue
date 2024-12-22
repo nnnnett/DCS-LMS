@@ -155,7 +155,11 @@
           </q-card-section>
           <!-- Course Materials-->
           <q-card-section class="flex flex-center courseMaterials">
-            <q-card class="materialsContent q-px-lg">
+            <q-card
+              class="materialsContent q-px-lg"
+              clickable
+              @click="goToMaterialPage"
+            >
               <q-card-section class="row materialsAssignment-container">
                 <div class="col-1">
                   <q-img
@@ -432,6 +436,7 @@
   box-shadow: none
   width: 70vw
   height: auto
+
 // course materials and assignment for feed and task
 .courseMaterials
   height: auto
@@ -441,6 +446,9 @@
   border-radius: 14px
   box-shadow: none
   height: auto
+.materialsContent:hover
+  background-color: #D9D9D9
+  cursor: pointer
 .courseAssignment
   height: auto
 .assignmentContent
@@ -499,6 +507,7 @@
     display: flex
     flex-direction: column
     position: relative
+
   .icon
     position: absolute
     bottom: 10px
@@ -573,11 +582,13 @@
 </style>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { ref } from "vue";
 
-const feedLink = ref(false);
+const router = useRouter();
+const feedLink = ref(true);
 const taskLink = ref(false);
-const myWorksLink = ref(true);
+const myWorksLink = ref(false);
 
 const filter = ref("");
 const selectMyWorks = ref({
@@ -601,4 +612,8 @@ const showMyWorks = () => {
   taskLink.value = false;
   myWorksLink.value = true;
 };
+
+async function goToMaterialPage() {
+  router.replace(`/main/materialsPage`);
+}
 </script>

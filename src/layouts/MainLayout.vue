@@ -9,6 +9,7 @@
           color="black"
           icon="menu"
           aria-label="Menu"
+          @mouseleave="closeLeftDrawerWithDelay"
           @click="toggleLeftDrawer"
         />
         <div class="q-mx-md">
@@ -38,6 +39,8 @@
   </q-layout>
 </template>
 
+<style lang="sass" scoped></style>
+
 <script setup>
 import { ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
@@ -50,5 +53,11 @@ const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+function closeLeftDrawerWithDelay() {
+  setTimeout(() => {
+    leftDrawerOpen.value = false;
+  }, 3000); // Adjust delay time in milliseconds
 }
 </script>
