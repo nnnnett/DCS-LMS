@@ -9,7 +9,6 @@
           color="black"
           icon="menu"
           aria-label="Menu"
-          @mouseleave="closeLeftDrawerWithDelay"
           @click="toggleLeftDrawer"
         />
         <div class="q-mx-md">
@@ -55,9 +54,10 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
-function closeLeftDrawerWithDelay() {
-  setTimeout(() => {
-    leftDrawerOpen.value = false;
-  }, 2500); // Adjust delay time in milliseconds
-}
+// @mouseleave="closeLeftDrawerWithDelay"
+// function closeLeftDrawerWithDelay() {
+//   setTimeout(() => {
+//     leftDrawerOpen.value = false;
+//   }, 2500); // Adjust delay time in milliseconds
+// }
 </script>

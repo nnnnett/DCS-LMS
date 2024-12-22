@@ -387,7 +387,7 @@
 </template>
 <style lang="sass" scoped>
 .main-container
-  width: 100vw
+  width: 99vw
   height: auto
 .headerNav
   font-size: 1rem

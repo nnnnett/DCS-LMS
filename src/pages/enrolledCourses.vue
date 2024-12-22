@@ -25,7 +25,8 @@
               overflow: hidden;
             "
           >
-            <q-btn-dropdown
+            <!-- archived button -->
+            <!-- <q-btn-dropdown
               flat
               color="white"
               dropdown-icon="more_vert"
@@ -38,7 +39,7 @@
                   </q-item-section>
                 </q-item>
               </q-list>
-            </q-btn-dropdown>
+            </q-btn-dropdown> -->
             <div class="course-info">
               <div>
                 <div class="course-title">Capstone 1</div>
@@ -116,7 +117,6 @@
   border-radius: 0px 0px 14px 14px
   overflow: hidden
   padding: 8px
-
 .due-text,
 .chapter-text
   white-space: nowrap

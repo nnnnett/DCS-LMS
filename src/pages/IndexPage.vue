@@ -51,25 +51,22 @@
               style="
                 display: flex;
                 flex-wrap: wrap;
-                column-gap: 70px;
+                column-gap: 20px;
                 width: 100%;
                 row-gap: 150px;
-                height: 400px;
+                height: 420px;
                 max-height: 500px;
                 overflow: hidden;
               "
               class="q-px-none row"
             >
               <!-- Courses -->
-              <div
-                class="enrolledCoursesContainer col-3"
-                style="box-sizing: border-box"
-              >
+
+              <div class="enrolledCoursesContainer">
                 <div
                   class="enrolledCourses"
                   style="
-                    width: 275px;
-                    max-width: 275px;
+                    width: 100%;
                     height: 180px;
                     background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
                     background-size: cover;
@@ -79,7 +76,8 @@
                     overflow: hidden;
                   "
                 >
-                  <q-btn-dropdown
+                  <!-- archived? -->
+                  <!-- <q-btn-dropdown
                     flat
                     color="white"
                     dropdown-icon="more_vert"
@@ -92,13 +90,11 @@
                         </q-item-section>
                       </q-item>
                     </q-list>
-                  </q-btn-dropdown>
+                  </q-btn-dropdown> -->
                   <div class="course-info">
                     <div>
-                      <div>Capstone 1</div>
-                      <div style="font-size: 12px; opacity: 0.8">
-                        Rosalina D. Lacuesta
-                      </div>
+                      <div class="course-title">Capstone 1</div>
+                      <div class="course-instructor">Rosalina D. Lacuesta</div>
                     </div>
                     <q-img
                       src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
@@ -108,12 +104,15 @@
                 </div>
                 <div class="course-Schedule">
                   <q-card-section class="q-pb-none" style="overflow: hidden">
-                    <div>Due Today</div>
-                    <div>Chapter 1: Introduction</div>
+                    <div class="due-text">Due Today</div>
+                    <div class="chapter-text">Chapter 1: Introduction</div>
                   </q-card-section>
+
                   <q-card-section style="overflow: hidden">
-                    <div>Due Friday</div>
-                    <div>Chapter 2: Review of Related Literature</div>
+                    <div class="due-text">Due Friday</div>
+                    <div class="chapter-text">
+                      Chapter 2: Review of Related Literature
+                    </div>
                   </q-card-section>
 
                   <q-card-section
@@ -127,141 +126,6 @@
                       to="/main/coursePage"
                       style="border: 1px solid #4b4b4b"
                     >
-                      <q-icon name="chevron_right" />
-                    </q-btn>
-                  </q-card-section>
-                </div>
-              </div>
-
-              <div
-                class="enrolledCoursesContainer col-3"
-                style="box-sizing: border-box"
-              >
-                <div
-                  class="enrolledCourses"
-                  style="
-                    width: 275px;
-                    max-width: 275px;
-                    height: 180px;
-                    background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
-                    background-size: cover;
-                    background-position: center;
-                    position: relative;
-                    border-radius: 14px 14px 0px 0px;
-                    overflow: hidden;
-                  "
-                >
-                  <q-btn-dropdown
-                    flat
-                    color="white"
-                    dropdown-icon="more_vert"
-                    style="position: absolute; top: 8px; right: 8px"
-                  >
-                    <q-list>
-                      <q-item clickable>
-                        <q-item-section>
-                          <q-item-label>View Details</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
-                  <div class="course-info col-3">
-                    <div>
-                      <div>Capstone 2</div>
-                      <div style="font-size: 12px; opacity: 0.8">
-                        John D. Smith
-                      </div>
-                    </div>
-                    <q-img
-                      src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                      style="width: 50px; height: 50px; border-radius: 50%"
-                    />
-                  </div>
-                </div>
-                <div class="course-Schedule">
-                  <q-card-section class="q-pb-none">
-                    <div>Due Tomorrow</div>
-                    <div>Chapter 3: Methodology</div>
-                  </q-card-section>
-                  <q-card-section>
-                    <div>Due Next Week</div>
-                    <div>Chapter 4: Data Analysis</div>
-                  </q-card-section>
-                  <q-card-section
-                    style="
-                      display: flex;
-                      justify-content: flex-end;
-                      padding: 8px;
-                    "
-                  >
-                    <q-btn style="border: 1px solid #4b4b4b">
-                      <q-icon name="chevron_right" />
-                    </q-btn>
-                  </q-card-section>
-                </div>
-              </div>
-              <div
-                class="enrolledCoursesContainer col-3"
-                style="box-sizing: border-box"
-              >
-                <div
-                  class="enrolledCourses"
-                  style="
-                    width: 275px;
-                    max-width: 275px;
-                    height: 180px;
-                    background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
-                    background-size: cover;
-                    background-position: center;
-                    position: relative;
-                    border-radius: 14px 14px 0px 0px;
-                    overflow: hidden;
-                  "
-                >
-                  <q-btn-dropdown
-                    flat
-                    color="white"
-                    dropdown-icon="more_vert"
-                    style="position: absolute; top: 8px; right: 8px"
-                  >
-                    <q-list>
-                      <q-item clickable>
-                        <q-item-section>
-                          <q-item-label>View Details</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
-                  <div class="course-info">
-                    <div>
-                      <div>Capstone 2</div>
-                      <div style="font-size: 12px; opacity: 0.8">
-                        John D. Smith
-                      </div>
-                    </div>
-                    <q-img
-                      src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                      style="width: 50px; height: 50px; border-radius: 50%"
-                    />
-                  </div>
-                </div>
-                <div class="course-Schedule">
-                  <q-card-section class="q-pb-none">
-                    <div>Due Tomorrow</div>
-                    <div>Chapter 3: Methodology</div>
-                  </q-card-section>
-                  <q-card-section>
-                    <div>Due Next Week</div>
-                    <div>Chapter 4: Data Analysis</div>
-                  </q-card-section>
-                  <q-card-section
-                    style="
-                      display: flex;
-                      justify-content: flex-end;
-                      padding: 8px;
-                    "
-                  >
-                    <q-btn style="border: 1px solid #4b4b4b">
                       <q-icon name="chevron_right" />
                     </q-btn>
                   </q-card-section>
@@ -320,11 +184,10 @@
   height: auto
 .main-content
   display: flex
-  justify-content: space-between
+  justify-content: space-evenly
   height: auto
 .sub-content-1
-
-  width: 60%
+  width: 53%
   height: auto
 .active-pendingTask-container
   border: 1px solid #46AF4B
@@ -336,11 +199,13 @@
   border-radius: 14px
 .sub-content-1-1
   display: flex
-
   column-gap: 10px
 .sub-content-1-2
   color: #4B4B4B
-
+  height: auto
+.enrolledCoursesContainer
+  width: 300px
+  height: auto
 .course-info
   display: flex
   position: absolute
@@ -349,26 +214,57 @@
   background-color: rgba(0, 0, 0, 0.6)
   color: white
   padding: 8px 16px
-  display: flex
   justify-content: space-between
   align-items: center
+.course-title
+  font-size: 14px
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+.course-instructor
+  font-size: 12px
+  opacity: 0.8
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
 .course-Schedule
-  border: 1px solid #8F9BB3
-  height: auto
-  width: 275px
-  max-width: 275px
+  border: 1px solid #8f9bb3
   border-radius: 0px 0px 14px 14px
   overflow: hidden
+  padding: 8px
+.due-text,
+.chapter-text
   white-space: nowrap
-
+  overflow: hidden
+  text-overflow: ellipsis
+.due-text
+  font-size: 1rem
+.chapter-text
+  font-size: 0.9rem
 // notification side
 .sub-content-2
   color: #4B4B4B
   border: 1px solid #46AF4B
   width: 35%
-
   max-height: 550px
   border-radius: 24px
+@media (max-width:1129px)
+  .main-content
+    display: flex
+    flex-direction: column
+  .sub-content-1
+    width: 100%
+  .sub-content-2
+    width: 97%
+@media (max-width:500px)
+  .sub-content-1-1
+    display: flex
+    flex-direction: column
+  .active-pendingTask-container
+    width: 100%
+    margin-bottom: 10px
+  .main-container
+    padding: 0px
 </style>
 
 <script setup>
