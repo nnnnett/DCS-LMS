@@ -58,6 +58,6 @@ function toggleLeftDrawer() {
 function closeLeftDrawerWithDelay() {
   setTimeout(() => {
     leftDrawerOpen.value = false;
-  }, 3000); // Adjust delay time in milliseconds
+  }, 2500); // Adjust delay time in milliseconds
 }
 </script>

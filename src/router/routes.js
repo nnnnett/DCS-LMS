@@ -20,6 +20,10 @@ const routes = [
         path: "activityPage",
         component: () => import("pages/activityPage.vue"),
       },
+      {
+        path: "settings",
+        component: () => import("pages/settingsPage.vue"),
+      },
     ],
   },
   {

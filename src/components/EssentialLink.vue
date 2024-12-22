@@ -30,7 +30,7 @@
     </q-item>
   </div>
   <div class="q-py-sm">
-    <q-item clickable>
+    <q-item clickable @click="router.replace(`/main/settings`)">
       <q-item-section avatar>
         <q-icon name="settings" />
       </q-item-section>
