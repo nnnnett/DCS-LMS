@@ -2,15 +2,59 @@
   <q-page>
     <div class="main-container q-px-xl">
       <!-- Enrolled Courses Text -->
-      <q-card-section class="q-mt-lg flex q-px-none">
+      <q-card-section
+        class="q-mt-lg flex q-px-none headerTxtBtn"
+        style="width: 100%"
+      >
         <div class="text-h5 text-weight-medium" style="color: #4b4b4b">
           Enrolled Courses
+        </div>
+        <q-space></q-space>
+        <div
+          style="width: auto; color: #46af4b"
+          v-if="isStudent"
+          class="joinCreateBtn"
+        >
+          <q-btn
+            class="joinCreateBtn"
+            label="Join Class"
+            flat
+            @click="classCodePopup = true"
+            icon="add"
+            style="
+              border: 1px solid #46af4b;
+              border-radius: 10px;
+              width: 100%;
+              height: 40px;
+              text-transform: capitalize;
+            "
+          />
+        </div>
+
+        <div
+          style="width: auto; color: #46af4b"
+          v-if="isInstructor"
+          class="joinCreateBtn"
+        >
+          <q-btn
+            class="joinCreateBtn"
+            label="Create Class"
+            flat
+            icon="add"
+            @click="createCoursePopup = true"
+            style="
+              border: 1px solid #46af4b;
+              border-radius: 10px;
+              width: 100%;
+              height: 40px;
+              text-transform: capitalize;
+            "
+          />
         </div>
       </q-card-section>
       <!-- Main Content -->
       <q-card-section class="enrolled-container">
         <!-- erolled list -->
-
         <div class="enrolledCoursesContainer">
           <div
             class="enrolledCourses"
@@ -72,6 +116,135 @@
               </q-btn>
             </q-card-section>
           </div>
+        </div>
+
+        <!-- join class popup (student) -->
+        <div>
+          <q-dialog v-model="classCodePopup">
+            <q-card>
+              <q-card-section>
+                <div class="text-h6">Input Class Code</div>
+              </q-card-section>
+              <q-form>
+                <div class="flex flex-center column">
+                  <div style="width: 80%">
+                    <q-input
+                      v-model="classCode"
+                      type="text"
+                      borderless
+                      class="q-px-md"
+                      style="border: 1px solid #4b4b4b; border-radius: 14px"
+                    >
+                    </q-input>
+                  </div>
+                  <div
+                    style="width: 80%; display: flex; justify-content: flex-end"
+                  >
+                    <q-card-actions align="right" class="bg-white text-teal">
+                      <q-btn
+                        flat
+                        label="Join"
+                        type="submit"
+                        :loading="loading"
+                      />
+                    </q-card-actions>
+                    <q-card-actions align="right" class="bg-white text-teal">
+                      <q-btn flat label="Cancel" v-close-popup />
+                    </q-card-actions>
+                  </div>
+                </div>
+              </q-form>
+            </q-card>
+          </q-dialog>
+        </div>
+
+        <!-- Create Course Pop Up (instructor) -->
+        <div>
+          <q-dialog v-model="createCoursePopup" persistent>
+            <q-card style="width: 700px; max-width: 80vw">
+              <q-card-section>
+                <div class="text-h6">Create Course</div>
+              </q-card-section>
+              <!-- q form -->
+              <q-form @submit.prevent="createCourse">
+                <div
+                  style="width: 100%; color: #4b4b4b"
+                  class="q-px-xl flex flex-center"
+                >
+                  <!-- <div style="width: 80%">
+                    <q-card-section class="q-px-none">
+                      Course Image
+                    </q-card-section>
+                    <q-file
+                      v-model="courseImage"
+                      borderless
+                      class="q-px-md"
+                      style="border: 1px solid #4b4b4b; border-radius: 14px"
+                    >
+                      <template #append>
+                        <q-icon name="upload_file"></q-icon>
+                      </template>
+                    </q-file>
+                  </div> -->
+                  <div style="width: 80%">
+                    <q-card-section class="q-px-none">
+                      Course Name
+                    </q-card-section>
+                    <q-input
+                      v-model="courseName"
+                      type="text"
+                      borderless
+                      class="q-px-md"
+                      style="border: 1px solid #4b4b4b; border-radius: 14px"
+                    >
+                    </q-input>
+                  </div>
+                  <div style="width: 80%">
+                    <q-card-section class="q-px-none">
+                      Course Section
+                    </q-card-section>
+                    <q-input
+                      v-model="courseSection"
+                      type="text"
+                      borderless
+                      class="q-px-md"
+                      style="border: 1px solid #4b4b4b; border-radius: 14px"
+                    >
+                    </q-input>
+                  </div>
+                  <div style="width: 80%">
+                    <q-card-section class="q-px-none">
+                      Course Description
+                    </q-card-section>
+                    <q-input
+                      v-model="courseDescription"
+                      type="textarea"
+                      borderless
+                      class="q-px-md"
+                      style="border: 1px solid #4b4b4b; border-radius: 14px"
+                    >
+                    </q-input>
+                  </div>
+
+                  <div
+                    style="width: 80%; display: flex; justify-content: flex-end"
+                  >
+                    <q-card-actions align="right" class="bg-white text-teal">
+                      <q-btn
+                        flat
+                        label="Create Course"
+                        :loading="loading"
+                        type="submit"
+                      />
+                    </q-card-actions>
+                    <q-card-actions align="right" class="bg-white text-teal">
+                      <q-btn flat label="Cancel" v-close-popup />
+                    </q-card-actions>
+                  </div>
+                </div>
+              </q-form>
+            </q-card>
+          </q-dialog>
         </div>
       </q-card-section>
     </div>
@@ -137,6 +310,97 @@
 @media (max-width:722px)
   .enrolled-container
     width: 350px
+
+@media (max-width:500px)
+  .headerTxtBtn
+    display: flex
+    flex-direction: column
 </style>
 
-<script setup></script>
+<script setup>
+import { onMounted, ref } from "vue";
+import axios from "axios";
+import { useQuasar } from "quasar";
+
+const loading = ref(false);
+const $q = useQuasar();
+const roleChecker = ref("instructor");
+const isStudent = ref("");
+const isInstructor = ref("");
+const createCoursePopup = ref(false);
+const classCodePopup = ref(false);
+// create course
+const courseImage = ref("try Image");
+const courseName = ref("");
+const courseSection = ref("");
+const courseDescription = ref("");
+
+async function roleValidation() {
+  if (roleChecker.value === "student") {
+    return (isStudent.value = true);
+  } else if (roleChecker.value === "instructor") {
+    return (isInstructor.value = true);
+  } else {
+    return;
+  }
+}
+
+async function getCourses() {
+  try {
+    const response = await axios.get(`${process.env.api_host}/courses`);
+    console.log("here", response);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function createCourse() {
+  const token = localStorage.getItem("authToken");
+  loading.value = true;
+  try {
+    if (
+      !courseImage.value ||
+      !courseName.value ||
+      !courseSection.value ||
+      !courseDescription.value
+    ) {
+      $q.notify({
+        type: "warning",
+        message: "Please complete all required fields!",
+      });
+    }
+    await axios.post(
+      `${process.env.api_host}/courses/create`,
+      {
+        name: courseName.value,
+        section: courseSection.value,
+        description: courseDescription.value,
+        image: courseImage.value,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    $q.notify({
+      type: "positive",
+      message: "created Succesfully!",
+    });
+  } catch (err) {
+    console.error(err);
+    $q.notify({
+      type: "negative",
+      message: "Something went wrong!",
+    });
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  getCourses();
+  roleValidation();
+});
+</script>
