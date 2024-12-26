@@ -9,7 +9,7 @@
         <div class="text-h5 text-weight-medium" style="color: #4b4b4b">
           Enrolled Courses
         </div>
-        <q-space></q-space>
+        <q-space />
         <div
           style="width: auto; color: #46af4b"
           v-if="isStudent"
@@ -53,68 +53,71 @@
         </div>
       </q-card-section>
       <!-- Main Content -->
-      <q-card-section class="enrolled-container">
+      <q-card-section class="enrolled-container" v-if="courses">
         <!-- erolled list -->
-        <div class="enrolledCoursesContainer">
-          <div
-            class="enrolledCourses"
-            style="
-              width: 100%;
-              height: 180px;
-              background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
-              background-size: cover;
-              background-position: center;
-              position: relative;
-              border-radius: 14px 14px 0px 0px;
-              overflow: hidden;
-            "
-          >
-            <!-- archived button -->
-            <!-- <q-btn-dropdown
-              flat
-              color="white"
-              dropdown-icon="more_vert"
-              style="position: absolute; top: 8px; right: 8px"
+        <div v-for="course in courses" :key="course._id">
+          <div class="enrolledCoursesContainer">
+            <div
+              class="enrolledCourses"
+              style="
+                width: 100%;
+                height: 180px;
+                background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
+                background-size: cover;
+                background-position: center;
+                position: relative;
+                border-radius: 14px 14px 0px 0px;
+                overflow: hidden;
+              "
             >
-              <q-list>
-                <q-item clickable>
-                  <q-item-section>
-                    <q-item-label>View Details</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown> -->
-            <div class="course-info">
-              <div>
-                <div class="course-title">Capstone 1</div>
-                <div class="course-instructor">Rosalina D. Lacuesta</div>
+              <!-- archived button -->
+              <!-- <q-btn-dropdown
+                flat
+                color="white"
+                dropdown-icon="more_vert"
+                style="position: absolute; top: 8px; right: 8px"
+              >
+                <q-list>
+                  <q-item clickable>
+                    <q-item-section>
+                      <q-item-label>View Details</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown> -->
+              <div class="course-info">
+                <div>
+                  <div class="course-title">{{ course.name }}</div>
+                  <div class="course-instructor">Rosalina D. Lacuesta</div>
+                </div>
+                <q-img
+                  src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                  style="width: 50px; height: 50px; border-radius: 50%"
+                />
               </div>
-              <q-img
-                src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                style="width: 50px; height: 50px; border-radius: 50%"
-              />
             </div>
-          </div>
-          <div class="course-Schedule">
-            <q-card-section class="q-pb-none" style="overflow: hidden">
-              <div class="due-text">Due Today</div>
-              <div class="chapter-text">Chapter 1: Introduction</div>
-            </q-card-section>
-
-            <q-card-section style="overflow: hidden">
-              <div class="due-text">Due Friday</div>
-              <div class="chapter-text">
-                Chapter 2: Review of Related Literature
-              </div>
-            </q-card-section>
-
-            <q-card-section
-              style="display: flex; justify-content: flex-end; padding: 8px"
-            >
-              <q-btn to="/main/coursePage" style="border: 1px solid #4b4b4b">
-                <q-icon name="chevron_right" />
-              </q-btn>
-            </q-card-section>
+            <div class="course-Schedule">
+              <q-card-section class="q-pb-none" style="overflow: hidden">
+                <div class="due-text">Due Today</div>
+                <div class="chapter-text">Chapter 1: Introduction</div>
+              </q-card-section>
+              <q-card-section style="overflow: hidden">
+                <div class="due-text">Due Friday</div>
+                <div class="chapter-text">
+                  Chapter 2: Review of Related Literature
+                </div>
+              </q-card-section>
+              <q-card-section
+                style="display: flex; justify-content: flex-end; padding: 8px"
+              >
+                <q-btn
+                  :to="`/main/coursePage/` + course._id"
+                  style="border: 1px solid #4b4b4b"
+                >
+                  <q-icon name="chevron_right" />
+                </q-btn>
+              </q-card-section>
+            </div>
           </div>
         </div>
 
@@ -335,6 +338,9 @@ const courseName = ref("");
 const courseSection = ref("");
 const courseDescription = ref("");
 
+// course
+const courses = ref(null);
+
 async function roleValidation() {
   if (roleChecker.value === "student") {
     return (isStudent.value = true);
@@ -348,7 +354,8 @@ async function roleValidation() {
 async function getCourses() {
   try {
     const response = await axios.get(`${process.env.api_host}/courses`);
-    console.log("here", response);
+
+    courses.value = response.data;
   } catch (err) {
     console.error(err);
   }
@@ -384,6 +391,7 @@ async function createCourse() {
         },
       }
     );
+    createCoursePopup.value = false;
     $q.notify({
       type: "positive",
       message: "created Succesfully!",

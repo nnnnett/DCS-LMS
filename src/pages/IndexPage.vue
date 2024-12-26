@@ -48,6 +48,7 @@
               </router-link>
             </q-card-section>
             <q-card-section
+              v-if="courses"
               style="
                 display: flex;
                 flex-wrap: wrap;
@@ -62,73 +63,75 @@
             >
               <!-- Courses -->
 
-              <div class="enrolledCoursesContainer">
-                <div
-                  class="enrolledCourses"
-                  style="
-                    width: 100%;
-                    height: 180px;
-                    background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
-                    background-size: cover;
-                    background-position: center;
-                    position: relative;
-                    border-radius: 14px 14px 0px 0px;
-                    overflow: hidden;
-                  "
-                >
-                  <!-- archived? -->
-                  <!-- <q-btn-dropdown
-                    flat
-                    color="white"
-                    dropdown-icon="more_vert"
-                    style="position: absolute; top: 8px; right: 8px"
-                  >
-                    <q-list>
-                      <q-item clickable>
-                        <q-item-section>
-                          <q-item-label>View Details</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown> -->
-                  <div class="course-info">
-                    <div>
-                      <div class="course-title">Capstone 1</div>
-                      <div class="course-instructor">Rosalina D. Lacuesta</div>
-                    </div>
-                    <q-img
-                      src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                      style="width: 50px; height: 50px; border-radius: 50%"
-                    />
-                  </div>
-                </div>
-                <div class="course-Schedule">
-                  <q-card-section class="q-pb-none" style="overflow: hidden">
-                    <div class="due-text">Due Today</div>
-                    <div class="chapter-text">Chapter 1: Introduction</div>
-                  </q-card-section>
-
-                  <q-card-section style="overflow: hidden">
-                    <div class="due-text">Due Friday</div>
-                    <div class="chapter-text">
-                      Chapter 2: Review of Related Literature
-                    </div>
-                  </q-card-section>
-
-                  <q-card-section
+              <div v-for="course in courses" :key="course._id">
+                <div class="enrolledCoursesContainer">
+                  <div
+                    class="enrolledCourses"
                     style="
-                      display: flex;
-                      justify-content: flex-end;
-                      padding: 8px;
+                      width: 100%;
+                      height: 180px;
+                      background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
+                      background-size: cover;
+                      background-position: center;
+                      position: relative;
+                      border-radius: 14px 14px 0px 0px;
+                      overflow: hidden;
                     "
                   >
-                    <q-btn
-                      to="/main/coursePage"
-                      style="border: 1px solid #4b4b4b"
+                    <!-- archived? -->
+                    <!-- <q-btn-dropdown
+                      flat
+                      color="white"
+                      dropdown-icon="more_vert"
+                      style="position: absolute; top: 8px; right: 8px"
                     >
-                      <q-icon name="chevron_right" />
-                    </q-btn>
-                  </q-card-section>
+                      <q-list>
+                        <q-item clickable>
+                          <q-item-section>
+                            <q-item-label>View Details</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown> -->
+                    <div class="course-info">
+                      <div>
+                        <div class="course-title">{{ course.name }}</div>
+                        <div class="course-instructor">
+                          Rosalina D. Lacuesta
+                        </div>
+                      </div>
+                      <q-img
+                        src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                        style="width: 50px; height: 50px; border-radius: 50%"
+                      />
+                    </div>
+                  </div>
+                  <div class="course-Schedule">
+                    <q-card-section class="q-pb-none" style="overflow: hidden">
+                      <div class="due-text">Due Today</div>
+                      <div class="chapter-text">Chapter 1: Introduction</div>
+                    </q-card-section>
+                    <q-card-section style="overflow: hidden">
+                      <div class="due-text">Due Friday</div>
+                      <div class="chapter-text">
+                        Chapter 2: Review of Related Literature
+                      </div>
+                    </q-card-section>
+                    <q-card-section
+                      style="
+                        display: flex;
+                        justify-content: flex-end;
+                        padding: 8px;
+                      "
+                    >
+                      <q-btn
+                        to="/main/coursePage"
+                        style="border: 1px solid #4b4b4b"
+                      >
+                        <q-icon name="chevron_right" />
+                      </q-btn>
+                    </q-card-section>
+                  </div>
                 </div>
               </div>
             </q-card-section>
@@ -204,7 +207,7 @@
   color: #4B4B4B
   height: auto
 .enrolledCoursesContainer
-  width: 300px
+  width: 290px
   height: auto
 .course-info
   display: flex
@@ -275,6 +278,7 @@ import axios from "axios";
 const loading = ref(true);
 const notifDate = ref("");
 const router = useRouter();
+const courses = ref(null);
 
 async function isLogin() {
   const token = localStorage.getItem("authToken");
@@ -300,7 +304,18 @@ async function isLogin() {
   }
 }
 
+async function getCourses() {
+  try {
+    const response = await axios.get(`${process.env.api_host}/courses`);
+    courses.value = response.data;
+    console.log("here", courses.value);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 onMounted(() => {
   isLogin();
+  getCourses();
 });
 </script>

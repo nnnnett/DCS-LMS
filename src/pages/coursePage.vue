@@ -14,12 +14,17 @@
           <div class="q-px-xl" @click="showFeed">
             <q-card-section :class="{ active: feedLink }">Feed</q-card-section>
           </div>
-          <div class="q-px-xl" @click="showTask">
+          <div class="q-px-xl" @click="showTask" v-if="isStudent">
             <q-card-section :class="{ active: taskLink }">Task</q-card-section>
           </div>
-          <div class="q-px-xl" @click="showMyWorks">
+          <div class="q-px-xl" @click="showMyWorks" v-if="isStudent">
             <q-card-section :class="{ active: myWorksLink }"
               >My Works</q-card-section
+            >
+          </div>
+          <div class="q-px-xl" @click="showStudents" v-if="isInstructor">
+            <q-card-section :class="{ active: studentList }"
+              >Students</q-card-section
             >
           </div>
         </div>
@@ -47,7 +52,26 @@
                   display: flex;
                 "
               >
-                <div class="courseInstructor">
+                <!-- Edit course button -->
+                <div
+                  v-if="isInstructor"
+                  style="
+                    position: absolute;
+                    border: 1px solid #d9d9d9;
+                    border-radius: 14px;
+                    right: 5px;
+                    top: 5px;
+                  "
+                >
+                  <q-btn
+                    flat
+                    icon="edit"
+                    color="white"
+                    alt="edit button"
+                    @click="editCoursePopup = true"
+                  />
+                </div>
+                <div class="courseInstructor" v-if="courses">
                   <q-img
                     src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
                     style="
@@ -58,11 +82,15 @@
                       min-height: 50px;
                     "
                   />
+                  <div style="font-size: 1.5em; font-weight: 500">
+                    {{ courses.name }}
+                  </div>
                   <div style="font-size: 1em" class="q-py-sm">
                     Rosalina D. Lacuesta
                   </div>
-                  <div style="font-size: 1.5em; font-weight: 500">
-                    Capstone 1
+
+                  <div style="font-size: 1em; font-weight: 500">
+                    Hub: 102723
                   </div>
                 </div>
               </div>
@@ -70,13 +98,10 @@
           </q-card-section>
           <!-- course Description -->
           <q-card-section class="flex courseDescUpcoming">
-            <div class="courseDescription q-px-xl">
+            <div class="courseDescription q-px-xl" v-if="courses">
               <div class="text-subtitle1">Course Description</div>
               <div style="text-indent: 50px">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum,
-                praesentium, reiciendis veritatis voluptatum mollitia expedita
-                accusamus quia vitae exercitationem temporibus cumque et magnam
-                non dignissimos at iste dolores. Nemo, reprehenderit?
+                {{ courses.description }}
               </div>
             </div>
 
@@ -228,6 +253,92 @@
               </q-card-section>
             </q-card>
           </q-card-section>
+          <div>
+            <q-dialog v-model="editCoursePopup" persistent>
+              <q-card style="width: 700px; max-width: 80vw">
+                <q-card-section>
+                  <div class="text-h6">Edit Course</div>
+                </q-card-section>
+                <!-- q form -->
+                <q-form>
+                  <div
+                    style="width: 100%; color: #4b4b4b"
+                    class="q-px-xl flex flex-center"
+                  >
+                    <!-- <div style="width: 80%">
+                    <q-card-section class="q-px-none">
+                      Course Image
+                    </q-card-section>
+                    <q-file
+                      v-model="courseImage"
+                      borderless
+                      class="q-px-md"
+                      style="border: 1px solid #4b4b4b; border-radius: 14px"
+                    >
+                      <template #append>
+                        <q-icon name="upload_file"></q-icon>
+                      </template>
+                    </q-file>
+                  </div> -->
+                    <div style="width: 80%">
+                      <q-card-section class="q-px-none">
+                        Course Name
+                      </q-card-section>
+                      <q-input
+                        v-model="courseName"
+                        type="text"
+                        borderless
+                        class="q-px-md"
+                        style="border: 1px solid #4b4b4b; border-radius: 14px"
+                      >
+                      </q-input>
+                    </div>
+                    <div style="width: 80%">
+                      <q-card-section class="q-px-none">
+                        Course Section
+                      </q-card-section>
+                      <q-input
+                        v-model="courseSection"
+                        type="text"
+                        borderless
+                        class="q-px-md"
+                        style="border: 1px solid #4b4b4b; border-radius: 14px"
+                      >
+                      </q-input>
+                    </div>
+                    <div style="width: 80%">
+                      <q-card-section class="q-px-none">
+                        Course Description
+                      </q-card-section>
+                      <q-input
+                        v-model="courseDescription"
+                        type="textarea"
+                        borderless
+                        class="q-px-md"
+                        style="border: 1px solid #4b4b4b; border-radius: 14px"
+                      >
+                      </q-input>
+                    </div>
+
+                    <div
+                      style="
+                        width: 80%;
+                        display: flex;
+                        justify-content: flex-end;
+                      "
+                    >
+                      <q-card-actions align="right" class="bg-white text-teal">
+                        <q-btn flat label="Save" type="submit" />
+                      </q-card-actions>
+                      <q-card-actions align="right" class="bg-white text-teal">
+                        <q-btn flat label="Cancel" v-close-popup />
+                      </q-card-actions>
+                    </div>
+                  </div>
+                </q-form>
+              </q-card>
+            </q-dialog>
+          </div>
         </div>
         <!-- task tab -->
         <div v-if="taskLink" class="task-container">
@@ -381,6 +492,21 @@
             </q-card>
           </q-card-section>
         </div>
+
+        <!-- for instructor show all students -->
+        <div v-if="studentList" class="studentList-container">
+          <q-card-section style="display: flex; justify-content: space-between">
+            <div style="color: #8f9bb3; font-size: 1.5em">List of Students</div>
+            <div style="color: #8f9bb3; font-size: 1.5em" class="q-pl-sm">
+              Hub Code:
+              <span style="color: #4b4b4b; font-weight: 600">022723</span>
+            </div>
+          </q-card-section>
+          <!-- list of students -->
+          <div>
+            <q-table :rows="rows" :columns="columns" row-key="id"> </q-table>
+          </div>
+        </div>
       </q-card-section>
     </div>
   </q-page>
@@ -506,6 +632,10 @@
   color: #ffffffff
 .filterSelect
   width: 350px
+
+// studentList-container
+.studentList-container
+  height: auto
 @media (max-width:1004px)
   .courseDescUpcoming
     display: flex
@@ -597,13 +727,29 @@
 </style>
 
 <script setup>
-import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import { useQuasar } from "quasar";
 
+const loading = ref(false);
+const route = useRoute();
+const $q = useQuasar();
+const editCoursePopup = ref(false);
 const router = useRouter();
+
 const feedLink = ref(true);
 const taskLink = ref(false);
 const myWorksLink = ref(false);
+const studentList = ref(false);
+
+// role validation
+const roleChecker = ref("student");
+const isStudent = ref("");
+const isInstructor = ref("");
+
+const courses = ref(null);
+const courseId = route.params.courseId;
 
 const filter = ref("");
 const selectMyWorks = ref({
@@ -614,18 +760,28 @@ const showFeed = () => {
   feedLink.value = true;
   taskLink.value = false;
   myWorksLink.value = false;
+  studentList.value = false;
 };
 
 const showTask = () => {
   feedLink.value = false;
   taskLink.value = true;
   myWorksLink.value = false;
+  studentList.value = false;
 };
 
 const showMyWorks = () => {
   feedLink.value = false;
   taskLink.value = false;
   myWorksLink.value = true;
+  studentList.value = false;
+};
+
+const showStudents = () => {
+  studentList.value = true;
+  feedLink.value = false;
+  taskLink.value = false;
+  myWorksLink.value = false;
 };
 
 async function goToMaterialPage() {
@@ -635,4 +791,66 @@ async function goToMaterialPage() {
 async function gotoActivityPage() {
   router.replace(`/main/activityPage`);
 }
+
+// checks if its user, instructor, admin
+async function roleValidation() {
+  if (roleChecker.value === "student") {
+    return (isStudent.value = true);
+  } else if (roleChecker.value === "instructor") {
+    return (isInstructor.value = true);
+  } else {
+    return;
+  }
+}
+
+const rows = ref([
+  { id: 1, firstName: "John", middleName: "M.", lastName: "Doe" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Aane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+]);
+
+const columns = ref([
+  { name: "firstName", label: "First Name", align: "left", field: "firstName" },
+  {
+    name: "middleName",
+    label: "Middle Name",
+    align: "left",
+    field: "middleName",
+  },
+  { name: "lastName", label: "Last Name", align: "left", field: "lastName" },
+]);
+
+async function getCourses() {
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/courses?query=${courseId}`
+    );
+    courses.value = response.data[0];
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+onMounted(() => {
+  getCourses();
+  roleValidation();
+});
 </script>
