@@ -98,7 +98,22 @@
                         >
                         </q-input>
                       </div>
-
+                      <div style="width: 90%">
+                        <q-card-section class="q-px-none">
+                          Assignment Description
+                        </q-card-section>
+                        <q-file
+                          v-model="newFile"
+                          style="width: auto"
+                          label="Upload File"
+                          clearable
+                          multiple
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
+                      </div>
                       <q-card-section class="q-px-none dueDateGrade-container">
                         <div class="q-pl-sm dueDateGrade">
                           <div style="color: #8f9bb3" class="text-caption">
@@ -435,6 +450,7 @@ const editDueDate = ref("");
 const editDueTime = ref("");
 const editGrade = ref("");
 const editDescription = ref("");
+const newFile = ref("");
 // role validation
 const roleChecker = ref("instructor");
 const isStudent = ref("");
