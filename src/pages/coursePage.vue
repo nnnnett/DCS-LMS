@@ -428,10 +428,8 @@
                 </div>
                 <div class="col-9">
                   <div style="height: auto; text-align: justify">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Fuga itaque harum tempora quas dolores voluptatibus optio
-                    rem praesentium qui non deserunt maiores quam voluptas
-                    eveniet quasi, repellat voluptate, similique laudantium.
+                    Rosalina D. Lacuesta posted a new material: Capstone
+                    Documentation Format.
                   </div>
                   <div class="text-caption">December 12, 2024</div>
                 </div>
@@ -465,10 +463,8 @@
                 </div>
                 <div class="col-9">
                   <div style="height: auto; text-align: justify">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Fuga itaque harum tempora quas dolores voluptatibus optio
-                    rem praesentium qui non deserunt maiores quam voluptas
-                    eveniet quasi, repellat voluptate, similique laudantium.
+                    Rosalina D. Lacuesta posted a new assignment : Chapter 1
+                    Introduction
                   </div>
                   <div class="text-caption">December 12, 2024</div>
                 </div>
@@ -592,10 +588,8 @@
                 </div>
                 <div class="col-9">
                   <div style="height: auto; text-align: justify">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Fuga itaque harum tempora quas dolores voluptatibus optio
-                    rem praesentium qui non deserunt maiores quam voluptas
-                    eveniet quasi, repellat voluptate, similique laudantium.
+                    Rosalina D. Lacuesta posted a new material: Capstone
+                    Documentation Format.
                   </div>
                   <div class="text-caption">December 12, 2024</div>
                 </div>
@@ -630,10 +624,8 @@
                 </div>
                 <div class="col-9">
                   <div style="height: auto; text-align: justify">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Fuga itaque harum tempora quas dolores voluptatibus optio
-                    rem praesentium qui non deserunt maiores quam voluptas
-                    eveniet quasi, repellat voluptate, similique laudantium.
+                    Rosalina D. Lacuesta posted a new assignment : Chapter 1
+                    Introduction
                   </div>
                   <div class="text-caption">December 12, 2024</div>
                 </div>
@@ -1059,7 +1051,7 @@ const grade = ref("");
 const dueDate = ref("");
 const dueTime = ref("");
 // role validation
-const roleChecker = ref("instructor");
+const roleChecker = ref("student");
 const isStudent = ref("");
 const isInstructor = ref("");
 
@@ -1122,7 +1114,7 @@ async function goToMaterialPage() {
 }
 
 async function gotoActivityPage() {
-  router.replace(`/main/activityPage`);
+  router.replace(`/main/assignmentPage`);
 }
 
 // checks if its user, instructor, admin

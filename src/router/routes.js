@@ -17,8 +17,8 @@ const routes = [
         component: () => import("pages/materialsPage.vue"),
       },
       {
-        path: "activityPage",
-        component: () => import("pages/activityPage.vue"),
+        path: "assignmentPage",
+        component: () => import("src/pages/assignmentPage.vue"),
       },
       {
         path: "settings",

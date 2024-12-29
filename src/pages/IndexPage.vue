@@ -125,7 +125,7 @@
                       "
                     >
                       <q-btn
-                        to="/main/coursePage"
+                        :to="`/main/coursePage/` + course._id"
                         style="border: 1px solid #4b4b4b"
                       >
                         <q-icon name="chevron_right" />
