@@ -121,6 +121,240 @@
               </q-scroll-area>
             </div>
           </q-card-section>
+          <!-- post new announcement, materials, and assignments -->
+          <q-card-section
+            v-if="isInstructor"
+            class="flex flex-center createNewPost-container"
+          >
+            <q-card class="q-px-lg createNewPost">
+              <!-- create post navbar -->
+              <q-card-section class="createNewPost-navBar q-mt-lg q-py-none">
+                <div class="PostnavBar" @click="showAnnouncement">
+                  <q-card-section :class="{ active: announcementLink }"
+                    >Announcement</q-card-section
+                  >
+                </div>
+                <div class="PostnavBar" @click="showMaterials">
+                  <q-card-secton :class="{ active: materialsLink }"
+                    >Material</q-card-secton
+                  >
+                </div>
+                <div class="PostnavBar" @click="showAssignment">
+                  <q-card-section :class="{ active: assignmentLink }"
+                    >Assignment</q-card-section
+                  >
+                </div>
+              </q-card-section>
+              <q-card-section>
+                <!-- Announcement -->
+                <q-form>
+                  <div v-if="announcementLink">
+                    <q-card-section class="newPost-container">
+                      New Announcement
+                      <!-- textarea -->
+                      <q-card-section
+                        style="
+                          background-color: #f3f3f3;
+                          border: 1px solid #d9d9d9;
+                          border-radius: 14px;
+                        "
+                      >
+                        <q-input
+                          type="textarea"
+                          borderless
+                          v-model="createAnnouncement"
+                        />
+                      </q-card-section>
+                      <!-- q-file and button -->
+                      <q-card-section class="q-px-none uploadAndBtn">
+                        <q-file
+                          v-model="announcementFile"
+                          style="width: auto"
+                          label="Upload File"
+                          clearable
+                          multiple
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
+                        <!-- Cancel Button -->
+                        <q-space />
+                        <q-btn flat label="Cancel" class="q-mr-sm" />
+                        <!-- Post Button -->
+                        <q-btn
+                          flat
+                          label="Post"
+                          style="
+                            background-color: #46af4b;
+                            color: #ffffff;
+                            border-radius: 14px;
+                          "
+                        />
+                      </q-card-section>
+                    </q-card-section>
+                  </div>
+                </q-form>
+                <!-- Material -->
+                <q-forrm>
+                  <div v-if="materialsLink">
+                    <q-card-section class="newPost-container">
+                      New Materials
+                      <q-card-section
+                        class="q-mb-md"
+                        style="
+                          background-color: #f3f3f3;
+                          border: 1px solid #d9d9d9;
+                          border-radius: 14px;
+                        "
+                      >
+                        <q-input
+                          type="input"
+                          borderless
+                          v-model="materialTitle"
+                          label="Title of the Material"
+                        />
+                      </q-card-section>
+                      <!-- textarea -->
+                      <q-card-section
+                        style="
+                          background-color: #f3f3f3;
+                          border: 1px solid #d9d9d9;
+                          border-radius: 14px;
+                        "
+                      >
+                        <q-input
+                          type="textarea"
+                          borderless
+                          v-model="materialDescription"
+                          label="Description of the Material (optional)"
+                        />
+                      </q-card-section>
+                      <!-- q-file and button -->
+                      <q-card-section class="q-px-none uploadAndBtn">
+                        <q-file
+                          v-model="materialsFile"
+                          style="width: auto"
+                          label="Upload File"
+                          clearable
+                          multiple
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
+                        <!-- Cancel Button -->
+                        <q-space />
+                        <q-btn flat label="Cancel" class="q-mr-sm" />
+                        <!-- Post Button -->
+                        <q-btn
+                          flat
+                          label="Post"
+                          style="
+                            background-color: #46af4b;
+                            color: #ffffff;
+                            border-radius: 14px;
+                          "
+                        />
+                      </q-card-section>
+                    </q-card-section>
+                  </div>
+                </q-forrm>
+                <!-- Assignment -->
+                <div v-if="assignmentLink">
+                  <q-card-section class="newPost-container">
+                    New Assignment
+                    <q-card-section
+                      class="q-mb-md"
+                      style="
+                        background-color: #f3f3f3;
+                        border: 1px solid #d9d9d9;
+                        border-radius: 14px;
+                      "
+                    >
+                      <q-input
+                        type="input"
+                        borderless
+                        v-model="assignemntTitle"
+                        label="Title of the Assignment"
+                      />
+                    </q-card-section>
+                    <!-- textarea -->
+                    <q-card-section
+                      style="
+                        background-color: #f3f3f3;
+                        border: 1px solid #d9d9d9;
+                        border-radius: 14px;
+                      "
+                    >
+                      <q-input
+                        type="textarea"
+                        borderless
+                        v-model="assignemntDescription"
+                        label="Description of the assignment (optional)"
+                      />
+                    </q-card-section>
+
+                    <!-- Due Date/Grade -->
+                    <q-card-section class="q-px-none dueDateGrade-container">
+                      <div class="q-pl-sm dueDateGrade">
+                        <div style="color: #8f9bb3" class="text-caption">
+                          Grade
+                        </div>
+                        <q-input
+                          class="q-pl-sm"
+                          type="number"
+                          v-model="grade"
+                          borderless
+                        />
+                      </div>
+                      <div class="q-pl-sm dueDateGrade">
+                        <div style="color: #8f9bb3" class="text-caption">
+                          Due Date
+                        </div>
+                        <q-input type="date" v-model="dueDate" borderless />
+                      </div>
+                      <div class="q-pl-sm dueDateGrade">
+                        <div style="color: #8f9bb3" class="text-caption">
+                          Time Due
+                        </div>
+                        <q-input type="time" v-model="dueTime" borderless />
+                      </div>
+                    </q-card-section>
+
+                    <!-- q-file and button -->
+                    <q-card-section class="q-px-none uploadAndBtn">
+                      <q-file
+                        v-model="assignemntFile"
+                        style="width: auto"
+                        label="Upload File"
+                        clearable
+                        multiple
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                      </q-file>
+                      <!-- Cancel Button -->
+                      <q-space />
+                      <q-btn flat label="Cancel" class="q-mr-sm" />
+                      <!-- Post Button -->
+                      <q-btn
+                        flat
+                        label="Post"
+                        style="
+                          background-color: #46af4b;
+                          color: #ffffff;
+                          border-radius: 14px;
+                        "
+                      />
+                    </q-card-section>
+                  </q-card-section>
+                </div>
+              </q-card-section>
+            </q-card>
+          </q-card-section>
+
           <!-- Course Announcement -->
           <q-card-section class="flex flex-center courseAnnouncement">
             <q-card class="announcementContent q-px-lg">
@@ -632,10 +866,52 @@
   color: #ffffffff
 .filterSelect
   width: 350px
-
 // studentList-container
 .studentList-container
   height: auto
+// create new post
+.createNewPost-container
+  height: auto
+.createNewPost
+  width: 70vw
+  border: 1px solid #D9D9D9
+  border-radius: 14px
+  box-shadow: none
+  height: auto
+.createNewPost-navBar
+  display: flex
+  width: 100%
+  justify-content:flex-start
+  column-gap: 10px
+  color: #8F9BB3
+  cursor: pointer
+  font-weight: 600
+.createNewPost-navBar .active
+  color: #4B4B4B
+.createNewPost-navBar .active::after
+  position: absolute
+  background-color: #28a745
+.newPost-container
+  height: auto
+.uploadAndBtn
+  display: flex
+.PostnavBar
+  background-color: #f3f3f3
+  height: 50px
+  width: 190px
+  justify-content: center
+  align-items: center
+  display: flex
+  border-radius: 14px
+.dueDateGrade-container
+  display: flex
+  justify-content: flex-end
+  column-gap: 14px
+  width: 100%
+.dueDateGrade
+  background-color: #f3f3f3
+  border: 1px solid #d9d9d9
+  width: 100px
 @media (max-width:1004px)
   .courseDescUpcoming
     display: flex
@@ -677,6 +953,13 @@
     display: flex
     flex-direction: column
     position: relative
+@media (max-width:715px)
+  .dueDateGrade-container
+    display: flex
+    flex-direction: column
+    row-gap: 14px
+    width: 100%
+    align-items: flex-end
 @media (max-width:547px)
   .main-container
     width: 100%
@@ -724,6 +1007,20 @@
     margin-left: 0px
   .filterSelect
     width: 250px
+  .createNewPost-container
+    padding: 16px 0px
+  .createNewPost
+    width: 100%
+  .createNewPost-navBar
+    display: flex
+    flex-direction: column
+    row-gap: 10px
+  .PostnavBar
+    width: 100%
+  .uploadAndBtn
+    display: flex
+    flex-direction: column
+    row-gap: 10px
 </style>
 
 <script setup>
@@ -743,8 +1040,26 @@ const taskLink = ref(false);
 const myWorksLink = ref(false);
 const studentList = ref(false);
 
+const announcementLink = ref(true);
+const materialsLink = ref(false);
+const assignmentLink = ref(false);
+
+// create new post
+const createAnnouncement = ref("");
+const announcementFile = ref("");
+
+const materialTitle = ref("");
+const materialDescription = ref("");
+const materialsFile = ref("");
+
+const assignemntTitle = ref("");
+const assignemntDescription = ref("");
+const assignemntFile = ref("");
+const grade = ref("");
+const dueDate = ref("");
+const dueTime = ref("");
 // role validation
-const roleChecker = ref("student");
+const roleChecker = ref("instructor");
 const isStudent = ref("");
 const isInstructor = ref("");
 
@@ -782,6 +1097,24 @@ const showStudents = () => {
   feedLink.value = false;
   taskLink.value = false;
   myWorksLink.value = false;
+};
+
+const showAnnouncement = () => {
+  announcementLink.value = true;
+  materialsLink.value = false;
+  assignmentLink.value = false;
+};
+
+const showMaterials = () => {
+  announcementLink.value = false;
+  materialsLink.value = true;
+  assignmentLink.value = false;
+};
+
+const showAssignment = () => {
+  announcementLink.value = false;
+  materialsLink.value = false;
+  assignmentLink.value = true;
 };
 
 async function goToMaterialPage() {
