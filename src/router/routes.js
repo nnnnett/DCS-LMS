@@ -12,13 +12,10 @@ const routes = [
         path: "coursePage/:courseId",
         component: () => import("pages/coursePage.vue"),
       },
+
       {
-        path: "materialsPage",
-        component: () => import("pages/materialsPage.vue"),
-      },
-      {
-        path: "assignmentPage",
-        component: () => import("src/pages/assignmentPage.vue"),
+        path: "materialPage/:courseId/:assignmentId",
+        component: () => import("src/pages/materialPage.vue"),
       },
       {
         path: "settings",

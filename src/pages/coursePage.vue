@@ -498,41 +498,6 @@
               </q-card-section>
             </q-card>
           </q-card-section>
-          <!-- Course Materials-->
-          <q-card-section class="flex flex-center courseMaterials">
-            <q-card
-              class="materialsContent q-px-lg"
-              clickable
-              @click="goToMaterialPage"
-            >
-              <q-card-section class="row materialsAssignment-container">
-                <div class="col-1">
-                  <q-img
-                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                    style="width: 50px; height: 50px; border-radius: 50%"
-                  />
-                </div>
-                <div class="col-9">
-                  <div style="height: auto; text-align: justify">
-                    Rosalina D. Lacuesta posted a new material: Capstone
-                    Documentation Format.
-                  </div>
-                  <div class="text-caption">December 12, 2024</div>
-                </div>
-                <div
-                  class="flex flex-center icon q-ml-md"
-                  style="
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
-                    background-color: #46af4b;
-                  "
-                >
-                  <q-icon name="library_books" color="white" size="24px" />
-                </div>
-              </q-card-section>
-            </q-card>
-          </q-card-section>
           <!-- Course Assignment  -->
           <q-card-section class="flex flex-center courseAssignment">
             <q-card
@@ -658,42 +623,6 @@
         </div>
         <!-- task tab -->
         <div v-if="taskLink" class="task-container">
-          <!-- Course Materials-->
-          <q-card-section class="flex flex-center courseMaterials">
-            <q-card
-              class="materialsContent q-px-lg"
-              clickable
-              @click="goToMaterialPage"
-            >
-              <q-card-section class="row materialsAssignment-container">
-                <div class="col-1">
-                  <q-img
-                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                    style="width: 50px; height: 50px; border-radius: 50%"
-                  />
-                </div>
-                <div class="col-9">
-                  <div style="height: auto; text-align: justify">
-                    Rosalina D. Lacuesta posted a new material: Capstone
-                    Documentation Format.
-                  </div>
-                  <div class="text-caption">December 12, 2024</div>
-                </div>
-
-                <div
-                  class="flex flex-center icon q-ml-md"
-                  style="
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
-                    background-color: #46af4b;
-                  "
-                >
-                  <q-icon name="library_books" color="white" size="24px" />
-                </div>
-              </q-card-section>
-            </q-card>
-          </q-card-section>
           <!-- Course Assignment  -->
           <q-card-section class="flex flex-center courseAssignment">
             <q-card
@@ -1219,12 +1148,8 @@ const showAssignment = () => {
   assignmentLink.value = true;
 };
 
-async function goToMaterialPage() {
-  router.replace(`/main/materialsPage`);
-}
-
 async function gotoActivityPage() {
-  router.replace(`/main/assignmentPage`);
+  router.replace(`/main/materialPage/` + courses.value._id + "/materialId");
 }
 
 // checks if its user, instructor, admin

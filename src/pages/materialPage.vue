@@ -9,7 +9,7 @@
             label="<"
             size="20px"
             flat
-            to="/main/coursePage"
+            :to="`/main/coursePage/` + courseId"
             style="
               background-color: #f2f7ff;
               border-radius: 50%;
@@ -285,6 +285,7 @@
                     label="Attach Activity"
                     clearable
                     icon="home"
+                    multiple
                   >
                     <template v-slot:append>
                       <q-icon name="attach_file" />
@@ -443,7 +444,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const submitWork = ref("");
 const editTitle = ref("");
 const editDueDate = ref("");
@@ -452,7 +455,7 @@ const editGrade = ref("");
 const editDescription = ref("");
 const newFile = ref("");
 // role validation
-const roleChecker = ref("instructor");
+const roleChecker = ref("student");
 const isStudent = ref("");
 const isInstructor = ref("");
 // submitted status
@@ -462,6 +465,8 @@ const isMissing = ref("");
 const isPending = ref("");
 
 const editAssignment = ref(false);
+
+const courseId = route.params.courseId;
 
 // checks if its user, instructor, admin
 async function roleValidation() {
