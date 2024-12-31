@@ -51,9 +51,14 @@
             <q-input type="text" borderless v-model="lastName" />
           </div>
           <!-- prfile image -->
-          <!-- <div class="registration-input q-mt-md">
-            <q-file v-model="image" borderless label="profile" />
-          </div> -->
+          <div class="registration-input q-mt-md">
+            <q-file
+              v-model="imageProfile"
+              accept="image/*"
+              borderless
+              label="profile"
+            />
+          </div>
           <q-card-section class="q-pl-none q-pb-none text-h5">
             <div style="color: #4b4b4b">
               <span style="color: #46af4b">*</span> Login info
@@ -159,6 +164,7 @@ import { ref } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
+import { uploadToCloud } from "src/components/cloudinaryUtility";
 
 const router = useRouter();
 const $q = useQuasar();
@@ -171,11 +177,12 @@ const email = ref("");
 const firstName = ref("");
 const lastName = ref("");
 const middleName = ref("");
-const image = ref("iamge");
 const role = ref("student");
 const isArchived = ref(false);
 const loading = ref(false);
 const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/; // Regex for special char, number, and min 8 chars
+const imageProfile = ref(null);
+const uploadResult = ref(null);
 
 async function registerStudent() {
   if (
@@ -214,17 +221,9 @@ async function registerStudent() {
     return;
   }
   try {
-    // const formData = new FormData();
-    // formData.append("username", username.value);
-    // formData.append("password", password.value);
-    // formData.append("email", email.value);
-    // formData.append("firstName", firstName.value);
-    // formData.append("middleName", middleName.value);
-    // formData.append("lastName", lastName.value);
-    // formData.append("role", role.value);
-    // formData.append("isArchived", isArvhived.value);
-    // formData.append("image", image.value);
     loading.value = true;
+    const imageUrl = await uploadToCloud(imageProfile.value);
+
     const response = await axios.post(
       `${process.env.api_host}/users/create`,
       {
@@ -236,7 +235,7 @@ async function registerStudent() {
         lastName: lastName.value,
         role: role.value,
         isArchived: isArchived.value,
-        image: image.value,
+        file: imageUrl,
       },
       {
         headers: { "Content-Type": "application/json" },

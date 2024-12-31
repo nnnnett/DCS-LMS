@@ -308,7 +308,6 @@ async function getCourses() {
   try {
     const response = await axios.get(`${process.env.api_host}/courses`);
     courses.value = response.data;
-    console.log("here", courses.value);
   } catch (err) {
     console.error(err);
   }

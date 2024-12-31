@@ -86,32 +86,4 @@ const handleLogout = async () => {
     // await isLogin();
   }
 };
-
-// async function isLogin() {
-//   const token = localStorage.getItem("authToken");
-//   console.log("tken ", token);
-//   try {
-//     const response = await axios.get(
-//       `${process.env.api_host}/users/tokenValidation`,
-//       {
-//         headers: {
-//           authorization: token,
-//         },
-//       }
-//     );
-//     const isLogin = response.data.isValid === true;
-//     if (isLogin) {
-//       const userData = await axios.get(`${process.env.api_host}/users`, {
-//         headers: {
-//           authorization: token,
-//         },
-//       });
-//       router.replace(`/`);
-//     }
-
-//     return isLogin;
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
 </script>
