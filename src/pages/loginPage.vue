@@ -25,15 +25,27 @@
             <div style="color: #6c7275">Username</div>
           </q-card-section>
           <!-- username -->
-          <div class="login-input">
+          <div class="login-input q-px-sm">
             <q-input type="text" borderless v-model="username" />
           </div>
           <q-card-section class="q-pl-none q-pb-xs">
             <div style="color: #6c7275">Password</div>
           </q-card-section>
           <!-- password -->
-          <div class="login-input">
-            <q-input type="password" borderless v-model="password" />
+          <div class="login-input q-px-sm">
+            <q-input
+              :type="isPwd ? 'password' : 'text'"
+              borderless
+              v-model="password"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                />
+              </template>
+            </q-input>
           </div>
           <div style="width: 100%; border-radius: 14px" class="q-mt-md">
             <!-- submit button -->
@@ -120,6 +132,7 @@ import { useRouter } from "vue-router";
 
 const $q = useQuasar();
 const router = useRouter();
+const isPwd = ref(true);
 const username = ref("");
 const password = ref("");
 const loading = ref(false);

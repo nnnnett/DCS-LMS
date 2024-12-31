@@ -33,21 +33,21 @@
           <q-card-section class="q-pl-none q-pb-xs">
             <div style="color: #6c7275">First Name</div>
           </q-card-section>
-          <div class="registration-input">
+          <div class="registration-input q-px-sm">
             <q-input type="text" borderless v-model="firstName" />
           </div>
           <!-- Middle Name -->
           <q-card-section class="q-pl-none q-pb-xs">
             <div style="color: #6c7275">Middle Name</div>
           </q-card-section>
-          <div class="registration-input">
+          <div class="registration-input q-px-sm">
             <q-input type="text" borderless v-model="middleName" />
           </div>
           <!-- Last Name -->
           <q-card-section class="q-pl-none q-pb-xs">
             <div style="color: #6c7275">Last Name</div>
           </q-card-section>
-          <div class="registration-input">
+          <div class="registration-input q-px-sm">
             <q-input type="text" borderless v-model="lastName" />
           </div>
           <!-- prfile image -->
@@ -63,29 +63,52 @@
             <div style="color: #6c7275">Username</div>
           </q-card-section>
           <!-- username -->
-          <div class="registration-input">
+          <div class="registration-input q-px-sm">
             <q-input type="text" borderless v-model="username" />
           </div>
           <!-- Email -->
           <q-card-section class="q-pl-none q-pb-xs">
             <div style="color: #6c7275">Email</div>
           </q-card-section>
-          <div class="registration-input">
+          <div class="registration-input q-px-sm">
             <q-input type="email" borderless v-model="email" />
           </div>
           <q-card-section class="q-pl-none q-pb-xs">
             <div style="color: #6c7275">Password</div>
           </q-card-section>
           <!-- Password -->
-          <div class="registration-input">
-            <q-input type="password" borderless v-model="password" />
+          <div class="registration-input q-px-sm">
+            <q-input
+              :type="isPwd ? 'password' : 'text'"
+              borderless
+              v-model="password"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                /> </template
+            ></q-input>
           </div>
           <q-card-section class="q-pl-none q-pb-xs">
             <div style="color: #6c7275">Confirm Password</div>
           </q-card-section>
           <!-- Password -->
-          <div class="registration-input">
-            <q-input type="password" borderless v-model="confirmPassword" />
+          <div class="registration-input q-px-sm">
+            <q-input
+              :type="isCPwd ? 'password' : 'text'"
+              borderless
+              v-model="confirmPassword"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isCPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isCPwd = !isCPwd"
+                />
+              </template>
+            </q-input>
           </div>
 
           <div style="width: 100%; border-radius: 14px" class="q-mt-md">
@@ -139,6 +162,8 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const $q = useQuasar();
+const isPwd = ref(true);
+const isCPwd = ref(true);
 const username = ref("");
 const password = ref("");
 const confirmPassword = ref("");
