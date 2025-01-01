@@ -233,99 +233,101 @@
         </q-card-section>
 
         <!-- Submit Work -->
-        <q-card-section class="submitWork" v-if="isStudent">
-          <q-card class="submitWorkContent">
-            <q-card-section>
-              <div class="workStatusTxt">
-                <div class="text-h5 text-weight-medium">Your Work</div>
-                <!-- pending status -->
-
-                <div
-                  v-if="isPending"
-                  class="text-weight-medium"
-                  style="color: #ffcf32; font-size: 1rem"
-                >
-                  Pending
-                </div>
-                <!-- done status -->
-                <div
-                  v-if="isDone"
-                  class="text-weight-medium"
-                  style="color: #46af4b; font-size: 1rem"
-                >
-                  Done
-                </div>
-
-                <!-- missing status -->
-                <div
-                  v-if="isMissing"
-                  class="text-weight-medium"
-                  style="color: #ff7070; font-size: 1rem"
-                >
-                  Missing
-                </div>
-              </div>
-              <!-- List of submitted Work -->
-              <div>
-                <div class="submittedWork-container q-mt-sm">
-                  <div>wewe</div>
-                </div>
-              </div>
-              <!-- file input and submit button -->
-              <div>
-                <!-- file input for submit work -->
-                <div
-                  class="q-mt-sm"
-                  style="border: 1px solid #46af4b; border-radius: 14px"
-                >
-                  <q-file
-                    class="q-px-xl"
-                    borderless
-                    v-model="submitWork"
-                    label="Attach Activity"
-                    clearable
-                    icon="home"
-                    multiple
+        <q-card-section class="submitWork" v-if="isAssignment">
+          <div>
+            <q-card class="submitWorkContent" v-if="isStudent">
+              <q-card-section>
+                <div class="workStatusTxt">
+                  <div class="text-h5 text-weight-medium">Your Work</div>
+                  <!-- pending status -->
+                  <div
+                    v-if="isPending"
+                    class="text-weight-medium"
+                    style="color: #ffcf32; font-size: 1rem"
                   >
-                    <template v-slot:append>
-                      <q-icon name="attach_file" />
-                    </template>
-                  </q-file>
+                    Pending
+                  </div>
+                  <!-- done status -->
+                  <div
+                    v-if="isDone"
+                    class="text-weight-medium"
+                    style="color: #46af4b; font-size: 1rem"
+                  >
+                    Done
+                  </div>
+                  <!-- missing status -->
+                  <div
+                    v-if="isMissing"
+                    class="text-weight-medium"
+                    style="color: #ff7070; font-size: 1rem"
+                  >
+                    Missing
+                  </div>
                 </div>
-                <!-- no unsubmit btn if no attach file * vice versa -->
-                <!-- Submit button -->
-                <div
-                  class="q-mt-sm"
-                  style="
-                    background-color: #46af4b;
-                    color: #ffffff;
-                    border-radius: 14px;
-                  "
-                >
-                  <q-btn
-                    flat
-                    label="Submit"
-                    style="width: 100%; text-transform: capitalize"
-                  />
+                <!-- List of submitted Work -->
+                <div>
+                  <div class="submittedWork-container q-mt-sm">
+                    <div>wewe</div>
+                  </div>
                 </div>
-                <!-- Unsubmit Button -->
-                <div
-                  class="q-mt-sm"
-                  style="
-                    background-color: #d9d9d9;
-                    color: #ffffff;
-                    border-radius: 14px;
-                  "
-                >
-                  <q-btn
-                    flat
-                    label="Unsubmit"
-                    style="width: 100%; text-transform: capitalize"
-                  />
+                <!-- file input and submit button -->
+                <div>
+                  <!-- file input for submit work -->
+                  <div
+                    class="q-mt-sm"
+                    style="border: 1px solid #46af4b; border-radius: 14px"
+                  >
+                    <q-file
+                      class="q-px-xl"
+                      borderless
+                      v-model="submitWork"
+                      label="Attach Activity"
+                      clearable
+                      icon="home"
+                    >
+                      <template v-slot:append>
+                        <q-icon name="attach_file" />
+                      </template>
+                    </q-file>
+                  </div>
+                  <!-- no unsubmit btn if no attach file * vice versa -->
+                  <!-- Submit button -->
+                  <div
+                    class="q-mt-sm"
+                    style="
+                      background-color: #46af4b;
+                      color: #ffffff;
+                      border-radius: 14px;
+                    "
+                  >
+                    <q-btn
+                      v-model="subBtn"
+                      :disable="!submitWork"
+                      flat
+                      label="Submit"
+                      style="width: 100%; text-transform: capitalize"
+                    />
+                  </div>
+                  <!-- Unsubmit Button -->
+                  <div
+                    class="q-mt-sm"
+                    style="
+                      background-color: #d9d9d9;
+                      color: #ffffff;
+                      border-radius: 14px;
+                    "
+                  >
+                    <q-btn
+                      :disable="!subBtn"
+                      flat
+                      label="Unsubmit"
+                      style="width: 100%; text-transform: capitalize"
+                    />
+                  </div>
                 </div>
-              </div>
-            </q-card-section>
-          </q-card>
+              </q-card-section>
+            </q-card>
+          </div>
         </q-card-section>
       </div>
     </div>
@@ -445,9 +447,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { getCoursesMaterials } from "src/components/courseMaterials";
+import axios from "axios";
 
 const route = useRoute();
 const submitWork = ref("");
+const subBtn = ref("");
 const editTitle = ref("");
 const editDueDate = ref("");
 const editDueTime = ref("");
@@ -467,7 +472,9 @@ const isPending = ref("");
 const editAssignment = ref(false);
 
 const courseId = route.params.courseId;
-
+const materialId = route.params.materialId;
+const materials = ref("");
+const isAssignment = ref("");
 // checks if its user, instructor, admin
 async function roleValidation() {
   if (roleChecker.value === "student") {
@@ -490,7 +497,22 @@ async function checkSubmitted() {
   }
 }
 
+async function assignmentChecker() {
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/courses/getMaterial?query=${materialId}`
+    );
+    materials.value = response.data[0].type;
+    if (materials.value === "assignment") {
+      return (isAssignment.value = true);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 onMounted(() => {
+  assignmentChecker();
   roleValidation();
   checkSubmitted();
 });

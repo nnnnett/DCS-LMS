@@ -14,7 +14,7 @@ const routes = [
       },
 
       {
-        path: "materialPage/:courseId/:assignmentId",
+        path: "materialPage/:courseId/:materialId",
         component: () => import("src/pages/materialPage.vue"),
       },
       {

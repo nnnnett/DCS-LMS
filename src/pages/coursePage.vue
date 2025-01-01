@@ -82,8 +82,14 @@
                       min-height: 50px;
                     "
                   />
-                  <div style="font-size: 1.5em; font-weight: 500">
-                    {{ courses.name }}
+                  <div
+                    style="
+                      font-size: 1.5em;
+                      font-weight: 500;
+                      text-transform: capitalize;
+                    "
+                  >
+                    {{ courses.name }} - {{ courses.section }}
                   </div>
                   <div style="font-size: 1em" class="q-py-sm">
                     Rosalina D. Lacuesta
@@ -488,7 +494,7 @@
                   <q-card
                     class="assignmentContent q-px-lg"
                     clickable
-                    @click="gotoActivityPage"
+                    @click="gotoActivityPage(material._id)"
                   >
                     <q-card-section class="row materialsAssignment-container">
                       <div class="col-1">
@@ -623,7 +629,7 @@
                 <q-card
                   class="assignmentContent q-px-lg"
                   clickable
-                  @click="gotoActivityPage"
+                  @click="gotoActivityPage(material._id)"
                 >
                   <q-card-section class="row materialsAssignment-container">
                     <div class="col-1">
@@ -1140,8 +1146,8 @@ const showAssignment = () => {
   materialsLink.value = false;
   assignmentLink.value = true;
 };
-async function gotoActivityPage() {
-  router.replace(`/main/materialPage/` + courses.value._id + "/materialId");
+async function gotoActivityPage(materialId) {
+  router.replace(`/main/materialPage/` + courses.value._id + "/" + materialId);
 }
 // checks if its user, instructor, admin
 async function roleValidation() {
@@ -1314,9 +1320,8 @@ async function postAssignment() {
 
 async function getMaterials() {
   try {
-    const materialsDetails = await getCoursesMaterials();
+    const materialsDetails = await getCoursesMaterials(courseId);
     materials.value = materialsDetails;
-    console.log("here", materials.value);
   } catch (err) {
     console.error(err);
   }
