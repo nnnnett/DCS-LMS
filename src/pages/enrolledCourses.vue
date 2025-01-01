@@ -360,7 +360,7 @@ async function getUserCourses() {
     const getCourseDetails = await getCourses();
     courses.value = getCourseDetails;
     courses.value.forEach((course, index) => {
-      console.log(`Course ${index + 1}:`, course.file);
+      course.file;
     });
   } catch (err) {
     console.error(err);

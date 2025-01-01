@@ -34,7 +34,7 @@
       <q-card-section>
         <!-- feed tab -->
         <div v-if="feedLink" class="feed-container">
-          <q-card-section class="flex flex-center">
+          <q-card-section class="flex flex-center" v-if="courses">
             <!-- course info  -->
             <q-responsive
               :ratio="16 / 9"
@@ -42,15 +42,15 @@
               style="max-height: 35vh; max-width: 70vw"
             >
               <div
-                style="
-                  background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
-                  background-size: cover;
-                  background-position: center;
-                  position: relative;
-                  border-radius: 14px;
-                  overflow: hidden;
-                  display: flex;
-                "
+                :style="{
+                  backgroundImage: `url(${courses.file})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  position: 'relative',
+                  borderRadius: '14px',
+                  overflow: 'hidden',
+                  display: 'flex',
+                }"
               >
                 <!-- Edit course button -->
                 <div
@@ -71,7 +71,7 @@
                     @click="editCoursePopup = true"
                   />
                 </div>
-                <div class="courseInstructor" v-if="courses">
+                <div class="courseInstructor">
                   <q-img
                     src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
                     style="
@@ -147,7 +147,7 @@
               </q-card-section>
               <q-card-section>
                 <!-- Announcement -->
-                <q-form>
+                <q-form @submit.prevent="postAnnouncement">
                   <div v-if="announcementLink">
                     <q-card-section class="newPost-container">
                       New Announcement
@@ -167,22 +167,13 @@
                       </q-card-section>
                       <!-- q-file and button -->
                       <q-card-section class="q-px-none uploadAndBtn">
-                        <q-file
-                          v-model="announcementFile"
-                          style="width: auto"
-                          label="Upload File"
-                          clearable
-                          multiple
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="attach_file" />
-                          </template>
-                        </q-file>
                         <!-- Cancel Button -->
                         <q-space />
                         <q-btn flat label="Cancel" class="q-mr-sm" />
                         <!-- Post Button -->
                         <q-btn
+                          type="submit"
+                          :loading="loading"
                           flat
                           label="Post"
                           style="
@@ -196,7 +187,7 @@
                   </div>
                 </q-form>
                 <!-- Material -->
-                <q-forrm>
+                <q-form @submit.prevent="postMaterial">
                   <div v-if="materialsLink">
                     <q-card-section class="newPost-container">
                       New Materials
@@ -237,7 +228,6 @@
                           style="width: auto"
                           label="Upload File"
                           clearable
-                          multiple
                         >
                           <template v-slot:prepend>
                             <q-icon name="attach_file" />
@@ -248,6 +238,8 @@
                         <q-btn flat label="Cancel" class="q-mr-sm" />
                         <!-- Post Button -->
                         <q-btn
+                          type="submit"
+                          :loading="loading"
                           flat
                           label="Post"
                           style="
@@ -259,98 +251,99 @@
                       </q-card-section>
                     </q-card-section>
                   </div>
-                </q-forrm>
+                </q-form>
                 <!-- Assignment -->
-                <div v-if="assignmentLink">
-                  <q-card-section class="newPost-container">
-                    New Assignment
-                    <q-card-section
-                      class="q-mb-md"
-                      style="
-                        background-color: #f3f3f3;
-                        border: 1px solid #d9d9d9;
-                        border-radius: 14px;
-                      "
-                    >
-                      <q-input
-                        type="input"
-                        borderless
-                        v-model="assignemntTitle"
-                        label="Title of the Assignment"
-                      />
-                    </q-card-section>
-                    <!-- textarea -->
-                    <q-card-section
-                      style="
-                        background-color: #f3f3f3;
-                        border: 1px solid #d9d9d9;
-                        border-radius: 14px;
-                      "
-                    >
-                      <q-input
-                        type="textarea"
-                        borderless
-                        v-model="assignemntDescription"
-                        label="Description of the assignment (optional)"
-                      />
-                    </q-card-section>
-
-                    <!-- Due Date/Grade -->
-                    <q-card-section class="q-px-none dueDateGrade-container">
-                      <div class="q-pl-sm dueDateGrade">
-                        <div style="color: #8f9bb3" class="text-caption">
-                          Grade
-                        </div>
-                        <q-input
-                          class="q-pl-sm"
-                          type="number"
-                          v-model="grade"
-                          borderless
-                        />
-                      </div>
-                      <div class="q-pl-sm dueDateGrade">
-                        <div style="color: #8f9bb3" class="text-caption">
-                          Due Date
-                        </div>
-                        <q-input type="date" v-model="dueDate" borderless />
-                      </div>
-                      <div class="q-pl-sm dueDateGrade">
-                        <div style="color: #8f9bb3" class="text-caption">
-                          Time Due
-                        </div>
-                        <q-input type="time" v-model="dueTime" borderless />
-                      </div>
-                    </q-card-section>
-
-                    <!-- q-file and button -->
-                    <q-card-section class="q-px-none uploadAndBtn">
-                      <q-file
-                        v-model="assignemntFile"
-                        style="width: auto"
-                        label="Upload File"
-                        clearable
-                        multiple
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="attach_file" />
-                        </template>
-                      </q-file>
-                      <!-- Cancel Button -->
-                      <q-space />
-                      <q-btn flat label="Cancel" class="q-mr-sm" />
-                      <!-- Post Button -->
-                      <q-btn
-                        flat
-                        label="Post"
+                <q-form @submit.prevent="postAssignment">
+                  <div v-if="assignmentLink">
+                    <q-card-section class="newPost-container">
+                      New Assignment
+                      <q-card-section
+                        class="q-mb-md"
                         style="
-                          background-color: #46af4b;
-                          color: #ffffff;
+                          background-color: #f3f3f3;
+                          border: 1px solid #d9d9d9;
                           border-radius: 14px;
                         "
-                      />
+                      >
+                        <q-input
+                          type="input"
+                          borderless
+                          v-model="assignemntTitle"
+                          label="Title of the Assignment"
+                        />
+                      </q-card-section>
+                      <!-- textarea -->
+                      <q-card-section
+                        style="
+                          background-color: #f3f3f3;
+                          border: 1px solid #d9d9d9;
+                          border-radius: 14px;
+                        "
+                      >
+                        <q-input
+                          type="textarea"
+                          borderless
+                          v-model="assignemntDescription"
+                          label="Description of the assignment (optional)"
+                        />
+                      </q-card-section>
+                      <!-- Due Date/Grade -->
+                      <!-- <q-card-section class="q-px-none dueDateGrade-container">
+                        <div class="q-pl-sm dueDateGrade">
+                          <div style="color: #8f9bb3" class="text-caption">
+                            Grade
+                          </div>
+                          <q-input
+                            class="q-pl-sm"
+                            type="number"
+                            v-model="grade"
+                            borderless
+                          />
+                        </div>
+                        <div class="q-pl-sm dueDateGrade">
+                          <div style="color: #8f9bb3" class="text-caption">
+                            Due Date
+                          </div>
+                          <q-input type="date" v-model="dueDate" borderless />
+                        </div>
+                        <div class="q-pl-sm dueDateGrade">
+                          <div style="color: #8f9bb3" class="text-caption">
+                            Time Due
+                          </div>
+                          <q-input type="time" v-model="dueTime" borderless />
+                        </div>
+                      </q-card-section> -->
+                      <!-- q-file and button -->
+                      <q-card-section class="q-px-none uploadAndBtn">
+                        <q-file
+                          v-model="assignemntFile"
+                          style="width: auto"
+                          label="Upload File"
+                          clearable
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
+                        <!-- Cancel Button -->
+                        <q-space />
+                        <q-btn flat label="Cancel" class="q-mr-sm" />
+                        <!-- Post Button -->
+                        <q-btn
+                          flat
+                          :loading="loading"
+                          type="submit"
+                          label="Post"
+                          style="
+                            background-color: #46af4b;
+                            color: #ffffff;
+                            border-radius: 14px;
+                          "
+                        />
+                      </q-card-section>
                     </q-card-section>
-                  </q-card-section>
-                </div>
+                  </div>
+                </q-form>
               </q-card-section>
             </q-card>
           </q-card-section>
@@ -1056,11 +1049,11 @@
 import { useRouter, useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { useQuasar } from "quasar";
+import { Notify } from "quasar";
+import { uploadToCloud } from "src/components/cloudinaryUtility";
 
 const loading = ref(false);
 const route = useRoute();
-const $q = useQuasar();
 const editCoursePopup = ref(false);
 const router = useRouter();
 const editAnnouncement = ref(false);
@@ -1077,7 +1070,6 @@ const assignmentLink = ref(false);
 
 // create new post
 const createAnnouncement = ref("");
-const announcementFile = ref("");
 
 const materialTitle = ref("");
 const materialDescription = ref("");
@@ -1101,57 +1093,48 @@ const filter = ref("");
 const selectMyWorks = ref({
   options: ["All", "Submitted", "Missing", "Pending"],
 });
-
 const showFeed = () => {
   feedLink.value = true;
   taskLink.value = false;
   myWorksLink.value = false;
   studentList.value = false;
 };
-
 const showTask = () => {
   feedLink.value = false;
   taskLink.value = true;
   myWorksLink.value = false;
   studentList.value = false;
 };
-
 const showMyWorks = () => {
   feedLink.value = false;
   taskLink.value = false;
   myWorksLink.value = true;
   studentList.value = false;
 };
-
 const showStudents = () => {
   studentList.value = true;
   feedLink.value = false;
   taskLink.value = false;
   myWorksLink.value = false;
 };
-
 const showAnnouncement = () => {
   announcementLink.value = true;
   materialsLink.value = false;
   assignmentLink.value = false;
 };
-
 const showMaterials = () => {
   announcementLink.value = false;
   materialsLink.value = true;
   assignmentLink.value = false;
 };
-
 const showAssignment = () => {
   announcementLink.value = false;
   materialsLink.value = false;
   assignmentLink.value = true;
 };
-
 async function gotoActivityPage() {
   router.replace(`/main/materialPage/` + courses.value._id + "/materialId");
 }
-
 // checks if its user, instructor, admin
 async function roleValidation() {
   if (roleChecker.value === "student") {
@@ -1162,7 +1145,6 @@ async function roleValidation() {
     return;
   }
 }
-
 const rows = ref([
   { id: 1, firstName: "John", middleName: "M.", lastName: "Doe" },
   { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
@@ -1186,7 +1168,6 @@ const rows = ref([
   { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
   { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
 ]);
-
 const columns = ref([
   { name: "firstName", label: "First Name", align: "left", field: "firstName" },
   {
@@ -1197,7 +1178,6 @@ const columns = ref([
   },
   { name: "lastName", label: "Last Name", align: "left", field: "lastName" },
 ]);
-
 async function getCourses() {
   try {
     const response = await axios.get(
@@ -1206,6 +1186,124 @@ async function getCourses() {
     courses.value = response.data[0];
   } catch (err) {
     console.error(err);
+  }
+}
+
+async function postAnnouncement() {
+  const token = localStorage.getItem("authToken");
+  try {
+    loading.value = true;
+    const response = axios.post(
+      `${process.env.api_host}/courses/material/${courseId}`,
+      {
+        description: createAnnouncement.value,
+        type: "announcement",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Announcement Posted Succesfully",
+    });
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went Wrong",
+    });
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function postMaterial() {
+  loading.value = true;
+  const token = localStorage.getItem("authToken");
+  const fileSubmit = await uploadToCloud(materialsFile.value);
+  try {
+    if (!materialTitle.value || !materialsFile.value) {
+      Notify.create({
+        type: "warning",
+        message: "Fll in all required fields",
+      });
+      return;
+    }
+    await axios.post(
+      `${process.env.api_host}/courses/material/${courseId}`,
+      {
+        name: materialTitle.value,
+        description: materialDescription.value,
+        type: "material",
+        file: fileSubmit,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Material Posted Succesfully",
+    });
+    return;
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went Wrong",
+    });
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function postAssignment() {
+  const token = localStorage.getItem("authToken");
+  const fileSubmit = await uploadToCloud(assignemntFile.value);
+  try {
+    loading.value = true;
+    if (!assignemntTitle.value || !assignemntFile.value) {
+      Notify.create({
+        type: "warning",
+        message: "Fill in required fields",
+      });
+      return;
+    }
+    await axios.post(
+      `${process.env.api_host}/courses/material/${courseId}`,
+      {
+        name: assignemntTitle.value,
+        description: assignemntDescription.value,
+        type: "assignment",
+        file: fileSubmit,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Assignment Posted Succesfully",
+    });
+    return;
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went Wrong",
+    });
+  } finally {
+    loading.value = false;
   }
 }
 

@@ -67,16 +67,16 @@
                 <div class="enrolledCoursesContainer">
                   <div
                     class="enrolledCourses"
-                    style="
-                      width: 100%;
-                      height: 180px;
-                      background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
-                      background-size: cover;
-                      background-position: center;
-                      position: relative;
-                      border-radius: 14px 14px 0px 0px;
-                      overflow: hidden;
-                    "
+                    :style="{
+                      width: '100%',
+                      height: '180px',
+                      backgroundImage: `url(${course.file})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      position: 'relative',
+                      borderRadius: '14px 14px 0px 0px',
+                      overflow: 'hidden',
+                    }"
                   >
                     <!-- archived? -->
                     <!-- <q-btn-dropdown
@@ -274,6 +274,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { getCourses } from "src/components/course";
 
 const loading = ref(true);
 const notifDate = ref("");
@@ -304,10 +305,13 @@ async function isLogin() {
   }
 }
 
-async function getCourses() {
+async function getUserCourses() {
   try {
-    const response = await axios.get(`${process.env.api_host}/courses`);
-    courses.value = response.data;
+    const getCourseDetails = await getCourses();
+    courses.value = getCourseDetails;
+    courses.value.forEach((course, index) => {
+      console.log(`Course ${index + 1}:`, course.file);
+    });
   } catch (err) {
     console.error(err);
   }
@@ -315,6 +319,6 @@ async function getCourses() {
 
 onMounted(() => {
   isLogin();
-  getCourses();
+  getUserCourses();
 });
 </script>

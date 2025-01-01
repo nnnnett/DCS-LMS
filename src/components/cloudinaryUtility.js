@@ -7,7 +7,7 @@ export async function uploadToCloud(file) {
   }
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "profile_Image"); // Replace with your unsigned preset name
+  formData.append("upload_preset", "fileUpload"); // Replace with your unsigned preset name
   try {
     const response = await axios.post(
       "https://api.cloudinary.com/v1_1/dqaw6ndtn/image/upload", // Replace `your-cloud-name` with your Cloudinary account’s cloud name
