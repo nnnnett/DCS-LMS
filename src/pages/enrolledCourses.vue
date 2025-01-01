@@ -59,16 +59,16 @@
           <div class="enrolledCoursesContainer">
             <div
               class="enrolledCourses"
-              style="
-                width: 100%;
-                height: 180px;
-                background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
-                background-size: cover;
-                background-position: center;
-                position: relative;
-                border-radius: 14px 14px 0px 0px;
-                overflow: hidden;
-              "
+              :style="{
+                width: '100%',
+                height: '180px',
+                backgroundImage: `url(${course.file})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                position: 'relative',
+                borderRadius: '14px 14px 0px 0px',
+                overflow: 'hidden',
+              }"
             >
               <!-- archived button -->
               <!-- <q-btn-dropdown
@@ -174,21 +174,23 @@
                   style="width: 100%; color: #4b4b4b"
                   class="q-px-xl flex flex-center"
                 >
-                  <!-- <div style="width: 80%">
+                  <div style="width: 80%">
                     <q-card-section class="q-px-none">
                       Course Image
                     </q-card-section>
                     <q-file
                       v-model="courseImage"
                       borderless
+                      label="upload Image"
                       class="q-px-md"
+                      accept="image/*"
                       style="border: 1px solid #4b4b4b; border-radius: 14px"
                     >
                       <template #append>
                         <q-icon name="upload_file"></q-icon>
                       </template>
                     </q-file>
-                  </div> -->
+                  </div>
                   <div style="width: 80%">
                     <q-card-section class="q-px-none">
                       Course Name
@@ -324,6 +326,8 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
+import { uploadToCloud } from "src/components/cloudinaryUtility";
+import { getCourses } from "src/components/course";
 
 const loading = ref(false);
 const $q = useQuasar();
@@ -333,7 +337,7 @@ const isInstructor = ref("");
 const createCoursePopup = ref(false);
 const classCodePopup = ref(false);
 // create course
-const courseImage = ref("try Image");
+const courseImage = ref(null);
 const courseName = ref("");
 const courseSection = ref("");
 const courseDescription = ref("");
@@ -351,11 +355,13 @@ async function roleValidation() {
   }
 }
 
-async function getCourses() {
+async function getUserCourses() {
   try {
-    const response = await axios.get(`${process.env.api_host}/courses`);
-
-    courses.value = response.data;
+    const getCourseDetails = await getCourses();
+    courses.value = getCourseDetails;
+    courses.value.forEach((course, index) => {
+      console.log(`Course ${index + 1}:`, course.file);
+    });
   } catch (err) {
     console.error(err);
   }
@@ -364,17 +370,20 @@ async function getCourses() {
 async function createCourse() {
   const token = localStorage.getItem("authToken");
   loading.value = true;
+  const imageUrl = await uploadToCloud(courseImage.value);
   try {
     if (
       !courseImage.value ||
       !courseName.value ||
       !courseSection.value ||
-      !courseDescription.value
+      !courseDescription.value ||
+      !courseImage.value
     ) {
       $q.notify({
         type: "warning",
         message: "Please complete all required fields!",
       });
+      return;
     }
     await axios.post(
       `${process.env.api_host}/courses/create`,
@@ -382,7 +391,7 @@ async function createCourse() {
         name: courseName.value,
         section: courseSection.value,
         description: courseDescription.value,
-        image: courseImage.value,
+        file: imageUrl,
       },
       {
         headers: {
@@ -396,6 +405,7 @@ async function createCourse() {
       type: "positive",
       message: "created Succesfully!",
     });
+    return;
   } catch (err) {
     console.error(err);
     $q.notify({
@@ -408,7 +418,7 @@ async function createCourse() {
 }
 
 onMounted(() => {
-  getCourses();
+  getUserCourses();
   roleValidation();
 });
 </script>

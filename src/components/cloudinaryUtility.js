@@ -3,7 +3,6 @@ import { Notify } from "quasar";
 
 export async function uploadToCloud(file) {
   if (!file) {
-    alert("Please select a file first!");
     return;
   }
   const formData = new FormData();
