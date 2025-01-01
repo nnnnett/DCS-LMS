@@ -537,26 +537,27 @@
                   <div class="text-h6">Edit Course</div>
                 </q-card-section>
                 <!-- q form -->
-                <q-form>
+                <q-form @submit.prevent="updateCourse">
                   <div
                     style="width: 100%; color: #4b4b4b"
                     class="q-px-xl flex flex-center"
                   >
-                    <!-- <div style="width: 80%">
-                    <q-card-section class="q-px-none">
-                      Course Image
-                    </q-card-section>
-                    <q-file
-                      v-model="courseImage"
-                      borderless
-                      class="q-px-md"
-                      style="border: 1px solid #4b4b4b; border-radius: 14px"
-                    >
-                      <template #append>
-                        <q-icon name="upload_file"></q-icon>
-                      </template>
-                    </q-file>
-                  </div> -->
+                    <div style="width: 80%">
+                      <q-card-section class="q-px-none">
+                        Course Image
+                      </q-card-section>
+                      <q-file
+                        v-model="courseImage"
+                        accept="image/*"
+                        borderless
+                        class="q-px-md"
+                        style="border: 1px solid #4b4b4b; border-radius: 14px"
+                      >
+                        <template #append>
+                          <q-icon name="upload_file"></q-icon>
+                        </template>
+                      </q-file>
+                    </div>
                     <div style="width: 80%">
                       <q-card-section class="q-px-none">
                         Course Name
@@ -605,7 +606,12 @@
                       "
                     >
                       <q-card-actions align="right" class="bg-white text-teal">
-                        <q-btn flat label="Save" type="submit" />
+                        <q-btn
+                          :loading="loading"
+                          flat
+                          label="Save"
+                          type="submit"
+                        />
                       </q-card-actions>
                       <q-card-actions align="right" class="bg-white text-teal">
                         <q-btn flat label="Cancel" v-close-popup />
@@ -1082,11 +1088,9 @@ const assignmentLink = ref(false);
 
 // create new post
 const createAnnouncement = ref("");
-
 const materialTitle = ref("");
 const materialDescription = ref("");
 const materialsFile = ref("");
-
 const assignemntTitle = ref("");
 const assignemntDescription = ref("");
 const assignemntFile = ref("");
@@ -1094,19 +1098,23 @@ const grade = ref("");
 const dueDate = ref("");
 const dueTime = ref("");
 // role validation
-const roleChecker = ref("student");
+const roleChecker = ref("instructor");
 const isStudent = ref("");
 const isInstructor = ref("");
 
 const courses = ref(null);
 const courseId = route.params.courseId;
-
 const materials = ref(null);
-
 const filter = ref("");
 const selectMyWorks = ref({
   options: ["All", "Submitted", "Missing", "Pending"],
 });
+
+// update/edit course
+const courseImage = ref("");
+const courseName = ref("");
+const courseSection = ref("");
+const courseDescription = ref("");
 const showFeed = () => {
   feedLink.value = true;
   taskLink.value = false;
@@ -1324,6 +1332,50 @@ async function getMaterials() {
     materials.value = materialsDetails;
   } catch (err) {
     console.error(err);
+  }
+}
+
+async function updateCourse() {
+  loading.value = true;
+
+  try {
+    const token = localStorage.getItem("authToken");
+    let imageUrl = null;
+    if (courseImage.value) {
+      imageUrl = await uploadToCloud(courseImage.value);
+    }
+
+    // Prepare the payload with conditional inclusion of the image URL
+    const payload = {
+      name: courseName.value,
+      section: courseSection.value,
+      description: courseDescription.value,
+    };
+
+    // Add image URL if it's provided
+    if (imageUrl) {
+      payload.file = imageUrl;
+    }
+    const response = await axios.post(
+      `${process.env.api_host}/courses/update/${courseId}`,
+      payload,
+      {
+        headers: { "Content-Type": "application/json", authorization: token },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Course Updated Succesfully",
+    });
+    location.reload();
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went wrong",
+    });
+  } finally {
+    loading.value = false;
   }
 }
 
