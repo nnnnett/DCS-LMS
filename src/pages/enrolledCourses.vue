@@ -87,7 +87,9 @@
               </q-btn-dropdown> -->
               <div class="course-info">
                 <div>
-                  <div class="course-title">{{ course.name }}</div>
+                  <div class="course-title">
+                    {{ course.name }} - {{ course.section }}
+                  </div>
                   <div class="course-instructor">Rosalina D. Lacuesta</div>
                 </div>
                 <q-img

@@ -347,186 +347,183 @@
               </q-card-section>
             </q-card>
           </q-card-section>
-
-          <!-- Course Announcement -->
-          <q-card-section class="flex flex-center courseAnnouncement">
-            <q-card class="announcementContent q-px-lg">
-              <q-card-section class="contentHeader">
-                <div class="imgInstructor">
-                  <div class="q-mr-lg">
-                    <q-img
-                      src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                      style="width: 50px; height: 50px; border-radius: 50%"
-                    />
-                  </div>
-                  <div>
-                    <div>Rosalina D. Lacuesta</div>
-                    <div class="text-caption">December 12, 2024</div>
-                  </div>
-                </div>
-                <div class="dueDateTxtBtn">
-                  <div v-if="isInstructor">
-                    <q-btn-dropdown flat dropdown-icon="more_vert">
-                      <q-list>
-                        <q-item
-                          clickable
-                          v-close-popup
-                          @click="editAnnouncement = true"
-                        >
-                          <q-item-section>
-                            <q-item-label>Edit</q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </q-btn-dropdown>
-                  </div>
-                </div>
-              </q-card-section>
-              <!-- announcement content -->
-              <q-card-section class="q-px-xl" style="color: #4b4b4b">
-                <div class="text-h6 q-mb-sm">Capstone Forms</div>
-                <div style="text-align: justify">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Quasi accusamus ex nulla hic esse, numquam itaque obcaecati
-                  id. Harum excepturi porro numquam quasi ut, corporis sit rem
-                  fuga maiores beatae.
-                </div>
-              </q-card-section>
-              <!-- edit annoucement -->
-              <div>
-                <q-dialog v-model="editAnnouncement" persistent>
-                  <q-card style="width: 700px; max-width: 80vw">
-                    <q-card-section>
-                      <div class="text-h6">Edit Material</div>
-                    </q-card-section>
-                    <!-- q form -->
-                    <q-form>
-                      <div
-                        style="width: 100%; color: #4b4b4b"
-                        class="q-px-xl flex flex-center"
-                      >
-                        <div style="width: 90%">
-                          <q-card-section class="q-px-none">
-                            Announcement Description
-                          </q-card-section>
-                          <q-input
-                            v-model="editAnnouncementContent"
-                            type="textarea"
-                            borderless
-                            class="q-px-md"
+          <div v-if="materials">
+            <div v-for="material in materials" :key="material._id">
+              <div v-if="material.type === 'announcement'">
+                <!-- Course Announcement -->
+                <q-card-section class="flex flex-center courseAnnouncement">
+                  <q-card class="announcementContent q-px-lg">
+                    <q-card-section class="contentHeader">
+                      <div class="imgInstructor">
+                        <div class="q-mr-lg">
+                          <q-img
+                            src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
                             style="
-                              border: 1px solid #4b4b4b;
-                              border-radius: 14px;
+                              width: 50px;
+                              height: 50px;
+                              border-radius: 50%;
                             "
-                          >
-                          </q-input>
+                          />
                         </div>
-                        <div style="width: 90%">
-                          <q-card-section class="q-px-none"> </q-card-section>
-                          <q-file
-                            v-model="newFileAnnouncement"
-                            style="width: auto"
-                            label="Upload File"
-                            clearable
-                            multiple
-                          >
-                            <template v-slot:prepend>
-                              <q-icon name="attach_file" />
-                            </template>
-                          </q-file>
-                        </div>
-
-                        <div
-                          style="
-                            width: 80%;
-                            display: flex;
-                            justify-content: flex-end;
-                          "
-                        >
-                          <q-card-actions
-                            align="right"
-                            class="bg-white text-teal"
-                          >
-                            <q-btn flat label="Save" type="submit" />
-                          </q-card-actions>
-                          <q-card-actions
-                            align="right"
-                            class="bg-white text-teal"
-                          >
-                            <q-btn flat label="Cancel" v-close-popup />
-                          </q-card-actions>
+                        <div>
+                          <div>Rosalina D. Lacuesta</div>
+                          <div class="text-caption">December 12, 2024</div>
                         </div>
                       </div>
-                    </q-form>
-                  </q-card>
-                </q-dialog>
-              </div>
-              <!-- download file -->
-              <q-card-section class="q-px-xl">
-                <div style="width: 100%">
-                  <q-btn
-                    target="_blank"
-                    style="
-                      text-decoration: none;
-                      color: var(--q-primary);
-                      text-align: justify;
-                    "
-                  >
-                    //file name
-                  </q-btn>
-                </div>
-              </q-card-section>
-              <q-separator />
-              <q-card-section>
-                <div>
-                  <q-img
-                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                    style="width: 30px; height: 30px; border-radius: 50%"
-                  />
-                  <!-- might need q-form -->
-                  <div>
-                    <q-input type="textarea" label="Comment here..." />
-                  </div>
-                </div>
-              </q-card-section>
-            </q-card>
-          </q-card-section>
-          <!-- Course Assignment  -->
-          <q-card-section class="flex flex-center courseAssignment">
-            <q-card
-              class="assignmentContent q-px-lg"
-              clickable
-              @click="gotoActivityPage"
-            >
-              <q-card-section class="row materialsAssignment-container">
-                <div class="col-1">
-                  <q-img
-                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                    style="width: 50px; height: 50px; border-radius: 50%"
-                  />
-                </div>
-                <div class="col-9">
-                  <div style="height: auto; text-align: justify">
-                    Rosalina D. Lacuesta posted a new assignment : Chapter 1
-                    Introduction
-                  </div>
-                  <div class="text-caption">December 12, 2024</div>
-                </div>
+                      <div class="dueDateTxtBtn">
+                        <div v-if="isInstructor">
+                          <q-btn-dropdown flat dropdown-icon="more_vert">
+                            <q-list>
+                              <q-item
+                                clickable
+                                v-close-popup
+                                @click="editAnnouncement = true"
+                              >
+                                <q-item-section>
+                                  <q-item-label>Edit</q-item-label>
+                                </q-item-section>
+                              </q-item>
+                            </q-list>
+                          </q-btn-dropdown>
+                        </div>
+                      </div>
+                    </q-card-section>
+                    <!-- announcement content -->
+                    <q-card-section class="q-px-xl" style="color: #4b4b4b">
+                      <div class="text-h6 q-mb-sm">Announcement</div>
+                      <div style="text-align: justify">
+                        {{ material.description }}
+                      </div>
+                    </q-card-section>
 
-                <div
-                  class="flex flex-center icon q-ml-md"
-                  style="
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
-                    background-color: #46af4b;
-                  "
-                >
-                  <q-icon name="edit_square" color="white" size="24px" />
-                </div>
-              </q-card-section>
-            </q-card>
-          </q-card-section>
+                    <!-- edit annoucement -->
+                    <div>
+                      <q-dialog v-model="editAnnouncement" persistent>
+                        <q-card style="width: 700px; max-width: 80vw">
+                          <q-card-section>
+                            <div class="text-h6">Edit Material</div>
+                          </q-card-section>
+                          <!-- q form -->
+                          <q-form>
+                            <div
+                              style="width: 100%; color: #4b4b4b"
+                              class="q-px-xl flex flex-center"
+                            >
+                              <div style="width: 90%">
+                                <q-card-section class="q-px-none">
+                                  Announcement Description
+                                </q-card-section>
+                                <q-input
+                                  v-model="editAnnouncementContent"
+                                  type="textarea"
+                                  borderless
+                                  class="q-px-md"
+                                  style="
+                                    border: 1px solid #4b4b4b;
+                                    border-radius: 14px;
+                                  "
+                                >
+                                </q-input>
+                              </div>
+                              <div style="width: 90%">
+                                <q-card-section class="q-px-none">
+                                </q-card-section>
+                                <q-file
+                                  v-model="newFileAnnouncement"
+                                  style="width: auto"
+                                  label="Upload File"
+                                  clearable
+                                  multiple
+                                >
+                                  <template v-slot:prepend>
+                                    <q-icon name="attach_file" />
+                                  </template>
+                                </q-file>
+                              </div>
+                              <div
+                                style="
+                                  width: 80%;
+                                  display: flex;
+                                  justify-content: flex-end;
+                                "
+                              >
+                                <q-card-actions
+                                  align="right"
+                                  class="bg-white text-teal"
+                                >
+                                  <q-btn flat label="Save" type="submit" />
+                                </q-card-actions>
+                                <q-card-actions
+                                  align="right"
+                                  class="bg-white text-teal"
+                                >
+                                  <q-btn flat label="Cancel" v-close-popup />
+                                </q-card-actions>
+                              </div>
+                            </div>
+                          </q-form>
+                        </q-card>
+                      </q-dialog>
+                    </div>
+
+                    <q-separator />
+                    <q-card-section>
+                      <div>
+                        <q-img
+                          src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                          style="width: 30px; height: 30px; border-radius: 50%"
+                        />
+                        <!-- might need q-form -->
+                        <div>
+                          <q-input type="textarea" label="Comment here..." />
+                        </div>
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </q-card-section>
+              </div>
+              <!-- Course Assignment  -->
+              <div v-if="material.type !== 'announcement'">
+                <q-card-section class="flex flex-center courseAssignment">
+                  <q-card
+                    class="assignmentContent q-px-lg"
+                    clickable
+                    @click="gotoActivityPage"
+                  >
+                    <q-card-section class="row materialsAssignment-container">
+                      <div class="col-1">
+                        <q-img
+                          src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                          style="width: 50px; height: 50px; border-radius: 50%"
+                        />
+                      </div>
+                      <div class="col-9">
+                        <div style="height: auto; text-align: justify">
+                          Rosalina D. Lacuesta posted a new
+                          <span style="text-transform: capitalize">
+                            {{ material.type }} :
+                            {{ material.name }}
+                          </span>
+                        </div>
+                        <div class="text-caption">{{ material.createdAt }}</div>
+                      </div>
+                      <div
+                        class="flex flex-center icon q-ml-md"
+                        style="
+                          width: 50px;
+                          height: 50px;
+                          border-radius: 50%;
+                          background-color: #46af4b;
+                        "
+                      >
+                        <q-icon name="edit_square" color="white" size="24px" />
+                      </div>
+                    </q-card-section>
+                  </q-card>
+                </q-card-section>
+              </div>
+            </div>
+          </div>
           <div>
             <q-dialog v-model="editCoursePopup" persistent>
               <q-card style="width: 700px; max-width: 80vw">
@@ -617,41 +614,49 @@
         <!-- task tab -->
         <div v-if="taskLink" class="task-container">
           <!-- Course Assignment  -->
-          <q-card-section class="flex flex-center courseAssignment">
-            <q-card
-              class="assignmentContent q-px-lg"
-              clickable
-              @click="gotoActivityPage"
-            >
-              <q-card-section class="row materialsAssignment-container">
-                <div class="col-1">
-                  <q-img
-                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                    style="width: 50px; height: 50px; border-radius: 50%"
-                  />
-                </div>
-                <div class="col-9">
-                  <div style="height: auto; text-align: justify">
-                    Rosalina D. Lacuesta posted a new assignment : Chapter 1
-                    Introduction
-                  </div>
-                  <div class="text-caption">December 12, 2024</div>
-                </div>
-
-                <div
-                  class="flex flex-center icon q-ml-md"
-                  style="
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
-                    background-color: #46af4b;
-                  "
+          <div v-if="materials">
+            <div v-for="material in materials" :key="material._id">
+              <q-card-section
+                class="flex flex-center courseAssignment"
+                v-if="material.type === 'assignment'"
+              >
+                <q-card
+                  class="assignmentContent q-px-lg"
+                  clickable
+                  @click="gotoActivityPage"
                 >
-                  <q-icon name="edit_square" color="white" size="24px" />
-                </div>
+                  <q-card-section class="row materialsAssignment-container">
+                    <div class="col-1">
+                      <q-img
+                        src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                        style="width: 50px; height: 50px; border-radius: 50%"
+                      />
+                    </div>
+                    <div class="col-9">
+                      <div style="height: auto; text-align: justify">
+                        Rosalina D. Lacuesta posted a new
+                        <span style="text-transform: capitalize"
+                          >{{ material.type }} : {{ material.name }}</span
+                        >
+                      </div>
+                      <div class="text-caption">{{ material.createdAt }}</div>
+                    </div>
+                    <div
+                      class="flex flex-center icon q-ml-md"
+                      style="
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 50%;
+                        background-color: #46af4b;
+                      "
+                    >
+                      <q-icon name="edit_square" color="white" size="24px" />
+                    </div>
+                  </q-card-section>
+                </q-card>
               </q-card-section>
-            </q-card>
-          </q-card-section>
+            </div>
+          </div>
         </div>
         <!-- my works tab -->
         <div v-if="myWorksLink" class="myWorks-container">
@@ -1051,6 +1056,7 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import { Notify } from "quasar";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
+import { getCoursesMaterials } from "src/components/courseMaterials";
 
 const loading = ref(false);
 const route = useRoute();
@@ -1082,12 +1088,14 @@ const grade = ref("");
 const dueDate = ref("");
 const dueTime = ref("");
 // role validation
-const roleChecker = ref("instructor");
+const roleChecker = ref("student");
 const isStudent = ref("");
 const isInstructor = ref("");
 
 const courses = ref(null);
 const courseId = route.params.courseId;
+
+const materials = ref(null);
 
 const filter = ref("");
 const selectMyWorks = ref({
@@ -1188,7 +1196,6 @@ async function getCourses() {
     console.error(err);
   }
 }
-
 async function postAnnouncement() {
   const token = localStorage.getItem("authToken");
   try {
@@ -1220,7 +1227,6 @@ async function postAnnouncement() {
     loading.value = false;
   }
 }
-
 async function postMaterial() {
   loading.value = true;
   const token = localStorage.getItem("authToken");
@@ -1263,7 +1269,6 @@ async function postMaterial() {
     loading.value = false;
   }
 }
-
 async function postAssignment() {
   const token = localStorage.getItem("authToken");
   const fileSubmit = await uploadToCloud(assignemntFile.value);
@@ -1307,7 +1312,18 @@ async function postAssignment() {
   }
 }
 
+async function getMaterials() {
+  try {
+    const materialsDetails = await getCoursesMaterials();
+    materials.value = materialsDetails;
+    console.log("here", materials.value);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 onMounted(() => {
+  getMaterials();
   getCourses();
   roleValidation();
 });
