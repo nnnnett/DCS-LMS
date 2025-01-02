@@ -22,6 +22,14 @@ const routes = [
         component: () => import("pages/settingsPage.vue"),
       },
       {
+        path: "report",
+        component: () => import("pages/reportPage.vue"),
+      },
+      {
+        path: "viewReport/:courseId",
+        component: () => import("pages/viewReportPage.vue"),
+      },
+      {
         path: "archivedPage",
         component: () => import("pages/archivedPage.vue"),
       },

@@ -21,7 +21,7 @@
         </div>
       </q-card-section>
       <q-card-section
-        class="flex flex-center headerNavAssign"
+        class="flex flex-center q-py-none headerNavAssign"
         style="width: 100%"
       >
         <div class="materialNav">
@@ -33,7 +33,7 @@
               Assignment Details
             </q-card-section>
           </div>
-          <div @click="showStudentSubmission">
+          <div @click="showStudentSubmission" v-if="isInstructor">
             <q-card-section :class="{ active: studentSubmission }"
               >Student Submissions
             </q-card-section>
