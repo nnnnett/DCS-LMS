@@ -3,7 +3,7 @@
     <!-- Main Container -->
     <div class="main-container">
       <!-- Back btn and Assignment name -->
-      <q-card-section class="flex flex-center headerNavAssign">
+      <q-card-section class="flex flex-center headerNavAssign" v-if="materials">
         <div class="backBtn">
           <q-btn
             label="<"
@@ -17,10 +17,35 @@
               width: 50px;
             "
           />
-          <div class="q-ml-lg text-h6">Sample Course</div>
+          <div class="q-ml-lg text-h6">{{ materials.name }}</div>
         </div>
       </q-card-section>
-      <div class="assignment-Submit-Container flex flex-center">
+      <q-card-section
+        class="flex flex-center headerNavAssign"
+        style="width: 100%"
+      >
+        <div class="materialNav">
+          <div @click="showAssignmentDetails">
+            <q-card-section
+              class="q-pl-none"
+              :class="{ active: assgnmentDetails }"
+            >
+              Assignment Details
+            </q-card-section>
+          </div>
+          <div @click="showStudentSubmission">
+            <q-card-section :class="{ active: studentSubmission }"
+              >Student Submissions
+            </q-card-section>
+          </div>
+        </div>
+      </q-card-section>
+      <q-separator></q-separator>
+      <!-- assignment details -->
+      <div
+        class="assignment-Submit-Container flex flex-center"
+        v-if="assgnmentDetails"
+      >
         <!-- assgnment  -->
         <q-card-section class="courseAssignment">
           <q-card class="assignemntContent q-px-lg">
@@ -330,6 +355,50 @@
           </div>
         </q-card-section>
       </div>
+      <!-- student submission -->
+      <div class="studentSubmission-container" v-if="studentSubmission">
+        <q-card-section class="flex flex-center">
+          <div class="submissionDetails">
+            <div class="q-px-md submissionAnalytics">
+              <div>4</div>
+              <div>Submitted</div>
+            </div>
+            <div class="q-px-md submissionAnalytics">
+              <div>30</div>
+              <div>Students</div>
+            </div>
+            <div class="q-px-md submissionAnalytics">
+              <div>1</div>
+              <div>Graded</div>
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-section class="flex flex-center">
+          <div style="width: 70vw">
+            <q-table
+              :filter="filter"
+              :rows="rows"
+              :columns="columns"
+              row-key="id"
+            >
+              <template v-slot:top>
+                <div>
+                  <q-input
+                    dense
+                    debounce="300"
+                    color="primary"
+                    v-model="filter"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                </div>
+              </template>
+            </q-table>
+          </div>
+        </q-card-section>
+      </div>
     </div>
   </q-page>
 </template>
@@ -340,7 +409,7 @@
   width: 100%
   color: #4B4B4B
 .backBtn
-  width: 70vw
+  width: 80vw
   display: flex
   align-items: center
 .assignment-Submit-Container
@@ -394,7 +463,33 @@
 .dueDateGrade
   background-color: #f3f3f3
   border: 1px solid #d9d9d9
-
+.materialNav
+  width: 70vw
+  display: flex
+.materialNav div
+  cursor: pointer
+  position: relative
+.materialNav .active
+  color: #28a745
+.materialNav .active::after
+  content: ''
+  position: absolute
+  bottom: 0
+  left: 0
+  right: 0
+  height: 3px
+  background-color: #28a745
+.submissionDetails
+  width: 70vw
+  display: flex
+  height: 100px
+  align-items: center
+.submissionAnalytics
+  display: flex
+  flex-direction: column
+  border-left: 1px solid black
+  height: 90px
+  justify-content: space-evenly
 @media (max-width:1004px)
   .assignemntContent
     width: 90vw
@@ -434,7 +529,9 @@
     align-items: flex-end
     row-gap: 14px
     width: 100%
-
+  .materialNav
+    display: flex
+    flex-direction: column
   .dueDateGrade
     max-width: 120px
     display: flex
@@ -473,8 +570,22 @@ const editAssignment = ref(false);
 
 const courseId = route.params.courseId;
 const materialId = route.params.materialId;
-const materials = ref("");
+const materials = ref(null);
 const isAssignment = ref("");
+
+const assgnmentDetails = ref(true);
+const studentSubmission = ref(false);
+
+async function showAssignmentDetails() {
+  assgnmentDetails.value = true;
+  studentSubmission.value = false;
+}
+
+async function showStudentSubmission() {
+  assgnmentDetails.value = false;
+  studentSubmission.value = true;
+}
+const filter = ref("");
 // checks if its user, instructor, admin
 async function roleValidation() {
   if (roleChecker.value === "student") {
@@ -502,14 +613,39 @@ async function assignmentChecker() {
     const response = await axios.get(
       `${process.env.api_host}/courses/getMaterial?query=${materialId}`
     );
-    materials.value = response.data[0].type;
-    if (materials.value === "assignment") {
+    materials.value = response.data[0];
+    if (materials.value.type === "assignment") {
       return (isAssignment.value = true);
     }
   } catch (err) {
     console.error(err);
   }
 }
+
+const rows = ref([
+  { id: 1, name: "John", submissions: "M", status: "submitted", grade: "100" },
+  {
+    id: 2,
+    name: "Kenneth",
+    submissions: "A.",
+    status: "submitted",
+    grade: "90",
+  },
+  { id: 3, name: "Jules", submissions: "L", status: "pending", grade: "90" },
+  { id: 4, name: "Khris", submissions: "U", status: "missing", grade: "90" },
+  { id: 5, name: "Brt", submissions: "N", status: "missing", grade: "70" },
+]);
+const columns = ref([
+  { name: "name", label: "Full name ", align: "left", field: "name" },
+  {
+    name: "submissions",
+    label: "Activity",
+    align: "left",
+    field: "submissions",
+  },
+  { name: "status", label: "Status", align: "left", field: "status" },
+  { name: "grade", label: "grade", align: "left", field: "grade" },
+]);
 
 onMounted(() => {
   assignmentChecker();

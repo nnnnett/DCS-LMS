@@ -4,8 +4,12 @@
     <div class="main-container q-px-xl">
       <!-- Course Text -->
       <q-card-section class="q-mt-lg flex q-px-none">
-        <div class="text-h6 sampleCoursetxt" style="color: #4b4b4b">
-          Enrolled Courses > Sample Course
+        <div
+          class="text-h6 sampleCoursetxt"
+          style="color: #4b4b4b"
+          v-if="courses"
+        >
+          Enrolled Courses > {{ courses.name }}
         </div>
       </q-card-section>
       <!-- Main Content -->
@@ -389,6 +393,15 @@
                                   <q-item-label>Edit</q-item-label>
                                 </q-item-section>
                               </q-item>
+                              <q-item
+                                clickable
+                                v-close-popup
+                                @click="deleteAnnouncement = true"
+                              >
+                                <q-item-section>
+                                  <q-item-label>Delete</q-item-label>
+                                </q-item-section>
+                              </q-item>
                             </q-list>
                           </q-btn-dropdown>
                         </div>
@@ -403,14 +416,18 @@
                     </q-card-section>
 
                     <!-- edit annoucement -->
+
                     <div>
                       <q-dialog v-model="editAnnouncement" persistent>
                         <q-card style="width: 700px; max-width: 80vw">
-                          <q-card-section>
-                            <div class="text-h6">Edit Material</div>
-                          </q-card-section>
-                          <!-- q form -->
-                          <q-form>
+                          <q-form
+                            @submit.prevent="updateAnnouncement(material._id)"
+                          >
+                            <q-card-section>
+                              <div class="text-h6">Edit Announcement</div>
+                            </q-card-section>
+                            <!-- q form -->
+
                             <div
                               style="width: 100%; color: #4b4b4b"
                               class="q-px-xl flex flex-center"
@@ -431,21 +448,6 @@
                                 >
                                 </q-input>
                               </div>
-                              <div style="width: 90%">
-                                <q-card-section class="q-px-none">
-                                </q-card-section>
-                                <q-file
-                                  v-model="newFileAnnouncement"
-                                  style="width: auto"
-                                  label="Upload File"
-                                  clearable
-                                  multiple
-                                >
-                                  <template v-slot:prepend>
-                                    <q-icon name="attach_file" />
-                                  </template>
-                                </q-file>
-                              </div>
                               <div
                                 style="
                                   width: 80%;
@@ -457,7 +459,7 @@
                                   align="right"
                                   class="bg-white text-teal"
                                 >
-                                  <q-btn flat label="Save" type="submit" />
+                                  <q-btn type="submit" flat label="Save" />
                                 </q-card-actions>
                                 <q-card-actions
                                   align="right"
@@ -471,7 +473,27 @@
                         </q-card>
                       </q-dialog>
                     </div>
-
+                    <!-- edit announcement popup confirm -->
+                    <div>
+                      <q-dialog v-model="deleteAnnouncement" persistent>
+                        <q-card>
+                          <q-form @submit.prevent="deleteCurrentAnnouncement">
+                            <q-card-section class="bg-primary text-white">
+                              you sure you want to delete?
+                            </q-card-section>
+                            <q-card-section align="right">
+                              <q-btn flat type="submit" label="Delete" />
+                              <q-btn
+                                flat
+                                type="submit"
+                                label="Cancel"
+                                v-close-popup
+                              />
+                            </q-card-section>
+                          </q-form>
+                        </q-card>
+                      </q-dialog>
+                    </div>
                     <q-separator />
                     <q-card-section>
                       <div>
@@ -1074,9 +1096,9 @@ const loading = ref(false);
 const route = useRoute();
 const editCoursePopup = ref(false);
 const router = useRouter();
-const editAnnouncement = ref(false);
 const editAnnouncementContent = ref("");
-const newFileAnnouncement = ref("");
+const editAnnouncement = ref(false);
+const deleteAnnouncement = ref(false);
 const feedLink = ref(true);
 const taskLink = ref(false);
 const myWorksLink = ref(false);
@@ -1104,6 +1126,7 @@ const isInstructor = ref("");
 
 const courses = ref(null);
 const courseId = route.params.courseId;
+const materialId = route.params.materialId;
 const materials = ref(null);
 const filter = ref("");
 const selectMyWorks = ref({
@@ -1154,6 +1177,7 @@ const showAssignment = () => {
   materialsLink.value = false;
   assignmentLink.value = true;
 };
+
 async function gotoActivityPage(materialId) {
   router.replace(`/main/materialPage/` + courses.value._id + "/" + materialId);
 }
@@ -1191,7 +1215,12 @@ const rows = ref([
   { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
 ]);
 const columns = ref([
-  { name: "firstName", label: "First Name", align: "left", field: "firstName" },
+  {
+    name: "firstName",
+    label: "First Name",
+    align: "left",
+    field: "firstName",
+  },
   {
     name: "middleName",
     label: "Middle Name",
@@ -1377,6 +1406,46 @@ async function updateCourse() {
   } finally {
     loading.value = false;
   }
+}
+
+async function updateAnnouncement() {
+  if (!editAnnouncementContent.value) {
+    Notify.create({
+      type: "negative",
+      message: "Announcement content cannot be empty",
+    });
+    return;
+  }
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.post(
+      `${process.env.api_host}/courses/material/update/${materialId}/${courseId}`,
+      {
+        description: editAnnouncementContent.value,
+        type: "announcement",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Announcement Edited Successfully",
+    });
+  } catch (err) {
+    console.error(err.response || err);
+    Notify.create({
+      type: "negative",
+      message: err.response?.data?.message || "Something went wrong",
+    });
+  }
+}
+
+async function deleteCurrentAnnouncement() {
+  console.log("delete");
 }
 
 onMounted(() => {
