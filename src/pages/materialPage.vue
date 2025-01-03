@@ -24,7 +24,7 @@
         class="flex flex-center q-py-none headerNavAssign"
         style="width: 100%"
       >
-        <div class="materialNav">
+        <div class="materialNav" v-if="materials.type">
           <div @click="showAssignmentDetails">
             <q-card-section
               class="q-pl-none"
@@ -36,6 +36,16 @@
           <div @click="showStudentSubmission" v-if="isInstructor">
             <q-card-section :class="{ active: studentSubmission }"
               >Student Submissions
+            </q-card-section>
+          </div>
+        </div>
+        <div class="materialNav" v-if="!materials.type">
+          <div @click="showAssignmentDetails">
+            <q-card-section
+              class="q-pl-none"
+              :class="{ active: assgnmentDetails }"
+            >
+              Materials Details
             </q-card-section>
           </div>
         </div>
@@ -545,6 +555,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { getCoursesMaterials } from "src/components/courseMaterials";
+import { viewViewerUser } from "src/components/user";
 import axios from "axios";
 
 const route = useRoute();
@@ -557,7 +568,7 @@ const editGrade = ref("");
 const editDescription = ref("");
 const newFile = ref("");
 // role validation
-const roleChecker = ref("student");
+const roleValidation = ref("");
 const isStudent = ref("");
 const isInstructor = ref("");
 // submitted status
@@ -570,7 +581,8 @@ const editAssignment = ref(false);
 
 const courseId = route.params.courseId;
 const materialId = route.params.materialId;
-const materials = ref(null);
+
+const materials = ref("");
 const isAssignment = ref("");
 
 const assgnmentDetails = ref(true);
@@ -587,15 +599,6 @@ async function showStudentSubmission() {
 }
 const filter = ref("");
 // checks if its user, instructor, admin
-async function roleValidation() {
-  if (roleChecker.value === "student") {
-    return (isStudent.value = true);
-  } else if (roleChecker.value === "instructor") {
-    return (isInstructor.value = true);
-  } else {
-    return;
-  }
-}
 
 // check the users submitted assignment status
 async function checkSubmitted() {
@@ -647,9 +650,21 @@ const columns = ref([
   { name: "grade", label: "grade", align: "left", field: "grade" },
 ]);
 
+async function displayUserInfo() {
+  const checkUser = await viewViewerUser();
+  roleValidation.value = checkUser.role;
+  if (roleValidation.value === "student") {
+    return (isStudent.value = true);
+  } else if (roleValidation.value === "instructor") {
+    return (isInstructor.value = true);
+  } else if (roleValidation.value === "admin") {
+    return (isAdmin.value = true);
+  }
+}
+
 onMounted(() => {
   assignmentChecker();
-  roleValidation();
+  displayUserInfo();
   checkSubmitted();
 });
 </script>

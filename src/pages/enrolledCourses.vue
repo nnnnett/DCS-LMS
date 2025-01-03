@@ -330,10 +330,12 @@ import axios from "axios";
 import { useQuasar } from "quasar";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
 import { getCourses } from "src/components/course";
+import { viewViewerUser } from "src/components/user";
 
 const loading = ref(false);
 const $q = useQuasar();
-const roleChecker = ref("instructor");
+
+const roleValidation = ref("");
 const isStudent = ref("");
 const isInstructor = ref("");
 const createCoursePopup = ref(false);
@@ -346,16 +348,6 @@ const courseDescription = ref("");
 
 // course
 const courses = ref(null);
-
-async function roleValidation() {
-  if (roleChecker.value === "student") {
-    return (isStudent.value = true);
-  } else if (roleChecker.value === "instructor") {
-    return (isInstructor.value = true);
-  } else {
-    return;
-  }
-}
 
 async function getUserCourses() {
   try {
@@ -419,8 +411,20 @@ async function createCourse() {
   }
 }
 
+async function displayUserInfo() {
+  const checkUser = await viewViewerUser();
+  roleValidation.value = checkUser.role;
+  if (roleValidation.value === "student") {
+    return (isStudent.value = true);
+  } else if (roleValidation.value === "instructor") {
+    return (isInstructor.value = true);
+  } else if (roleValidation.value === "admin") {
+    return (isAdmin.value = true);
+  }
+}
+
 onMounted(() => {
   getUserCourses();
-  roleValidation();
+  displayUserInfo();
 });
 </script>

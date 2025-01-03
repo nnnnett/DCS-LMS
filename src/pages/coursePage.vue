@@ -13,20 +13,28 @@
         </div>
       </q-card-section>
       <!-- Main Content -->
-      <q-card-section class="q-pb-none">
+      <q-card-section class="q-pb-none" v-if="isStudent">
         <div class="headerNav q-px-md">
           <div class="q-px-xl" @click="showFeed">
             <q-card-section :class="{ active: feedLink }">Feed</q-card-section>
           </div>
-          <div class="q-px-xl" @click="showTask" v-if="isStudent">
+          <div class="q-px-xl" @click="showTask">
             <q-card-section :class="{ active: taskLink }">Task</q-card-section>
           </div>
-          <div class="q-px-xl" @click="showMyWorks" v-if="isStudent">
+          <div class="q-px-xl" @click="showMyWorks">
             <q-card-section :class="{ active: myWorksLink }"
               >My Works</q-card-section
             >
           </div>
-          <div class="q-px-xl" @click="showStudents" v-if="isInstructor">
+        </div>
+      </q-card-section>
+      <q-card-section class="q-pb-none" v-if="isInstructor">
+        <div class="headerNav q-px-md">
+          <div class="q-px-xl" @click="showFeed">
+            <q-card-section :class="{ active: feedLink }">Feed</q-card-section>
+          </div>
+
+          <div class="q-px-xl" @click="showStudents">
             <q-card-section :class="{ active: studentList }"
               >Students</q-card-section
             >
@@ -1104,6 +1112,7 @@ import axios from "axios";
 import { Notify } from "quasar";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
 import { getCoursesMaterials } from "src/components/courseMaterials";
+import { viewViewerUser } from "src/components/user";
 
 const loading = ref(false);
 const route = useRoute();
@@ -1114,10 +1123,10 @@ const editAnnouncement = ref(false);
 const deleteAnnouncement = ref(false);
 
 // course nav
-const feedLink = ref(false);
+const feedLink = ref(true);
 const taskLink = ref(false);
 const myWorksLink = ref(false);
-const studentList = ref(true);
+const studentList = ref(false);
 
 const announcementLink = ref(true);
 const materialsLink = ref(false);
@@ -1135,7 +1144,7 @@ const grade = ref("");
 const dueDate = ref("");
 const dueTime = ref("");
 // role validation
-const roleChecker = ref("instructor");
+const roleChecker = ref("");
 const isStudent = ref("");
 const isInstructor = ref("");
 
@@ -1197,15 +1206,19 @@ async function gotoActivityPage(materialId) {
   router.replace(`/main/materialPage/` + courses.value._id + "/" + materialId);
 }
 // checks if its user, instructor, admin
-async function roleValidation() {
+async function displayUserInfo() {
+  const checkUser = await viewViewerUser();
+  roleChecker.value = checkUser.role;
   if (roleChecker.value === "student") {
     return (isStudent.value = true);
   } else if (roleChecker.value === "instructor") {
     return (isInstructor.value = true);
-  } else {
-    return;
   }
 }
+
+onMounted(() => {
+  displayUserInfo();
+});
 const rows = ref([
   { id: 1, firstName: "John", lastName: "Doe" },
   { id: 2, firstName: "Jane", lastName: "Smith" },
@@ -1443,6 +1456,6 @@ async function deleteCurrentAnnouncement() {
 onMounted(() => {
   getMaterials();
   getCourses();
-  roleValidation();
+  displayUserInfo();
 });
 </script>
