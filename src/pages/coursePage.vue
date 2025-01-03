@@ -777,7 +777,20 @@
           </q-card-section>
           <!-- list of students -->
           <div>
-            <q-table :rows="rows" :columns="columns" row-key="id"> </q-table>
+            <q-table
+              :rows="rows"
+              :columns="columns"
+              row-key="id"
+              :rows-per-page-options="[0, 5, 10, 15, 20, 25, 30]"
+            >
+              <template #body="props">
+                <q-tr :props="props">
+                  <q-td key="firstName" class="bg-green-1">
+                    {{ props.row.firstName }}, {{ props.row.lastName }}
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
           </div>
         </div>
       </q-card-section>
@@ -1099,10 +1112,12 @@ const router = useRouter();
 const editAnnouncementContent = ref("");
 const editAnnouncement = ref(false);
 const deleteAnnouncement = ref(false);
-const feedLink = ref(true);
+
+// course nav
+const feedLink = ref(false);
 const taskLink = ref(false);
 const myWorksLink = ref(false);
-const studentList = ref(false);
+const studentList = ref(true);
 
 const announcementLink = ref(true);
 const materialsLink = ref(false);
@@ -1192,42 +1207,19 @@ async function roleValidation() {
   }
 }
 const rows = ref([
-  { id: 1, firstName: "John", middleName: "M.", lastName: "Doe" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Aane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
-  { id: 2, firstName: "Jane", middleName: "A.", lastName: "Smith" },
+  { id: 1, firstName: "John", lastName: "Doe" },
+  { id: 2, firstName: "Jane", lastName: "Smith" },
+  { id: 3, firstName: "Mark", lastName: "Smith" },
+  { id: 4, firstName: "Kenneth", lastName: "Smith" },
+  { id: 5, firstName: "Mwe", lastName: "Smith" },
 ]);
 const columns = ref([
   {
     name: "firstName",
-    label: "First Name",
+    label: "Name",
     align: "left",
     field: "firstName",
   },
-  {
-    name: "middleName",
-    label: "Middle Name",
-    align: "left",
-    field: "middleName",
-  },
-  { name: "lastName", label: "Last Name", align: "left", field: "lastName" },
 ]);
 async function getCourses() {
   try {
