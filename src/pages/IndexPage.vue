@@ -14,8 +14,13 @@
         <!-- sub content 1 -->
         <div class="sub-content-1">
           <!-- Under sub content 1 -->
-          <div class="sub-content-1-1">
-            <q-card-section class="active-pendingTask-container">
+          <div class="sub-content-1-1" v-if="!isAdmin">
+            <!-- student -->
+
+            <q-card-section
+              class="active-pendingTask-container"
+              v-if="isStudent"
+            >
               <div>
                 <q-icon name="library_books" color="primary" size="29px" />
               </div>
@@ -24,7 +29,10 @@
                 <div class="text-body2">Active Courses</div>
               </div>
             </q-card-section>
-            <q-card-section class="active-pendingTask-container">
+            <q-card-section
+              class="active-pendingTask-container"
+              v-if="isStudent"
+            >
               <div>
                 <q-icon name="library_books" color="primary" size="29px" />
               </div>
@@ -33,9 +41,37 @@
                 <div class="text-body2">Pending Task</div>
               </div>
             </q-card-section>
+
+            <!-- instructor -->
+
+            <q-card-section
+              class="active-pendingTask-container"
+              v-if="isInstructor"
+            >
+              <div>
+                <q-icon name="library_books" color="primary" size="29px" />
+              </div>
+              <div class="q-ml-sm">
+                <div class="text-h6">6</div>
+                <div class="text-body2">Active Courses</div>
+              </div>
+            </q-card-section>
+            <q-card-section
+              class="active-pendingTask-container"
+              v-if="isInstructor"
+            >
+              <div>
+                <q-icon name="library_books" color="primary" size="29px" />
+              </div>
+              <div class="q-ml-sm">
+                <div class="text-h6">6</div>
+                <div class="text-body2">Student</div>
+              </div>
+            </q-card-section>
           </div>
+
           <!-- under sub content 1 -->
-          <div class="sub-content-1-2 q-mt-lg">
+          <div class="sub-content-1-2 q-mt-lg" v-if="!isAdmin">
             <q-card-section class="flex q-px-none" style="max-width: 929px">
               <div class="text-h6">Enrolled Courses</div>
               <q-space />
@@ -136,6 +172,8 @@
               </div>
             </q-card-section>
           </div>
+
+          <div v-if="isAdmin">wewe</div>
         </div>
         <!-- notifcation side/ sub content 2 -->
         <div class="sub-content-2">
@@ -275,11 +313,16 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { getCourses } from "src/components/course";
+import { viewViewerUser } from "src/components/user";
 
 const loading = ref(true);
 const notifDate = ref("");
 const router = useRouter();
 const courses = ref(null);
+const roleValidation = ref("");
+const isStudent = ref("");
+const isInstructor = ref("");
+const isAdmin = ref("");
 
 async function isLogin() {
   const token = localStorage.getItem("authToken");
@@ -317,8 +360,21 @@ async function getUserCourses() {
   }
 }
 
+async function displayUserInfo() {
+  const checkUser = await viewViewerUser();
+  roleValidation.value = checkUser.role;
+  if (roleValidation.value === "student") {
+    return (isStudent.value = true);
+  } else if (roleValidation.value === "instructor") {
+    return (isInstructor.value = true);
+  } else if (roleValidation.value === "admin") {
+    return (isAdmin.value = true);
+  }
+}
+
 onMounted(() => {
   isLogin();
   getUserCourses();
+  displayUserInfo();
 });
 </script>

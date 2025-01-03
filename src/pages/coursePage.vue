@@ -1216,9 +1216,6 @@ async function displayUserInfo() {
   }
 }
 
-onMounted(() => {
-  displayUserInfo();
-});
 const rows = ref([
   { id: 1, firstName: "John", lastName: "Doe" },
   { id: 2, firstName: "Jane", lastName: "Smith" },
@@ -1245,9 +1242,16 @@ async function getCourses() {
   }
 }
 async function postAnnouncement() {
+  loading.value = true;
   const token = localStorage.getItem("authToken");
   try {
-    loading.value = true;
+    if (!createAnnouncement.value) {
+      Notify.create({
+        type: "warning",
+        message: "Please type Something before Posting!",
+      });
+      return;
+    }
     const response = axios.post(
       `${process.env.api_host}/courses/material/${courseId}`,
       {

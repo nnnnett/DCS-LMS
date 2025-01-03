@@ -230,12 +230,9 @@
               class="q-px-xl assignmentContentTxt"
               style="color: #4b4b4b"
             >
-              <div class="text-h6 q-mb-sm">Capstone Forms</div>
+              <div class="text-h6 q-mb-sm">{{ materials.name }}</div>
               <div style="text-align: justify">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi
-                accusamus ex nulla hic esse, numquam itaque obcaecati id. Harum
-                excepturi porro numquam quasi ut, corporis sit rem fuga maiores
-                beatae.
+                {{ materials.description }}
               </div>
             </q-card-section>
             <!-- download file -->

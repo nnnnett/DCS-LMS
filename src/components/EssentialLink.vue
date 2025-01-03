@@ -114,6 +114,28 @@
       </q-item>
     </div>
   </div>
+  <div v-if="isAdmin">
+    <div class="q-py-sm">
+      <q-item clickable @click="router.replace(`/main`)">
+        <q-item-section avatar>
+          <q-icon name="home" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Homepage</q-item-label>
+        </q-item-section>
+      </q-item>
+    </div>
+    <div class="q-py-sm">
+      <q-item clickable @click="handleLogout">
+        <q-item-section avatar>
+          <q-icon name="logout" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Logout</q-item-label>
+        </q-item-section>
+      </q-item>
+    </div>
+  </div>
   <!-- @click="router.replace(`/instructorDashboard`)" -->
 </template>
 
@@ -128,6 +150,7 @@ const roleValidation = ref("");
 const isStudent = ref("");
 const isInstructor = ref("");
 const isAdmin = ref("");
+
 const clearLocalStorage = () => {
   localStorage.clear();
   console.log("LocalStorage has been cleared.");
