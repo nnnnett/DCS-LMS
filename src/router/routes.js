@@ -33,6 +33,10 @@ const routes = [
         path: "archivedPage",
         component: () => import("pages/archivedPage.vue"),
       },
+      {
+        path: "userManagementPage",
+        component: () => import("pages/userManagementPage.vue"),
+      },
     ],
   },
   {

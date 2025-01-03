@@ -38,7 +38,7 @@
               <q-list>
                 <q-item clickable @click="unarchivedCourses(archived._id)">
                   <q-item-section>
-                    <q-item-label>Unarchived Course</q-item-label>
+                    <q-item-label>Unarchive Course</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>

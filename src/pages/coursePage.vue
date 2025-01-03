@@ -796,17 +796,30 @@
           <!-- list of students -->
           <div>
             <q-table
-              :rows="rows"
-              :columns="columns"
+              :rows="studentRows"
+              :columns="studentColumns"
+              separator="cell"
               row-key="id"
               :rows-per-page-options="[0, 5, 10, 15, 20, 25, 30]"
             >
               <template #body="props">
-                <q-tr :props="props">
-                  <q-td key="firstName" class="bg-green-1">
-                    {{ props.row.firstName }}, {{ props.row.lastName }}
+                <q-tr key="id" :props="props">
+                  <q-td class="bg-green-1">
+                    {{ props.row.lastName }}
+                  </q-td>
+                  <q-td class="bg-green-1">
+                    {{ props.row.firstName }}
                   </q-td>
                 </q-tr>
+              </template>
+              <template v-slot:top-right>
+                <q-btn
+                  color="primary"
+                  icon-right="archive"
+                  label="Export to csv"
+                  no-caps
+                  @click="exportStudentList"
+                />
               </template>
             </q-table>
           </div>
@@ -822,24 +835,24 @@
           <div>
             <q-table
               style="box-shadow: none"
-              :rows="rows"
-              :columns="columns"
+              :rows="gradeRows"
+              :columns="gradeColumns"
               row-key="id"
               :rows-per-page-options="[0, 5, 10, 15, 20, 25, 30]"
               separator="cell"
             >
               <template #body="props">
-                <q-tr :pops="props">
-                  <q-td key="firstName">
-                    {{ props.row.firstName }}, {{ props.row.lastName }}
+                <q-tr key="id" :pops="props">
+                  <q-td>
+                    {{ props.row.firstName }}
                   </q-td>
-                  <q-td key="oveRallGrade" class="text-center text-gray-2">
+                  <q-td>
+                    {{ props.row.lastName }}
+                  </q-td>
+                  <q-td class="text-center text-gray-2">
                     {{ props.row.oveRallGrade }}
                   </q-td>
-                  <q-td
-                    key="assignment1"
-                    class="text-center text-primary text-center"
-                  >
+                  <q-td class="text-center text-primary text-center">
                     {{ props.row.assignment1 }}/100
                     <q-btn-dropdown
                       style="display: block; width: 15px"
@@ -855,7 +868,7 @@
                       >
                     </q-btn-dropdown>
                   </q-td>
-                  <q-td key="assignment2" class="text-center text-primary">
+                  <q-td class="text-center text-primary">
                     {{ props.row.assignment2 }}/100
                     <q-btn-dropdown
                       style="display: block; width: 15px"
@@ -871,7 +884,7 @@
                       >
                     </q-btn-dropdown>
                   </q-td>
-                  <q-td key="assignment3" class="text-center text-primary">
+                  <q-td class="text-center text-primary">
                     {{ props.row.assignment3 }}/100
                     <q-btn-dropdown
                       style="display: block; width: 15px"
@@ -888,6 +901,15 @@
                     </q-btn-dropdown>
                   </q-td>
                 </q-tr>
+              </template>
+              <template v-slot:top-right>
+                <q-btn
+                  color="primary"
+                  icon-right="archive"
+                  label="Export to csv"
+                  no-caps
+                  @click="exportStudentSubmission"
+                />
               </template>
             </q-table>
           </div>
@@ -1200,7 +1222,7 @@
 import { useRouter, useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { Notify } from "quasar";
+import { Notify, exportFile } from "quasar";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
 import { getCoursesMaterials } from "src/components/courseMaterials";
 import { viewViewerUser } from "src/components/user";
@@ -1322,19 +1344,106 @@ async function displayUserInfo() {
   }
 }
 
-const rows = ref([
-  { id: 1, firstName: "John", lastName: "Doe" },
-  { id: 2, firstName: "Jane", lastName: "Smith" },
-  { id: 3, firstName: "Mark", lastName: "Smith" },
-  { id: 4, firstName: "Kenneth", lastName: "Smith" },
-  { id: 5, firstName: "Mwe", lastName: "Smith" },
+const studentRows = ref([
+  {
+    id: 1,
+    firstName: "kenneth",
+    lastName: "Doblon",
+  },
 ]);
-const columns = ref([
+
+const studentColumns = ref([
+  {
+    name: "lastName",
+    label: "Surname",
+    align: "left",
+    field: "lastName",
+    sortable: true,
+  },
   {
     name: "firstName",
-    label: "Name",
+    label: "First Name",
     align: "left",
     field: "firstName",
+  },
+]);
+
+const gradeRows = ref([
+  {
+    id: 1,
+    firstName: "Kenneth",
+    lastName: "Doblon",
+    oveRallGrade: "no grade",
+    assignment1: 23,
+    assignment2: 100,
+    assignment3: 0,
+  },
+  {
+    id: 1,
+    firstName: "Kenneth",
+    lastName: "Doblon",
+    oveRallGrade: "no grade",
+    assignment1: 23,
+    assignment2: 100,
+    assignment3: 0,
+  },
+  {
+    id: 1,
+    firstName: "Kenneth",
+    lastName: "Doblon",
+    oveRallGrade: "no grade",
+    assignment1: 23,
+    assignment2: 100,
+    assignment3: 0,
+  },
+  {
+    id: 1,
+    firstName: "Kenneth",
+    lastName: "Doblon",
+    oveRallGrade: "no grade",
+    assignment1: 23,
+    assignment2: 100,
+    assignment3: 0,
+  },
+]);
+const gradeColumns = ref([
+  {
+    name: "lastName",
+    label: "Surname",
+    align: "left",
+    field: "lastName",
+    sortable: true,
+  },
+  {
+    name: "firstName",
+    label: "First Name",
+    align: "left",
+    field: "firstName",
+  },
+
+  {
+    name: "oveRallGrade",
+    label: "Overall grade",
+    align: "center",
+    field: "oveRallGrade",
+  },
+  {
+    name: "assignment1",
+    label: "Assignment 1 Grades",
+    align: "center",
+    field: "assignment1",
+  },
+  {
+    name: "assignment2",
+    label: "Assignment 2 Grades",
+    align: "center",
+    field: "assignment2",
+  },
+  {
+    name: "assignment3",
+    label: "Assignment 3 Grades",
+    align: "center",
+    field: "assignment3",
   },
 ]);
 async function getCourses() {
@@ -1574,6 +1683,76 @@ async function archivedCourse() {
   }
 }
 
+function wrapCsvValue(val, formatFn, row) {
+  let formatted = formatFn !== void 0 ? formatFn(val, row) : val;
+
+  formatted =
+    formatted === void 0 || formatted === null ? "" : String(formatted);
+
+  formatted = formatted.split('"').join('""');
+  /**
+   * Excel accepts \n and \r in strings, but some other CSV parsers do not
+   * Uncomment the next two lines to escape new lines
+   */
+  // .split('\n').join('\\n')
+  // .split('\r').join('\\r')
+
+  return `"${formatted}"`;
+}
+
+function exportStudentSubmission() {
+  const content = [
+    gradeColumns.value.map((col) => wrapCsvValue(col.label)).join(","), // Header row
+    ...gradeRows.value.map((row) =>
+      gradeColumns.value
+        .map((col) =>
+          wrapCsvValue(
+            typeof col.field === "function" ? col.field(row) : row[col.field],
+            col.format,
+            row
+          )
+        )
+        .join(",")
+    ),
+  ].join("\r\n");
+
+  const status = exportFile("Student-Submissions.csv", content, "text/csv");
+
+  if (status !== true) {
+    Notify.create({
+      message: "Browser denied file download...",
+      color: "negative",
+      icon: "warning",
+    });
+  }
+}
+function exportStudentList() {
+  // Naive encoding to CSV format
+  const content = [
+    studentColumns.value.map((col) => wrapCsvValue(col.label)).join(","), // Header row
+    ...studentRows.value.map((row) =>
+      studentColumns.value
+        .map((col) =>
+          wrapCsvValue(
+            typeof col.field === "function" ? col.field(row) : row[col.field],
+            col.format,
+            row
+          )
+        )
+        .join(",")
+    ),
+  ].join("\r\n");
+
+  const status = exportFile("Student-List.csv", content, "text/csv");
+
+  if (status !== true) {
+    Notify.create({
+      message: "Browser denied file download...",
+      color: "negative",
+      icon: "warning",
+    });
+  }
+}
 onMounted(() => {
   getMaterials();
   getCourses();

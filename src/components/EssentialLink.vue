@@ -1,4 +1,5 @@
 <template>
+  <!-- student -->
   <div v-if="isStudent">
     <div class="q-py-sm">
       <q-item clickable @click="router.replace(`/main`)">
@@ -84,16 +85,6 @@
       </q-item>
     </div>
     <div class="q-py-sm">
-      <q-item clickable @click="router.replace(`/main/report`)">
-        <q-item-section avatar>
-          <q-icon name="bar_chart" />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>Reports</q-item-label>
-        </q-item-section>
-      </q-item>
-    </div>
-    <div class="q-py-sm">
       <q-item clickable @click="handleLogout">
         <q-item-section avatar>
           <q-icon name="logout" />
@@ -111,7 +102,37 @@
           <q-icon name="home" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>Homepage</q-item-label>
+          <q-item-label>Dashboard</q-item-label>
+        </q-item-section>
+      </q-item>
+    </div>
+    <div class="q-py-sm">
+      <q-item clickable @click="router.replace(`/main/userManagementPage`)">
+        <q-item-section avatar>
+          <q-icon name="person" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>User Management</q-item-label>
+        </q-item-section>
+      </q-item>
+    </div>
+    <div class="q-py-sm">
+      <q-item clickable @click="router.replace(`/main`)">
+        <q-item-section avatar>
+          <q-icon name="library_books" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Courses Management</q-item-label>
+        </q-item-section>
+      </q-item>
+    </div>
+    <div class="q-py-sm">
+      <q-item clickable @click="router.replace(`/main`)">
+        <q-item-section avatar>
+          <q-icon name="bar_chart" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Reports</q-item-label>
         </q-item-section>
       </q-item>
     </div>

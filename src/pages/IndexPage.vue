@@ -173,7 +173,7 @@
             </q-card-section>
           </div>
 
-          <div v-if="isAdmin">wewe</div>
+          <div v-if="isAdmin"></div>
         </div>
         <!-- notifcation side/ sub content 2 -->
         <div class="sub-content-2">

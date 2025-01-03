@@ -80,7 +80,7 @@
                 <q-list>
                   <q-item clickable @click="archivedCourses(course._id)">
                     <q-item-section>
-                      <q-item-label>Archived</q-item-label>
+                      <q-item-label>Archive</q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -394,6 +394,7 @@ async function createCourse() {
       }
     );
     createCoursePopup.value = false;
+    getUserCourses();
     Notify.create({
       type: "positive",
       message: "created Succesfully!",
