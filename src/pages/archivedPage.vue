@@ -36,7 +36,7 @@
               style="position: absolute; top: 8px; right: 8px"
             >
               <q-list>
-                <q-item clickable @click="UnarchivedCourses(archived._id)">
+                <q-item clickable @click="unarchivedCourses(archived._id)">
                   <q-item-section>
                     <q-item-label>Unarchived Course</q-item-label>
                   </q-item-section>
@@ -45,7 +45,9 @@
             </q-btn-dropdown>
             <div class="course-info">
               <div>
-                <div class="course-title">{{ archived.name }}</div>
+                <div class="course-title">
+                  {{ archived.name }} - {{ archived.section }}
+                </div>
                 <div class="course-instructor">Rosalina D. Lacuesta</div>
               </div>
               <q-img
@@ -60,7 +62,10 @@
             >
               <div style="align-self: center">See your works</div>
               <q-space></q-space>
-              <q-btn to="/main/coursePage" style="border: 1px solid #46af4b">
+              <q-btn
+                :to="`/main/coursePage/` + archived._id"
+                style="border: 1px solid #46af4b"
+              >
                 <q-icon name="chevron_right" />
               </q-btn>
             </q-card-section>
@@ -158,7 +163,7 @@ async function getArchivedCourse() {
   }
 }
 
-async function UnarchivedCourses(courseId) {
+async function unarchivedCourses(courseId) {
   try {
     const token = localStorage.getItem("authToken");
 
@@ -176,7 +181,7 @@ async function UnarchivedCourses(courseId) {
       type: "positive",
       message: "Course Unarchived Succesfully",
     });
-    location.reload();
+    getArchivedCourse();
   } catch (err) {
     console.error(err);
     Notify.create({

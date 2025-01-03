@@ -78,7 +78,7 @@
                 style="position: absolute; top: 8px; right: 8px"
               >
                 <q-list>
-                  <q-item clickable>
+                  <q-item clickable @click="archivedCourses(course._id)">
                     <q-item-section>
                       <q-item-label>Archived</q-item-label>
                     </q-item-section>
@@ -327,13 +327,12 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import axios from "axios";
-import { useQuasar } from "quasar";
+import { Notify } from "quasar";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
 import { getActiveCourses } from "src/components/course";
 import { viewViewerUser } from "src/components/user";
 
 const loading = ref(false);
-const $q = useQuasar();
 
 const roleValidation = ref("");
 const isStudent = ref("");
@@ -373,7 +372,7 @@ async function createCourse() {
       !courseDescription.value ||
       !courseImage.value
     ) {
-      $q.notify({
+      Notify.create({
         type: "warning",
         message: "Please complete all required fields!",
       });
@@ -395,14 +394,14 @@ async function createCourse() {
       }
     );
     createCoursePopup.value = false;
-    $q.notify({
+    Notify.create({
       type: "positive",
       message: "created Succesfully!",
     });
     return;
   } catch (err) {
     console.error(err);
-    $q.notify({
+    Notify.create({
       type: "negative",
       message: "Something went wrong!",
     });
@@ -423,6 +422,32 @@ async function displayUserInfo() {
   }
 }
 
+async function archivedCourses(courseId) {
+  try {
+    const token = localStorage.getItem("authToken");
+
+    const response = await axios.post(
+      `${process.env.api_host}/courses/update/${courseId}`,
+      {
+        isArchived: true,
+      },
+      {
+        headers: { "Content-Type": "application/json", authorization: token },
+      }
+    );
+    getUserCourses();
+    Notify.create({
+      type: "positive",
+      message: "Course Archived Succesfully",
+    });
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went Wrong",
+    });
+  }
+}
 onMounted(() => {
   getUserCourses();
   displayUserInfo();

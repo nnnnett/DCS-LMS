@@ -9,7 +9,12 @@
           style="color: #4b4b4b"
           v-if="courses"
         >
-          Enrolled Courses > {{ courses.name }}
+          <div v-if="courses.isArchived === false">
+            Enrolled Courses > {{ courses.name }}
+          </div>
+          <div v-if="courses.isArchived === true">
+            Archived Courses > {{ courses.name }}
+          </div>
         </div>
       </q-card-section>
       <!-- Main Content -->
