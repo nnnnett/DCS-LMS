@@ -60,7 +60,7 @@
 </style>
 
 <script setup>
-import { getCourses } from "src/components/course";
+import { getActiveCourses } from "src/components/course";
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
@@ -70,9 +70,8 @@ const courseId = route.params.courseId;
 const router = useRouter();
 async function getUserCourses() {
   try {
-    const getCourseDetails = await getCourses();
+    const getCourseDetails = await getActiveCourses();
     courses.value = getCourseDetails;
-    console.log("here", courses.value);
   } catch (err) {
     console.error(err);
   }

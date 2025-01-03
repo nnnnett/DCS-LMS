@@ -39,6 +39,11 @@
               >Students</q-card-section
             >
           </div>
+          <div class="q-px-xl" @click="showGrades">
+            <q-card-section :class="{ active: studentGrades }"
+              >Grades</q-card-section
+            >
+          </div>
         </div>
       </q-card-section>
       <q-separator />
@@ -801,6 +806,87 @@
             </q-table>
           </div>
         </div>
+        <!-- show grade for st -->
+        <div class="viewReport-container" v-if="studentGrades">
+          <q-card-section>
+            <div class="text-subtitle1 text-primary text-weight-medium">
+              Grades
+            </div>
+          </q-card-section>
+
+          <div>
+            <q-table
+              style="box-shadow: none"
+              :rows="rows"
+              :columns="columns"
+              row-key="id"
+              :rows-per-page-options="[0, 5, 10, 15, 20, 25, 30]"
+              separator="cell"
+            >
+              <template #body="props">
+                <q-tr :pops="props">
+                  <q-td key="firstName">
+                    {{ props.row.firstName }}, {{ props.row.lastName }}
+                  </q-td>
+                  <q-td key="oveRallGrade" class="text-center text-gray-2">
+                    {{ props.row.oveRallGrade }}
+                  </q-td>
+                  <q-td
+                    key="assignment1"
+                    class="text-center text-primary text-center"
+                  >
+                    {{ props.row.assignment1 }}/100
+                    <q-btn-dropdown
+                      style="display: block; width: 15px"
+                      flat
+                      dropdown-icon="more_vert"
+                      class="absolute-right"
+                      ><q-list>
+                        <q-item clickable v-close-popup @click="openSubmission">
+                          <q-item-section>
+                            <q-item-label>View Submission</q-item-label>
+                          </q-item-section>
+                        </q-item></q-list
+                      >
+                    </q-btn-dropdown>
+                  </q-td>
+                  <q-td key="assignment2" class="text-center text-primary">
+                    {{ props.row.assignment2 }}/100
+                    <q-btn-dropdown
+                      style="display: block; width: 15px"
+                      flat
+                      dropdown-icon="more_vert"
+                      class="absolute-right"
+                      ><q-list>
+                        <q-item clickable v-close-popup @click="openSubmission">
+                          <q-item-section>
+                            <q-item-label>View Submission</q-item-label>
+                          </q-item-section>
+                        </q-item></q-list
+                      >
+                    </q-btn-dropdown>
+                  </q-td>
+                  <q-td key="assignment3" class="text-center text-primary">
+                    {{ props.row.assignment3 }}/100
+                    <q-btn-dropdown
+                      style="display: block; width: 15px"
+                      flat
+                      dropdown-icon="more_vert"
+                      class="absolute-right"
+                      ><q-list>
+                        <q-item clickable v-close-popup @click="openSubmission">
+                          <q-item-section>
+                            <q-item-label>View Submission</q-item-label>
+                          </q-item-section>
+                        </q-item></q-list
+                      >
+                    </q-btn-dropdown>
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+          </div>
+        </div>
       </q-card-section>
     </div>
   </q-page>
@@ -1127,6 +1213,7 @@ const feedLink = ref(true);
 const taskLink = ref(false);
 const myWorksLink = ref(false);
 const studentList = ref(false);
+const studentGrades = ref(false);
 
 const announcementLink = ref(true);
 const materialsLink = ref(false);
@@ -1150,7 +1237,7 @@ const isInstructor = ref("");
 
 const courses = ref(null);
 const courseId = route.params.courseId;
-const materialId = route.params.materialId;
+
 const materials = ref(null);
 const filter = ref("");
 const selectMyWorks = ref({
@@ -1162,29 +1249,43 @@ const courseImage = ref("");
 const courseName = ref("");
 const courseSection = ref("");
 const courseDescription = ref("");
+
 const showFeed = () => {
   feedLink.value = true;
   taskLink.value = false;
   myWorksLink.value = false;
   studentList.value = false;
+  studentGrades.value = false;
 };
 const showTask = () => {
   feedLink.value = false;
   taskLink.value = true;
   myWorksLink.value = false;
   studentList.value = false;
+  studentGrades.value = false;
 };
 const showMyWorks = () => {
   feedLink.value = false;
   taskLink.value = false;
   myWorksLink.value = true;
   studentList.value = false;
+  studentGrades.value = false;
 };
+
+const showGrades = () => {
+  studentList.value = false;
+  feedLink.value = false;
+  taskLink.value = false;
+  myWorksLink.value = false;
+  studentGrades.value = true;
+};
+
 const showStudents = () => {
   studentList.value = true;
   feedLink.value = false;
   taskLink.value = false;
   myWorksLink.value = false;
+  studentGrades.value = false;
 };
 const showAnnouncement = () => {
   announcementLink.value = true;
@@ -1417,7 +1518,7 @@ async function updateCourse() {
   }
 }
 
-async function updateAnnouncement() {
+async function updateAnnouncement(materialId) {
   if (!editAnnouncementContent.value) {
     Notify.create({
       type: "negative",
@@ -1428,7 +1529,7 @@ async function updateAnnouncement() {
   try {
     const token = localStorage.getItem("authToken");
     const response = await axios.post(
-      `${process.env.api_host}/courses/material/update/${materialId}/${courseId}`,
+      `${process.env.api_host}/courses/material/update/${materialId}`,
       {
         description: editAnnouncementContent.value,
         type: "announcement",
@@ -1440,10 +1541,14 @@ async function updateAnnouncement() {
         },
       }
     );
+
     Notify.create({
       type: "positive",
       message: "Announcement Edited Successfully",
     });
+
+    getMaterials();
+    editAnnouncement.value = false;
   } catch (err) {
     console.error(err.response || err);
     Notify.create({
@@ -1455,6 +1560,13 @@ async function updateAnnouncement() {
 
 async function deleteCurrentAnnouncement() {
   console.log("delete");
+}
+
+async function archivedCourse() {
+  try {
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 onMounted(() => {

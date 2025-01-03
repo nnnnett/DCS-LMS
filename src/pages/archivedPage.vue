@@ -8,22 +8,26 @@
         </div>
       </q-card-section>
       <!-- Main Content -->
-      <q-card-section class="archived-container">
+      <q-card-section class="archived-container" v-if="archivedCourses">
         <!-- archived list -->
 
-        <div class="archivedCoursesContainer">
+        <div
+          class="archivedCoursesContainer"
+          v-for="archived in archivedCourses"
+          :key="archived"
+        >
           <div
             class="archivedCourses"
-            style="
-              width: 100%;
-              height: 180px;
-              background-image: url('https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg');
-              background-size: cover;
-              background-position: center;
-              position: relative;
-              border-radius: 14px 14px 0px 0px;
-              overflow: hidden;
-            "
+            :style="{
+              width: '100%',
+              height: '180px',
+              backgroundImage: `url(${archived.file})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              position: 'relative',
+              borderRadius: '14px 14px 0px 0px',
+              overflow: 'hidden',
+            }"
           >
             <q-btn-dropdown
               flat
@@ -32,16 +36,16 @@
               style="position: absolute; top: 8px; right: 8px"
             >
               <q-list>
-                <q-item clickable>
+                <q-item clickable @click="UnarchivedCourses(archived._id)">
                   <q-item-section>
-                    <q-item-label>View Details</q-item-label>
+                    <q-item-label>Unarchived Course</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
             </q-btn-dropdown>
             <div class="course-info">
               <div>
-                <div class="course-title">Capstone 1</div>
+                <div class="course-title">{{ archived.name }}</div>
                 <div class="course-instructor">Rosalina D. Lacuesta</div>
               </div>
               <q-img
@@ -130,4 +134,59 @@
     width: 350px
 </style>
 
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { getArchivedCourses } from "src/components/course";
+import { Notify } from "quasar";
+import axios from "axios";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const archivedCourses = ref(null);
+
+// const courseId = route.params.courseId;
+
+async function getArchivedCourse() {
+  try {
+    const getCourseDetails = await getArchivedCourses();
+    archivedCourses.value = getCourseDetails;
+    archivedCourses.value.forEach((course, index) => {
+      archivedCourses.value.name;
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function UnarchivedCourses(courseId) {
+  try {
+    const token = localStorage.getItem("authToken");
+
+    const response = await axios.post(
+      `${process.env.api_host}/courses/update/${courseId}`,
+      {
+        isArchived: false,
+      },
+      {
+        headers: { "Content-Type": "application/json", authorization: token },
+      }
+    );
+
+    Notify.create({
+      type: "positive",
+      message: "Course Unarchived Succesfully",
+    });
+    location.reload();
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went Wrong",
+    });
+  }
+}
+
+onMounted(() => {
+  getArchivedCourse();
+});
+</script>

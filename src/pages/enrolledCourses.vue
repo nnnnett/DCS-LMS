@@ -71,7 +71,7 @@
               }"
             >
               <!-- archived button -->
-              <!-- <q-btn-dropdown
+              <q-btn-dropdown
                 flat
                 color="white"
                 dropdown-icon="more_vert"
@@ -80,11 +80,11 @@
                 <q-list>
                   <q-item clickable>
                     <q-item-section>
-                      <q-item-label>View Details</q-item-label>
+                      <q-item-label>Archived</q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
-              </q-btn-dropdown> -->
+              </q-btn-dropdown>
               <div class="course-info">
                 <div>
                   <div class="course-title">
@@ -329,7 +329,7 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
-import { getCourses } from "src/components/course";
+import { getActiveCourses } from "src/components/course";
 import { viewViewerUser } from "src/components/user";
 
 const loading = ref(false);
@@ -351,7 +351,7 @@ const courses = ref(null);
 
 async function getUserCourses() {
   try {
-    const getCourseDetails = await getCourses();
+    const getCourseDetails = await getActiveCourses();
     courses.value = getCourseDetails;
     courses.value.forEach((course, index) => {
       course.file;

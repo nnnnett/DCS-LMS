@@ -24,7 +24,7 @@
         class="flex flex-center q-py-none headerNavAssign"
         style="width: 100%"
       >
-        <div class="materialNav" v-if="materials.type">
+        <div class="materialNav" v-if="materials.type === 'assignment'">
           <div @click="showAssignmentDetails">
             <q-card-section
               class="q-pl-none"
@@ -39,7 +39,7 @@
             </q-card-section>
           </div>
         </div>
-        <div class="materialNav" v-if="!materials.type">
+        <div class="materialNav" v-if="materials.type === 'material'">
           <div @click="showAssignmentDetails">
             <q-card-section
               class="q-pl-none"
