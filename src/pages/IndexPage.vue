@@ -133,11 +133,11 @@
                       <div>
                         <div class="course-title">{{ course.name }}</div>
                         <div class="course-instructor">
-                          Rosalina D. Lacuesta
+                          {{ course.instructorName }}
                         </div>
                       </div>
                       <q-img
-                        src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                        :src="course.instructorImage"
                         style="width: 50px; height: 50px; border-radius: 50%"
                       />
                     </div>

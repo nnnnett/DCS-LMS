@@ -65,7 +65,7 @@
             >
               <div
                 :style="{
-                  backgroundImage: `url(${courses.file})`,
+                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(${courses.file})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   position: 'relative',
@@ -95,7 +95,7 @@
                 </div>
                 <div class="courseInstructor">
                   <q-img
-                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                    :src="courses.instructorImage"
                     style="
                       width: 70px;
                       height: 70px;
@@ -114,12 +114,22 @@
                     {{ courses.name }} - {{ courses.section }}
                   </div>
                   <div style="font-size: 1em" class="q-py-sm">
-                    Rosalina D. Lacuesta
+                    {{ courses.instructorName }}
                   </div>
-
-                  <div style="font-size: 1em; font-weight: 500">
-                    Hub: {{ courses._id }}
-                  </div>
+                  <q-btn
+                    icon-right="content_paste"
+                    @click="copyToClipboard(courses._id)"
+                    no-caps
+                    style="
+                      font-size: 1em;
+                      font-weight: 500;
+                      color: inherit;
+                      cursor: pointer;
+                      text-align: left;
+                    "
+                  >
+                    Class: {{ courses._id }}
+                  </q-btn>
                 </div>
               </div>
             </q-responsive>
@@ -255,7 +265,6 @@
                           v-model="materialsFile"
                           style="width: auto"
                           label="Upload File"
-                          multiple
                           clearable
                         >
                           <template v-slot:prepend>
@@ -386,7 +395,7 @@
                       <div class="imgInstructor">
                         <div class="q-mr-lg">
                           <q-img
-                            src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                            :src="material.instructorImage"
                             style="
                               width: 50px;
                               height: 50px;
@@ -395,8 +404,10 @@
                           />
                         </div>
                         <div>
-                          <div>Rosalina D. Lacuesta</div>
-                          <div class="text-caption">December 12, 2024</div>
+                          <div>{{ material.instructorName }}</div>
+                          <div class="text-caption">
+                            {{ material.createdAt }}
+                          </div>
                         </div>
                       </div>
                       <div class="dueDateTxtBtn">
@@ -587,17 +598,19 @@
                     <q-card-section class="row materialsAssignment-container">
                       <div class="col-1">
                         <q-img
-                          src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                          :src="material.instructorImage"
                           style="width: 50px; height: 50px; border-radius: 50%"
                         />
                       </div>
                       <div class="col-9">
                         <div style="height: auto; text-align: justify">
-                          Rosalina D. Lacuesta posted a new
-                          <span style="text-transform: capitalize">
+                          {{ material.instructorName }} <br />
+                          <span
+                            style="text-transform: uppercase; font-weight: bold"
+                          >
                             {{ material.type }} :
-                            {{ material.name }}
                           </span>
+                          {{ material.name }}
                         </div>
                         <div class="text-caption">{{ material.createdAt }}</div>
                       </div>
@@ -1876,6 +1889,24 @@ async function addCommentF(materialId) {
 //     console.error(err);
 //   }
 // }
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(
+    () => {
+      Notify.create({
+        type: "positive",
+        message: "Copied to clipboard!",
+      });
+    },
+    (err) => {
+      console.error("Could not copy text: ", err);
+      Notify.create({
+        type: "negative",
+        message: "Failed to copy to clipboard.",
+      });
+    }
+  );
+}
 
 onMounted(() => {
   getMaterials();

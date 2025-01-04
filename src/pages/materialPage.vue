@@ -63,13 +63,13 @@
               <div class="imgInstructor">
                 <div class="q-mr-lg">
                   <q-img
-                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                    :src="materials.instructorImage"
                     style="width: 50px; height: 50px; border-radius: 50%"
                   />
                 </div>
                 <div>
-                  <div>Rosalina D. Lacuesta</div>
-                  <div class="text-caption">December 12, 2024</div>
+                  <div>{{ materials.instructorName }}</div>
+                  <div class="text-caption">{{ materials.createdAt }}</div>
                 </div>
               </div>
               <div class="dueDateTxtBtn">

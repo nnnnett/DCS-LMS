@@ -90,10 +90,12 @@
                   <div class="course-title">
                     {{ course.name }} - {{ course.section }}
                   </div>
-                  <div class="course-instructor">Rosalina D. Lacuesta</div>
+                  <div class="course-instructor">
+                    {{ course.instructorName }}
+                  </div>
                 </div>
                 <q-img
-                  src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                  :src="course.instructorImage"
                   style="width: 50px; height: 50px; border-radius: 50%"
                 />
               </div>
@@ -350,6 +352,7 @@ const courseName = ref("");
 const courseSection = ref("");
 const courseDescription = ref("");
 
+const classCode = ref("");
 // course
 const courses = ref(null);
 
@@ -467,7 +470,15 @@ async function archivedCourses(courseId) {
 }
 
 async function joinClass(courseCode) {
+  if (!classCode.value) {
+    Notify.create({
+      type: "warning",
+      message: "Please type Correct Code",
+    });
+    return;
+  }
   try {
+    loading.value = true;
     const token = localStorage.getItem("authToken");
     const response = await axios.get(
       `${process.env.api_host}/courses/joinCourse/${courseCode}`,
@@ -478,8 +489,20 @@ async function joinClass(courseCode) {
         },
       }
     );
+    Notify.create({
+      type: "positive",
+      message: "Class Joined!",
+    });
   } catch (err) {
     console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went wrong",
+    });
+  } finally {
+    loading.value = false;
+    classCodePopup.value = false;
+    getUserCourses();
   }
 }
 
