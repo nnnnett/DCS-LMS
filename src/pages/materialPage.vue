@@ -90,15 +90,37 @@
                             <q-item-label>Edit</q-item-label>
                           </q-item-section>
                         </q-item>
+                        <q-item
+                          clickable
+                          v-close-popup
+                          @click="deleteMaterials = true"
+                        >
+                          <q-item-section>
+                            <q-item-label>Delete</q-item-label>
+                          </q-item-section>
+                        </q-item>
                       </q-list>
                     </q-btn-dropdown>
                   </div>
                   <div v-if="materials.type === 'material'">
                     <q-btn-dropdown flat dropdown-icon="more_vert">
                       <q-list>
-                        <q-item clickable v-close-popup @click="tryew">
+                        <q-item
+                          clickable
+                          v-close-popup
+                          @click="editMaterial = true"
+                        >
                           <q-item-section>
                             <q-item-label>Edit</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                        <q-item
+                          clickable
+                          v-close-popup
+                          @click="deleteMaterials = true"
+                        >
+                          <q-item-section>
+                            <q-item-label>Delete</q-item-label>
                           </q-item-section>
                         </q-item>
                       </q-list>
@@ -153,7 +175,6 @@
                           style="width: auto"
                           label="Upload File"
                           clearable
-                          multiple
                         >
                           <template v-slot:prepend>
                             <q-icon name="attach_file" />
@@ -210,6 +231,119 @@
                         </q-card-actions>
                       </div>
                     </div>
+                  </q-form>
+                </q-card>
+              </q-dialog>
+            </div>
+            <!-- materials edit -->
+            <div>
+              <div>
+                <q-dialog v-model="editMaterial" persistent>
+                  <q-card style="width: 700px; max-width: 80vw">
+                    <q-card-section>
+                      <div class="text-h6">Edit Material</div>
+                    </q-card-section>
+                    <!-- q form -->
+                    <q-form @submit.prevent="updateMaterial">
+                      <div
+                        style="width: 100%; color: #4b4b4b"
+                        class="q-px-xl flex flex-center"
+                      >
+                        <div style="width: 90%">
+                          <q-card-section class="q-px-none">
+                            Title
+                          </q-card-section>
+                          <q-input
+                            v-model="editTitleMaterial"
+                            type="text"
+                            borderless
+                            class="q-px-md"
+                            style="
+                              border: 1px solid #4b4b4b;
+                              border-radius: 14px;
+                            "
+                          >
+                          </q-input>
+                        </div>
+                        <div style="width: 90%">
+                          <q-card-section class="q-px-none">
+                            Material Description
+                          </q-card-section>
+                          <q-input
+                            v-model="editDescriptionMaterial"
+                            type="textarea"
+                            borderless
+                            class="q-px-md"
+                            style="
+                              border: 1px solid #4b4b4b;
+                              border-radius: 14px;
+                            "
+                          >
+                          </q-input>
+                        </div>
+
+                        <div style="width: 90%">
+                          <q-file
+                            v-model="newFileMaterials"
+                            style="width: auto"
+                            label="Upload File"
+                            clearable
+                          >
+                            <template v-slot:prepend>
+                              <q-icon name="attach_file" />
+                            </template>
+                          </q-file>
+                        </div>
+
+                        <div
+                          style="
+                            width: 80%;
+                            display: flex;
+                            justify-content: flex-end;
+                          "
+                        >
+                          <q-card-actions
+                            align="right"
+                            class="bg-white text-teal"
+                          >
+                            <q-btn
+                              flat
+                              :loading="loading"
+                              label="Save"
+                              type="submit"
+                            />
+                          </q-card-actions>
+                          <q-card-actions
+                            align="right"
+                            class="bg-white text-teal"
+                          >
+                            <q-btn flat label="Cancel" v-close-popup />
+                          </q-card-actions>
+                        </div>
+                      </div>
+                    </q-form>
+                  </q-card>
+                </q-dialog>
+              </div>
+            </div>
+            <div>
+              <q-dialog v-model="deleteMaterials" persistent>
+                <q-card>
+                  <q-form
+                    @submit.prevent="deleteCurrentMaterials(materials._id)"
+                  >
+                    <q-card-section class="bg-primary text-white">
+                      you sure you want to delete?
+                    </q-card-section>
+                    <q-card-section align="right">
+                      <q-btn
+                        flat
+                        type="submit"
+                        :loading="loading"
+                        label="Delete"
+                      />
+                      <q-btn flat type="submit" label="Cancel" v-close-popup />
+                    </q-card-section>
                   </q-form>
                 </q-card>
               </q-dialog>
@@ -582,7 +716,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { getMaterialData } from "src/components/courseMaterials";
 import { viewViewerUser } from "src/components/user";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
@@ -596,15 +730,20 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 const loading = ref(false);
 const canvasContainer = ref(null);
 const route = useRoute();
+const router = useRouter();
 const submitWork = ref("");
 const subBtn = ref("");
+
+// const editDueTimeAssignment = ref("");
 const editTitleAssignment = ref("");
 const editDueDate = ref("");
-// const editDueTimeAssignment = ref("");
+const editAssignment = ref(false);
 const editGrade = ref("");
 const editDescriptionAssignment = ref("");
 const newFileAssignment = ref(null);
 const currentAssignmentFile = ref("");
+const gradeInput = ref("");
+const isAssignment = ref("");
 // role validation
 const roleValidation = ref("");
 const isStudent = ref("");
@@ -615,14 +754,18 @@ const isDone = ref("");
 const isMissing = ref("");
 const isPending = ref("");
 
-const editAssignment = ref(false);
-const gradeInput = ref("");
+// edit materials
 
+const editMaterial = ref(false);
+const editTitleMaterial = ref("");
+const editDescriptionMaterial = ref("");
+const newFileMaterials = ref(null);
+const currentMaterialFile = ref("");
 const courseId = route.params.courseId;
 const materialId = route.params.materialId;
 
 const materials = ref("");
-const isAssignment = ref("");
+const deleteMaterials = ref(false);
 
 const assgnmentDetails = ref(true);
 const studentSubmission = ref(false);
@@ -700,7 +843,7 @@ const columns = ref([
   { name: "name", label: "Full name ", align: "left", field: "name" },
   {
     name: "submissions",
-    label: "Activity",
+    label: "Submissions",
     align: "left",
     field: "submissions",
   },
@@ -724,7 +867,6 @@ async function gradeSubmission() {
 }
 async function fileExtension(file) {
   // Check if the file contains an extension
-  console.log("file", file);
   const fileChecker = file.split(".").pop().toLowerCase();
 
   // If the file doesn't have an extension or is not allowed, return early
@@ -742,15 +884,10 @@ async function fileExtension(file) {
     isImageFile.value = false;
     isRenderFile.value = false;
   }
-  console.log({
-    docu: isDocuFile.value,
-    img: isImageFile.value,
-    rend: isRenderFile.value,
-  });
+
   return;
 }
 async function render(fileObject) {
-  console.log("render runnning");
   // Set up the scene, camera, and renderer
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
@@ -832,23 +969,17 @@ async function formatTime(dueDate) {
 
   // Format the date
   const formattedDate = `${month}-${day}-${year}:${hours}-${minutes}-${seconds}`;
-  console.log(formattedDate);
   newDueDate.value = formattedDate;
   return;
 }
 
-async function tryew() {
-  console.log("re");
-}
-
-async function displayMaterialsInfo() {
+async function displayMaterialsInfoAssignment() {
   const materialInfo = await getMaterialData(materialId);
   editTitleAssignment.value = materialInfo.name;
   editDescriptionAssignment.value = materialInfo.description;
   editGrade.value = materialInfo.grade;
   editDueDate.value = materialInfo.dueDate;
   currentAssignmentFile.value = materialInfo.file;
-  console.log(currentAssignmentFile.value, "here");
 }
 
 async function updateAssignment() {
@@ -858,7 +989,7 @@ async function updateAssignment() {
 
     let fileSubmit = null;
     if (newFileAssignment.value) {
-      fileSubmit = await uploadToCloud(newFileAssignment.value[0]);
+      fileSubmit = await uploadToCloud(newFileAssignment.value);
       const response = await axios.post(
         `${process.env.api_host}/courses/material/update/${materialId}`,
         {
@@ -894,8 +1025,6 @@ async function updateAssignment() {
         }
       );
     }
-    console.log(fileSubmit);
-
     fileExtension(fileSubmit);
     Notify.create({
       type: "positive",
@@ -914,8 +1043,105 @@ async function updateAssignment() {
   }
 }
 
+async function displayMaterialsInfoMaterial() {
+  const materialInfo = await getMaterialData(materialId);
+  editTitleMaterial.value = materialInfo.name;
+  editDescriptionMaterial.value = materialInfo.description;
+  currentMaterialFile.value = materialInfo.file;
+}
+
+async function updateMaterial() {
+  loading.value = true;
+  try {
+    const token = localStorage.getItem("authToken");
+
+    let fileSubmit = null;
+    if (newFileMaterials.value) {
+      fileSubmit = await uploadToCloud(newFileMaterials.value);
+      const response = await axios.post(
+        `${process.env.api_host}/courses/material/update/${materialId}`,
+        {
+          name: editTitleMaterial.value,
+          description: editDescriptionMaterial.value,
+          file: fileSubmit,
+          type: "material",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+        }
+      );
+    } else {
+      const response = await axios.post(
+        `${process.env.api_host}/courses/material/update/${materialId}`,
+        {
+          name: editTitleMaterial.value,
+          description: editDescriptionMaterial.value,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+        }
+      );
+    }
+    fileExtension(fileSubmit);
+    Notify.create({
+      type: "positive",
+      message: "Material Edited Successfully",
+    });
+  } catch (err) {
+    console.error(err.response || err);
+    Notify.create({
+      type: "negative",
+      message: err.response?.data?.message || "Something went wrong",
+    });
+  } finally {
+    loading.value = false;
+    editMaterial.value = false;
+    location.reload();
+  }
+}
+
+async function deleteCurrentMaterials(materialId) {
+  loading.value = true;
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.post(
+      `${process.env.api_host}/courses/material/update/${materialId}`,
+      {
+        isArchived: true,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Materials Deleted Successfully",
+    });
+  } catch (err) {
+    console.error(err.response || err);
+    Notify.create({
+      type: "negative",
+      message: err.response?.data?.message || "Something went wrong",
+    });
+  } finally {
+    loading.value = false;
+    deleteMaterials.value = false;
+    router.replace(`/main/coursePage/` + courseId);
+  }
+}
+
 onMounted(() => {
-  displayMaterialsInfo();
+  displayMaterialsInfoAssignment();
+  displayMaterialsInfoMaterial();
   assignmentChecker();
   displayUserInfo();
   checkSubmitted();

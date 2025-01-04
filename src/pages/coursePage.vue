@@ -255,6 +255,7 @@
                           v-model="materialsFile"
                           style="width: auto"
                           label="Upload File"
+                          multiple
                           clearable
                         >
                           <template v-slot:prepend>
