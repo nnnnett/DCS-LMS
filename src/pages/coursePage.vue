@@ -128,7 +128,7 @@
           <q-card-section class="flex courseDescUpcoming">
             <div class="courseDescription q-px-xl" v-if="courses">
               <div class="text-subtitle1">Course Description</div>
-              <div style="text-indent: 50px">
+              <div style="text-indent: 20px">
                 {{ courses.description }}
               </div>
             </div>
@@ -316,13 +316,13 @@
                         />
                       </q-card-section>
                       <!-- Due Date/Grade -->
-                      <!-- <q-card-section class="q-px-none dueDateGrade-container">
+                      <q-card-section class="q-px-none dueDateGrade-container">
                         <div class="q-pl-sm dueDateGrade">
                           <div style="color: #8f9bb3" class="text-caption">
                             Grade
                           </div>
                           <q-input
-                            class="q-pl-sm"
+                            class="q-px-sm"
                             type="number"
                             v-model="grade"
                             borderless
@@ -334,13 +334,13 @@
                           </div>
                           <q-input type="date" v-model="dueDate" borderless />
                         </div>
-                        <div class="q-pl-sm dueDateGrade">
+                        <!-- <div class="q-pl-sm dueDateGrade">
                           <div style="color: #8f9bb3" class="text-caption">
                             Time Due
                           </div>
                           <q-input type="time" v-model="dueTime" borderless />
-                        </div>
-                      </q-card-section> -->
+                        </div> -->
+                      </q-card-section>
                       <!-- q-file and button -->
                       <q-card-section class="q-px-none uploadAndBtn">
                         <q-file
@@ -495,7 +495,11 @@
                     <div>
                       <q-dialog v-model="deleteAnnouncement" persistent>
                         <q-card>
-                          <q-form @submit.prevent="deleteCurrentAnnouncement">
+                          <q-form
+                            @submit.prevent="
+                              deleteCurrentAnnouncement(material._id)
+                            "
+                          >
                             <q-card-section class="bg-primary text-white">
                               you sure you want to delete?
                             </q-card-section>
@@ -515,13 +519,56 @@
                     <q-separator />
                     <q-card-section>
                       <div>
-                        <q-img
-                          src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
-                          style="width: 30px; height: 30px; border-radius: 50%"
-                        />
-                        <!-- might need q-form -->
-                        <div>
-                          <q-input type="textarea" label="Comment here..." />
+                        <!-- might need q-form / type comments -->
+                        <q-form @submit.prevent="addCommentF(material._id)">
+                          <div>
+                            <q-input
+                              type="textarea"
+                              v-model="addComment"
+                              label="Comment here..."
+                            />
+                            <q-btn
+                              type="submit"
+                              label="Add Comment"
+                              :loading="loading"
+                            />
+                          </div>
+                        </q-form>
+
+                        <!-- shows comments -->
+
+                        <div style="text-align: justify">
+                          <!-- {{ getCommentsF() }} -->
+                          <q-card-section style="display: flex">
+                            <q-img
+                              src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                              style="
+                                min-width: 30px;
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 50%;
+                              "
+                            />
+                            <div style="width: 90%" class="q-ml-sm">
+                              Lorem ipsum dolor sit amet consectetur adipisicing
+                              elit. Dolorum provident iste harum rem aliquid!
+                              Culpa quam laudantium consequatur at officiis
+                              dicta provident commodi, iste consequuntur iure
+                              labore. Cumque, mollitia officia.
+                            </div>
+                          </q-card-section>
+                          <q-card-section style="display: flex">
+                            <q-img
+                              src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                              style="
+                                min-width: 30px;
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 50%;
+                              "
+                            />
+                            <div style="width: 90%" class="q-ml-sm"></div>
+                          </q-card-section>
                         </div>
                       </div>
                     </q-card-section>
@@ -1096,7 +1143,7 @@
 .dueDateGrade
   background-color: #f3f3f3
   border: 1px solid #d9d9d9
-  width: 100px
+  width: 120px
 @media (max-width:1004px)
   .courseDescUpcoming
     display: flex
@@ -1226,6 +1273,7 @@ import { Notify, exportFile } from "quasar";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
 import { getCoursesMaterials } from "src/components/courseMaterials";
 import { viewViewerUser } from "src/components/user";
+import { addCommentMaterials } from "src/components/addComments";
 
 const loading = ref(false);
 const route = useRoute();
@@ -1246,6 +1294,8 @@ const announcementLink = ref(true);
 const materialsLink = ref(false);
 const assignmentLink = ref(false);
 
+const addComment = ref("");
+const getComment = ref();
 // create new post
 const createAnnouncement = ref("");
 const materialTitle = ref("");
@@ -1254,8 +1304,8 @@ const materialsFile = ref("");
 const assignemntTitle = ref("");
 const assignemntDescription = ref("");
 const assignemntFile = ref("");
-const grade = ref("");
-const dueDate = ref("");
+const grade = ref();
+const dueDate = ref();
 const dueTime = ref("");
 // role validation
 const roleChecker = ref("");
@@ -1266,6 +1316,7 @@ const courses = ref(null);
 const courseId = route.params.courseId;
 
 const materials = ref(null);
+const materiialId = ref(null);
 const filter = ref("");
 const selectMyWorks = ref({
   options: ["All", "Submitted", "Missing", "Pending"],
@@ -1277,6 +1328,7 @@ const courseName = ref("");
 const courseSection = ref("");
 const courseDescription = ref("");
 
+const isoDate = ref();
 const showFeed = () => {
   feedLink.value = true;
   taskLink.value = false;
@@ -1467,7 +1519,7 @@ async function postAnnouncement() {
       });
       return;
     }
-    const response = axios.post(
+    const response = await axios.post(
       `${process.env.api_host}/courses/material/${courseId}`,
       {
         description: createAnnouncement.value,
@@ -1484,6 +1536,9 @@ async function postAnnouncement() {
       type: "positive",
       message: "Announcement Posted Succesfully",
     });
+    getMaterials();
+    createAnnouncement.value = "";
+    return;
   } catch (err) {
     console.error(err);
     Notify.create({
@@ -1525,6 +1580,10 @@ async function postMaterial() {
       type: "positive",
       message: "Material Posted Succesfully",
     });
+    getMaterials();
+    materialTitle.value = "";
+    materialDescription.value = "";
+    materialsFile.value = null;
     return;
   } catch (err) {
     console.error(err);
@@ -1537,22 +1596,30 @@ async function postMaterial() {
   }
 }
 async function postAssignment() {
+  loading.value = true;
   const token = localStorage.getItem("authToken");
   const fileSubmit = await uploadToCloud(assignemntFile.value);
   try {
-    loading.value = true;
-    if (!assignemntTitle.value || !assignemntFile.value) {
+    if (
+      !assignemntTitle.value ||
+      !assignemntFile.value ||
+      !grade.value ||
+      !dueDate.value
+    ) {
       Notify.create({
         type: "warning",
         message: "Fill in required fields",
       });
       return;
     }
+    const intGrade = parseInt(grade.value);
     await axios.post(
       `${process.env.api_host}/courses/material/${courseId}`,
       {
         name: assignemntTitle.value,
         description: assignemntDescription.value,
+        grade: intGrade,
+        dueDate: dueDate.value,
         type: "assignment",
         file: fileSubmit,
       },
@@ -1567,6 +1634,12 @@ async function postAssignment() {
       type: "positive",
       message: "Assignment Posted Succesfully",
     });
+    getMaterials();
+    assignemntTitle.value = "";
+    assignemntFile.value = "";
+    assignemntDescription.value = "";
+    grade.value = "";
+    dueDate.value = "";
     return;
   } catch (err) {
     console.error(err);
@@ -1582,7 +1655,7 @@ async function postAssignment() {
 async function getMaterials() {
   try {
     const materialsDetails = await getCoursesMaterials(courseId);
-    materials.value = materialsDetails;
+    materials.value = await materialsDetails;
   } catch (err) {
     console.error(err);
   }
@@ -1672,14 +1745,38 @@ async function updateAnnouncement(materialId) {
   }
 }
 
-async function deleteCurrentAnnouncement() {
-  console.log("delete");
-}
-
-async function archivedCourse() {
+async function deleteCurrentAnnouncement(materialId) {
+  loading.value = true;
   try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.post(
+      `${process.env.api_host}/courses/material/update/${materialId}`,
+      {
+        isArchived: true,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Announcement Deleted Successfully",
+    });
+
+    getMaterials();
+
+    deleteAnnouncement.value = false;
   } catch (err) {
-    console.error(err);
+    console.error(err.response || err);
+    Notify.create({
+      type: "negative",
+      message: err.response?.data?.message || "Something went wrong",
+    });
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -1753,6 +1850,32 @@ function exportStudentList() {
     });
   }
 }
+
+async function addCommentF(materialId) {
+  try {
+    loading.value = true;
+    await addCommentMaterials(materialId, addComment.value);
+    addComment.value = "";
+  } catch (err) {
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+// async function getCommentsF(materialId) {
+//   try {
+//     const response = await axios.get(
+//       `${process.env.api_host}/courses/getComment?courseId=${materialId}`
+//     );
+//     getComment.value = await response.data;
+//     console.log("dsa0", getComment.value);
+//     return getComment.value;
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }
+
 onMounted(() => {
   getMaterials();
   getCourses();

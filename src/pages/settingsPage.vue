@@ -69,6 +69,7 @@
                         class="q-pl-md"
                         type="text"
                         borderless
+                        disable
                         v-model="username"
                         style="border: 1px solid #4b4b4b; border-radius: 14px"
                       />

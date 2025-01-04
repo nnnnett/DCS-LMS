@@ -85,6 +85,16 @@
       </q-item>
     </div>
     <div class="q-py-sm">
+      <q-item clickable @click="router.replace(`/main/settings`)">
+        <q-item-section avatar>
+          <q-icon name="settings" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Settings</q-item-label>
+        </q-item-section>
+      </q-item>
+    </div>
+    <div class="q-py-sm">
       <q-item clickable @click="handleLogout">
         <q-item-section avatar>
           <q-icon name="logout" />
@@ -133,6 +143,16 @@
         </q-item-section>
         <q-item-section>
           <q-item-label>Reports</q-item-label>
+        </q-item-section>
+      </q-item>
+    </div>
+    <div class="q-py-sm">
+      <q-item clickable @click="router.replace(`/main/settings`)">
+        <q-item-section avatar>
+          <q-icon name="settings" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Settings</q-item-label>
         </q-item-section>
       </q-item>
     </div>

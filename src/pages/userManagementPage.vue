@@ -24,14 +24,32 @@
             <q-tr key="id" :props="props">
               <q-td>{{ props.row.lastName }}</q-td>
               <q-td> {{ props.row.firstName }} </q-td>
+              <q-td> {{ props.row.userName }} </q-td>
               <q-td>{{ props.row.email }}</q-td>
               <q-td>{{ props.row.role }}</q-td>
               <q-td>{{ props.row.status }}</q-td>
               <q-td>{{ props.row.enrolledCourse }}</q-td>
               <q-td>
-                <q-btn flat class="text-primary">Edit</q-btn>
-                <q-btn flat class="text-red">Delete</q-btn></q-td
-              >
+                <q-btn-dropdown dropdown-icon="more_vert" flat>
+                  <q-list>
+                    <q-item>
+                      <q-btn flat class="text-primary" @click="editUser"
+                        >Edit</q-btn
+                      ></q-item
+                    >
+                    <q-item>
+                      <q-btn flat class="text-red" @click="archiveUser"
+                        >Archive</q-btn
+                      ></q-item
+                    >
+                    <q-item>
+                      <q-btn flat class="text-red" @click="resetPassword"
+                        >Reset Pass</q-btn
+                      ></q-item
+                    >
+                  </q-list>
+                </q-btn-dropdown>
+              </q-td>
             </q-tr>
           </template>
           <template v-slot:top-left>
@@ -79,6 +97,7 @@ const rows = ref([
     id: 1,
     firstName: "Kenneth",
     lastName: "Doblon",
+    userName: "nnet",
     email: "kennethdoblon@gmail.com",
     role: "student",
     status: "active",
@@ -88,6 +107,7 @@ const rows = ref([
     id: 2,
     firstName: "Jules",
     lastName: "Barantes",
+    userName: "magister",
     email: "julesbarantes@gmail.com",
     role: "admin",
     status: "inactive",
@@ -97,6 +117,7 @@ const rows = ref([
     id: 3,
     firstName: "Khris",
     lastName: "Wahing",
+    userName: "kira",
     email: "khriswahing@gmail.com",
     role: "instructor",
     status: "active",
@@ -117,6 +138,12 @@ const columns = ref([
     label: "First Name",
     align: "left",
     field: "firstName",
+  },
+  {
+    name: "userName",
+    label: "User Name",
+    align: "left",
+    field: "userName",
   },
   {
     name: "email",
@@ -149,6 +176,17 @@ const columns = ref([
     field: "actions",
   },
 ]);
+
+async function resetPassword() {
+  console.log("reset pass");
+}
+async function editUser() {
+  console.log("Edit User");
+}
+
+async function archiveUser() {
+  console.log("Archived user");
+}
 
 function wrapCsvValue(val, formatFn, row) {
   let formatted = formatFn !== void 0 ? formatFn(val, row) : val;
