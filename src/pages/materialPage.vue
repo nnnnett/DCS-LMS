@@ -78,19 +78,32 @@
                   <div>{{ materials.grade }} Points</div>
                 </div>
                 <div v-if="isInstructor">
-                  <q-btn-dropdown flat dropdown-icon="more_vert">
-                    <q-list>
-                      <q-item
-                        clickable
-                        v-close-popup
-                        @click="editAssignment = true"
-                      >
-                        <q-item-section>
-                          <q-item-label>Edit</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
+                  <div v-if="materials.type === 'assignment'">
+                    <q-btn-dropdown flat dropdown-icon="more_vert">
+                      <q-list>
+                        <q-item
+                          clickable
+                          v-close-popup
+                          @click="editAssignment = true"
+                        >
+                          <q-item-section>
+                            <q-item-label>Edit</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown>
+                  </div>
+                  <div v-if="materials.type === 'material'">
+                    <q-btn-dropdown flat dropdown-icon="more_vert">
+                      <q-list>
+                        <q-item clickable v-close-popup @click="tryew">
+                          <q-item-section>
+                            <q-item-label>Edit</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown>
+                  </div>
                 </div>
               </div>
             </q-card-section>
@@ -102,7 +115,7 @@
                     <div class="text-h6">Edit Assignment</div>
                   </q-card-section>
                   <!-- q form -->
-                  <q-form>
+                  <q-form @submit.prevent="updateAssignment">
                     <div
                       style="width: 100%; color: #4b4b4b"
                       class="q-px-xl flex flex-center"
@@ -112,7 +125,7 @@
                           Title
                         </q-card-section>
                         <q-input
-                          v-model="editTitle"
+                          v-model="editTitleAssignment"
                           type="text"
                           borderless
                           class="q-px-md"
@@ -125,7 +138,7 @@
                           Assignment Description
                         </q-card-section>
                         <q-input
-                          v-model="editDescription"
+                          v-model="editDescriptionAssignment"
                           type="textarea"
                           borderless
                           class="q-px-md"
@@ -133,12 +146,10 @@
                         >
                         </q-input>
                       </div>
+
                       <div style="width: 90%">
-                        <q-card-section class="q-px-none">
-                          Assignment Description
-                        </q-card-section>
                         <q-file
-                          v-model="newFile"
+                          v-model="newFileAssignment"
                           style="width: auto"
                           label="Upload File"
                           clearable
@@ -184,7 +195,12 @@
                           align="right"
                           class="bg-white text-teal"
                         >
-                          <q-btn flat label="Save" type="submit" />
+                          <q-btn
+                            flat
+                            :loading="loading"
+                            label="Save"
+                            type="submit"
+                          />
                         </q-card-actions>
                         <q-card-actions
                           align="right"
@@ -242,8 +258,8 @@
               class="q-px-xl assignmentContentTxt"
               style="color: #4b4b4b"
             >
-              <div class="text-h6 q-mb-sm">{{ materials.name }}</div>
-              <div style="text-align: justify">
+              <div class="text-h6 q-mb-sm">Description</div>
+              <div style="text-align: justify; font-size: 1.2em">
                 {{ materials.description }}
               </div>
             </q-card-section>
@@ -567,24 +583,28 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { getCoursesMaterials } from "src/components/courseMaterials";
+import { getMaterialData } from "src/components/courseMaterials";
 import { viewViewerUser } from "src/components/user";
+import { uploadToCloud } from "src/components/cloudinaryUtility";
 import axios from "axios";
+import { Notify } from "quasar";
 // for 3d viewer
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
+const loading = ref(false);
 const canvasContainer = ref(null);
 const route = useRoute();
 const submitWork = ref("");
 const subBtn = ref("");
-const editTitle = ref("");
+const editTitleAssignment = ref("");
 const editDueDate = ref("");
-const editDueTime = ref("");
+// const editDueTimeAssignment = ref("");
 const editGrade = ref("");
-const editDescription = ref("");
-const newFile = ref("");
+const editDescriptionAssignment = ref("");
+const newFileAssignment = ref(null);
+const currentAssignmentFile = ref("");
 // role validation
 const roleValidation = ref("");
 const isStudent = ref("");
@@ -699,11 +719,9 @@ async function displayUserInfo() {
     return (isAdmin.value = true);
   }
 }
-
 async function gradeSubmission() {
   console.log("submited");
 }
-
 async function fileExtension(file) {
   // Check if the file contains an extension
   console.log("file", file);
@@ -731,7 +749,6 @@ async function fileExtension(file) {
   });
   return;
 }
-
 async function render(fileObject) {
   console.log("render runnning");
   // Set up the scene, camera, and renderer
@@ -796,14 +813,12 @@ async function render(fileObject) {
     camera.updateProjectionMatrix();
   });
 }
-
 function downloadFile(fileUrl) {
   const link = document.createElement("a");
   link.href = fileUrl;
   link.target = "_blank";
   link.click();
 }
-
 async function formatTime(dueDate) {
   const date = new Date(dueDate);
 
@@ -822,7 +837,85 @@ async function formatTime(dueDate) {
   return;
 }
 
+async function tryew() {
+  console.log("re");
+}
+
+async function displayMaterialsInfo() {
+  const materialInfo = await getMaterialData(materialId);
+  editTitleAssignment.value = materialInfo.name;
+  editDescriptionAssignment.value = materialInfo.description;
+  editGrade.value = materialInfo.grade;
+  editDueDate.value = materialInfo.dueDate;
+  currentAssignmentFile.value = materialInfo.file;
+  console.log(currentAssignmentFile.value, "here");
+}
+
+async function updateAssignment() {
+  loading.value = true;
+  try {
+    const token = localStorage.getItem("authToken");
+
+    let fileSubmit = null;
+    if (newFileAssignment.value) {
+      fileSubmit = await uploadToCloud(newFileAssignment.value[0]);
+      const response = await axios.post(
+        `${process.env.api_host}/courses/material/update/${materialId}`,
+        {
+          name: editTitleAssignment.value,
+          description: editDescriptionAssignment.value,
+          grade: editGrade.value,
+          dueDate: editDueDate.value,
+          file: fileSubmit,
+          type: "assignment",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+        }
+      );
+    } else {
+      const response = await axios.post(
+        `${process.env.api_host}/courses/material/update/${materialId}`,
+        {
+          name: editTitleAssignment.value,
+          description: editDescriptionAssignment.value,
+          grade: editGrade.value,
+          dueDate: editDueDate.value,
+          type: "assignment",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+        }
+      );
+    }
+    console.log(fileSubmit);
+
+    fileExtension(fileSubmit);
+    Notify.create({
+      type: "positive",
+      message: "Announcement Edited Successfully",
+    });
+  } catch (err) {
+    console.error(err.response || err);
+    Notify.create({
+      type: "negative",
+      message: err.response?.data?.message || "Something went wrong",
+    });
+  } finally {
+    loading.value = false;
+    editAssignment.value = false;
+    location.reload();
+  }
+}
+
 onMounted(() => {
+  displayMaterialsInfo();
   assignmentChecker();
   displayUserInfo();
   checkSubmitted();

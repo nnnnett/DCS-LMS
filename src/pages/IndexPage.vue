@@ -184,31 +184,26 @@
             <div class="text-h6">Notification</div>
           </q-card-section>
           <!-- notification container -->
-          <div style="height: auto">
+          <div style="height: auto" v-if="notifications">
             <q-scroll-area style="height: 450px; max-width: 100%">
-              <q-card-section style="display: flex" v-for="n in 100" :key="n">
+              <q-card-section
+                style="display: flex"
+                v-for="notification in notifications"
+                :key="notification"
+              >
                 <div class="q-mr-xs">
                   <q-img
-                    src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                    :src="notification.instructorImage"
                     style="width: 50px; height: 50px; border-radius: 50%"
                   />
                 </div>
                 <div style="text-align: justify">
                   <!-- notif content -->
-                  <div>
-                    Rosalina D. Lacuesta posted a new announcement in “Capstone
-                    1” feed. Rosalina D. Lacuesta posted a new announcement in
-                    “Capstone 1” feed. Rosalina D. Lacuesta posted a new
-                    announcement in “Capstone 1” feed. Rosalina D. Lacuesta
-                    posted a new announcement in “Capstone 1” feed. Rosalina D.
-                    Lacuesta posted a new announcement in “Capstone 1” feed.
-                    Rosalina D. Lacuesta posted a new announcement in “Capstone
-                    1” feed. Rosalina D. Lacuesta posted a new announcement in
-                    “Capstone 1” feed. Rosalina D. Lacuesta posted a new
-                    announcement in “Capstone 1” feed.
-                  </div>
+                  <div>{{ notification.message }}</div>
                   <!-- notif date -->
-                  <div class="text-caption">just now</div>
+                  <div class="text-caption">
+                    {{ notification.createdAt }}
+                  </div>
                 </div>
               </q-card-section>
             </q-scroll-area>
@@ -324,6 +319,8 @@ const isStudent = ref("");
 const isInstructor = ref("");
 const isAdmin = ref("");
 
+const notifications = ref([]);
+const newDueDate = ref();
 async function isLogin() {
   const token = localStorage.getItem("authToken");
 
@@ -372,7 +369,33 @@ async function displayUserInfo() {
   }
 }
 
+async function getNotifications() {
+  const token = localStorage.getItem("authToken");
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/courses/getNotification`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Format the createdAt date
+    notifications.value = response.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Helper function to format the date
+function formatDate(isoDate) {
+  const date = new Date(isoDate);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${month}-${day}-${year}`;
+}
+
 onMounted(() => {
+  getNotifications();
   getUserCourses();
   displayUserInfo();
   isLogin();
