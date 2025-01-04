@@ -53,11 +53,16 @@
           <!-- prfile image -->
           <div class="registration-input q-mt-md">
             <q-file
+              class="q-px-md"
               v-model="imageProfile"
               accept="image/*"
               borderless
-              label="profile"
-            />
+              label="Upload Profile Image"
+            >
+              <template #append>
+                <q-icon name="upload"></q-icon>
+              </template>
+            </q-file>
           </div>
           <q-card-section class="q-pl-none q-pb-none text-h5">
             <div style="color: #4b4b4b">
@@ -223,7 +228,7 @@ async function registerStudent() {
   try {
     loading.value = true;
     const imageUrl = await uploadToCloud(imageProfile.value);
-
+    const token = localStorage.getItem("authToken");
     const response = await axios.post(
       `${process.env.api_host}/users/create`,
       {
@@ -238,7 +243,7 @@ async function registerStudent() {
         file: imageUrl,
       },
       {
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", authorization: token },
       }
     );
     $q.notify({
