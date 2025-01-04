@@ -130,7 +130,7 @@
               <q-card-section>
                 <div class="text-h6">Input Class Code</div>
               </q-card-section>
-              <q-form>
+              <q-form @submit.prevent="joinClass(classCode)">
                 <div class="flex flex-center column">
                   <div style="width: 80%">
                     <q-input
@@ -329,7 +329,11 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { Notify } from "quasar";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
-import { getActiveCourses } from "src/components/course";
+import {
+  getActiveCourses,
+  getMyCourses,
+  getMyClass,
+} from "src/components/course";
 import { viewViewerUser } from "src/components/user";
 
 const loading = ref(false);
@@ -351,8 +355,19 @@ const courses = ref(null);
 
 async function getUserCourses() {
   try {
-    const getCourseDetails = await getActiveCourses();
-    courses.value = getCourseDetails;
+    const myUser = await viewViewerUser();
+    console.log("user", myUser.role);
+    if (myUser.role === "student") {
+      const getCourseDetails = await getMyCourses(myUser._id);
+      courses.value = getCourseDetails;
+    } else if (myUser.role === "instructor") {
+      const getCourseDetails = await getMyClass(myUser._id);
+      courses.value = getCourseDetails;
+    } else {
+      const getCourseDetails = await getActiveCourses();
+      courses.value = getCourseDetails;
+    }
+
     courses.value.forEach((course, index) => {
       course.file;
     });
@@ -450,6 +465,24 @@ async function archivedCourses(courseId) {
     });
   }
 }
+
+async function joinClass(courseCode) {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${process.env.api_host}/courses/joinCourse/${courseCode}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 onMounted(() => {
   getUserCourses();
   displayUserInfo();

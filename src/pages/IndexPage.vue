@@ -307,7 +307,11 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { getActiveCourses } from "src/components/course";
+import {
+  getActiveCourses,
+  getMyCourses,
+  getMyClass,
+} from "src/components/course";
 import { viewViewerUser } from "src/components/user";
 
 const loading = ref(true);
@@ -347,8 +351,19 @@ async function isLogin() {
 
 async function getUserCourses() {
   try {
-    const getCourseDetails = await getActiveCourses();
-    courses.value = getCourseDetails;
+    const myUser = await viewViewerUser();
+    console.log("user", myUser.role);
+    if (myUser.role === "student") {
+      const getCourseDetails = await getMyCourses(myUser._id);
+      courses.value = getCourseDetails;
+    } else if (myUser.role === "instructor") {
+      const getCourseDetails = await getMyClass(myUser._id);
+      courses.value = getCourseDetails;
+    } else {
+      const getCourseDetails = await getActiveCourses();
+      courses.value = getCourseDetails;
+    }
+
     courses.value.forEach((course, index) => {
       course.file;
     });

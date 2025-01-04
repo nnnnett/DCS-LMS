@@ -32,3 +32,27 @@ export async function getAllCourses() {
     console.error(err);
   }
 }
+
+export async function getMyCourses(studentId) {
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/courses?studentId=${studentId}`
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function getMyClass(instructorId) {
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/courses?instructorId=${instructorId}`
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error(err);
+  }
+}

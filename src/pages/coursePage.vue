@@ -118,7 +118,7 @@
                   </div>
 
                   <div style="font-size: 1em; font-weight: 500">
-                    Hub: 102723
+                    Hub: {{ courses._id }}
                   </div>
                 </div>
               </div>
