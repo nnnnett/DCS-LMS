@@ -73,9 +73,9 @@
                 </div>
               </div>
               <div class="dueDateTxtBtn">
-                <div>
-                  <div>DUE JAN. 06 2025</div>
-                  <div>100 points</div>
+                <div v-if="materials.type === 'assignment'">
+                  <div>Due {{ newDueDate }}</div>
+                  <div>{{ materials.grade }} Points</div>
                 </div>
                 <div v-if="isInstructor">
                   <q-btn-dropdown flat dropdown-icon="more_vert">
@@ -171,16 +171,6 @@
                             borderless
                           />
                         </div>
-                        <div class="q-pl-sm dueDateGrade">
-                          <div style="color: #8f9bb3" class="text-caption">
-                            Time Due
-                          </div>
-                          <q-input
-                            type="time"
-                            v-model="editDueTime"
-                            borderless
-                          />
-                        </div>
                       </q-card-section>
 
                       <div
@@ -209,22 +199,44 @@
               </q-dialog>
             </div>
             <!-- Activity Image -->
-            <q-card-section>
-              <div style="height: auto">
-                <q-img
-                  src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702966/assets/mtmjbgnoj8viqadlanma.jpg"
-                  style="
-                    height: auto;
-                    background-size: cover;
-                    background-position: center;
-                    position: relative;
-                    border-radius: 14px;
-                    overflow: hidden;
-                    display: flex;
-                  "
-                />
-              </div>
-            </q-card-section>
+            <div v-if="isRenderFile">
+              <q-card-section>
+                <div ref="canvasContainer" class="canvas-container"></div>
+              </q-card-section>
+            </div>
+            <div v-if="isImageFile">
+              <q-card-section>
+                <div style="height: auto">
+                  <q-img
+                    :src="materials.file"
+                    style="
+                      height: auto;
+                      background-size: cover;
+                      background-position: center;
+                      position: relative;
+                      border-radius: 14px;
+                      overflow: hidden;
+                      display: flex;
+                    "
+                  />
+                </div>
+              </q-card-section>
+            </div>
+
+            <!-- download file -->
+            <div v-if="isDocuFile">
+              <q-card-section class="q-px-xl assignmentFile">
+                <div style="width: 100%">
+                  <q-btn
+                    @click="downloadFile(materials.file)"
+                    target="_blank"
+                    style="text-decoration: none; color: var(--q-primary)"
+                  >
+                    Download File
+                  </q-btn>
+                </div>
+              </q-card-section>
+            </div>
             <!-- assignment content -->
             <q-card-section
               class="q-px-xl assignmentContentTxt"
@@ -235,19 +247,7 @@
                 {{ materials.description }}
               </div>
             </q-card-section>
-            <!-- download file -->
-            <q-card-section class="q-px-xl assignmentFile">
-              <div style="width: 100%">
-                <q-btn
-                  target="_blank"
-                  style="text-decoration: none; color: var(--q-primary)"
-                >
-                  //file name lore accusamus ex nulla hic esse, numquam itaque
-                  obcaecati id. Harum excepturi porro numquam quasi ut, corporis
-                  sit rem fuga maiores beatae.
-                </q-btn>
-              </div>
-            </q-card-section>
+
             <q-separator />
             <q-card-section>
               <div>
@@ -570,7 +570,12 @@ import { useRoute } from "vue-router";
 import { getCoursesMaterials } from "src/components/courseMaterials";
 import { viewViewerUser } from "src/components/user";
 import axios from "axios";
+// for 3d viewer
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
+const canvasContainer = ref(null);
 const route = useRoute();
 const submitWork = ref("");
 const subBtn = ref("");
@@ -602,6 +607,8 @@ const isAssignment = ref("");
 const assgnmentDetails = ref(true);
 const studentSubmission = ref(false);
 
+const newDueDate = ref();
+
 async function showAssignmentDetails() {
   assgnmentDetails.value = true;
   studentSubmission.value = false;
@@ -611,7 +618,21 @@ async function showStudentSubmission() {
   assgnmentDetails.value = false;
   studentSubmission.value = true;
 }
+
+const isImageFile = ref(true);
+const isRenderFile = ref(true);
+const isDocuFile = ref(true);
 const filter = ref("");
+const allowedExtensionImage = [
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "bmp",
+  "svg",
+  "webp",
+];
+
 // checks if its user, instructor, admin
 
 // check the users submitted assignment status
@@ -631,6 +652,9 @@ async function assignmentChecker() {
       `${process.env.api_host}/courses/getMaterial?query=${materialId}`
     );
     materials.value = response.data[0];
+    await formatTime(materials.value.dueDate);
+    await fileExtension(materials.value.file);
+
     if (materials.value.type === "assignment") {
       return (isAssignment.value = true);
     }
@@ -678,6 +702,124 @@ async function displayUserInfo() {
 
 async function gradeSubmission() {
   console.log("submited");
+}
+
+async function fileExtension(file) {
+  // Check if the file contains an extension
+  console.log("file", file);
+  const fileChecker = file.split(".").pop().toLowerCase();
+
+  // If the file doesn't have an extension or is not allowed, return early
+  if (allowedExtensionImage.includes(fileChecker)) {
+    isImageFile.value = true;
+    isRenderFile.value = false;
+    isDocuFile.value = false;
+  } else if (fileChecker === "glb") {
+    isRenderFile.value = true;
+    isImageFile.value = false;
+    isDocuFile.value = false;
+    render(file);
+  } else {
+    isDocuFile.value = true;
+    isImageFile.value = false;
+    isRenderFile.value = false;
+  }
+  console.log({
+    docu: isDocuFile.value,
+    img: isImageFile.value,
+    rend: isRenderFile.value,
+  });
+  return;
+}
+
+async function render(fileObject) {
+  console.log("render runnning");
+  // Set up the scene, camera, and renderer
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  camera.position.set(0, 0, 40); // Adjust camera position for a good initial view
+
+  const renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
+  canvasContainer.value.appendChild(renderer.domElement);
+
+  // Add ambient light
+  const light = new THREE.AmbientLight(0xffffff, 1);
+  scene.add(light);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  scene.add(ambientLight);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+  directionalLight.position.set(5, 10, 7.5);
+  directionalLight.castShadow = true; // Enable shadows
+  scene.add(directionalLight);
+  // Add OrbitControls for interactivity
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; // Smooths the interaction
+  controls.dampingFactor = 0.05;
+  controls.screenSpacePanning = false;
+  controls.minDistance = 20; // Minimum zoom distance
+  controls.maxDistance = 50; // Maximum zoom distance
+  controls.maxTargetRadius = 40;
+  controls.target.set(0, 1, 0); // Center the controls on the model
+
+  // Load the 3D model
+  const loader = new GLTFLoader();
+  loader.load(
+    `${fileObject}`,
+    (gltf) => {
+      const model = gltf.scene;
+      scene.add(model);
+
+      // Animate the scene
+      const animate = () => {
+        requestAnimationFrame(animate);
+        controls.update(); // Update the controls each frame
+        renderer.render(scene, camera);
+      };
+      animate();
+    },
+    undefined,
+    (error) => {
+      console.error("An error occurred while loading the model:", error);
+    }
+  );
+
+  // Resize handler
+  window.addEventListener("resize", () => {
+    renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+}
+
+function downloadFile(fileUrl) {
+  const link = document.createElement("a");
+  link.href = fileUrl;
+  link.target = "_blank";
+  link.click();
+}
+
+async function formatTime(dueDate) {
+  const date = new Date(dueDate);
+
+  // Extract date components
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  // Format the date
+  const formattedDate = `${month}-${day}-${year}:${hours}-${minutes}-${seconds}`;
+  console.log(formattedDate);
+  newDueDate.value = formattedDate;
+  return;
 }
 
 onMounted(() => {

@@ -17,7 +17,7 @@
           <q-icon name="import_contacts" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>Enrolled Course</q-item-label>
+          <q-item-label> Courses</q-item-label>
         </q-item-section>
       </q-item>
     </div>
@@ -70,7 +70,7 @@
           <q-icon name="import_contacts" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>Enrolled Course</q-item-label>
+          <q-item-label> Courses</q-item-label>
         </q-item-section>
       </q-item>
     </div>

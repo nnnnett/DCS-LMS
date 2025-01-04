@@ -10,7 +10,7 @@
           v-if="courses"
         >
           <div v-if="courses.isArchived === false">
-            Enrolled Courses > {{ courses.name }}
+            Courses > {{ courses.name }}
           </div>
           <div v-if="courses.isArchived === true">
             Archived Courses > {{ courses.name }}

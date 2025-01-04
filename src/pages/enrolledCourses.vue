@@ -7,7 +7,7 @@
         style="width: 100%"
       >
         <div class="text-h5 text-weight-medium" style="color: #4b4b4b">
-          Enrolled Courses
+          Courses
         </div>
         <q-space />
         <div
