@@ -127,7 +127,7 @@
       </q-item>
     </div>
     <div class="q-py-sm">
-      <q-item clickable @click="router.replace(`/main`)">
+      <q-item clickable @click="router.replace(`/main/courseManagementPage`)">
         <q-item-section avatar>
           <q-icon name="library_books" />
         </q-item-section>

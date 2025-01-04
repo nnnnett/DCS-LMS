@@ -37,6 +37,10 @@ const routes = [
         path: "userManagementPage",
         component: () => import("pages/userManagementPage.vue"),
       },
+      {
+        path: "courseManagementPage",
+        component: () => import("pages/courseManagementPage.vue"),
+      },
     ],
   },
   {

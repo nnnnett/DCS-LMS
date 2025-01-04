@@ -373,8 +373,8 @@ async function displayUserInfo() {
 }
 
 onMounted(() => {
-  isLogin();
   getUserCourses();
   displayUserInfo();
+  isLogin();
 });
 </script>
