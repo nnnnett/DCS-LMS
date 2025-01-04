@@ -337,6 +337,7 @@ const loading = ref(false);
 const roleValidation = ref("");
 const isStudent = ref("");
 const isInstructor = ref("");
+const isAdmin = ref("");
 const createCoursePopup = ref(false);
 const classCodePopup = ref(false);
 // create course

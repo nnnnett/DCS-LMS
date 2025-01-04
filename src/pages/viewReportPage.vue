@@ -1,5 +1,6 @@
 <template>
   <q-page>
+    <!-- this page is not needed (was transfered to coursePage(grades)) -->
     <div class="main-container q-px-xl">
       <q-card-section
         class="q-mt-lg q-pl-md flex q-px-none headerTxtBtn"

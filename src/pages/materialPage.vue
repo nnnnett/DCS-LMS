@@ -387,6 +387,7 @@
               :rows="rows"
               :columns="columns"
               row-key="id"
+              separator="cell"
             >
               <template v-slot:top>
                 <div>
@@ -395,12 +396,27 @@
                     debounce="300"
                     color="primary"
                     v-model="filter"
+                    :rows-per-page-options="[0, 15, 20, 25, 30]"
                   >
                     <template v-slot:append>
                       <q-icon name="search" />
                     </template>
                   </q-input>
                 </div>
+              </template>
+              <template #body="props">
+                <q-tr key="id" :props="props">
+                  <q-td> {{ props.row.name }}</q-td>
+                  <q-td> {{ props.row.submissions }}</q-td>
+                  <q-td> {{ props.row.status }}</q-td>
+                  <q-td>
+                    <div style="width: 20%">
+                      <q-form @submit.prevent="gradeSubmission">
+                        <q-input v-model="gradeInput" type="number" />
+                      </q-form>
+                    </div>
+                  </q-td>
+                </q-tr>
               </template>
             </q-table>
           </div>
@@ -575,6 +591,7 @@ const isMissing = ref("");
 const isPending = ref("");
 
 const editAssignment = ref(false);
+const gradeInput = ref("");
 
 const courseId = route.params.courseId;
 const materialId = route.params.materialId;
@@ -657,6 +674,10 @@ async function displayUserInfo() {
   } else if (roleValidation.value === "admin") {
     return (isAdmin.value = true);
   }
+}
+
+async function gradeSubmission() {
+  console.log("submited");
 }
 
 onMounted(() => {
