@@ -136,7 +136,7 @@
         </q-item-section>
       </q-item>
     </div>
-    <div class="q-py-sm">
+    <!-- <div class="q-py-sm">
       <q-item clickable @click="router.replace(`/main/report`)">
         <q-item-section avatar>
           <q-icon name="bar_chart" />
@@ -145,7 +145,7 @@
           <q-item-label>Reports</q-item-label>
         </q-item-section>
       </q-item>
-    </div>
+    </div> -->
     <div class="q-py-sm">
       <q-item clickable @click="router.replace(`/main/settings`)">
         <q-item-section avatar>

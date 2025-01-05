@@ -17,220 +17,46 @@
           :columns="columns"
           row-key="id"
           separator="cell"
-          :filter="filter"
           :rows-per-page-options="[0, 15, 20, 25, 30]"
         >
           <template #body="props">
-            <q-tr key="id" :props="props">
+            <q-tr :props="props">
               <q-td>{{ props.row.lastName }}</q-td>
-              <q-td> {{ props.row.firstName }} </q-td>
-              <q-td> {{ props.row.userName }} </q-td>
+              <q-td>{{ props.row.firstName }}</q-td>
+              <q-td>{{ props.row.username }}</q-td>
               <q-td>{{ props.row.email }}</q-td>
               <q-td>{{ props.row.role }}</q-td>
               <q-td>{{ props.row.status }}</q-td>
-              <q-td>{{ props.row.enrolledCourse }}</q-td>
+
               <q-td>
                 <q-btn-dropdown dropdown-icon="more_vert" flat>
                   <q-list>
                     <q-item>
                       <q-btn flat class="text-primary" @click="editUser"
                         >Edit</q-btn
-                      ></q-item
-                    >
+                      >
+                    </q-item>
                     <q-item>
-                      <q-btn flat class="text-red" @click="archiveUser"
-                        >Archive</q-btn
-                      ></q-item
-                    >
+                      <q-btn
+                        flat
+                        class="text-red"
+                        @click="archiveUser(props.row.id)"
+                        >{{ props.row.button }}</q-btn
+                      >
+                    </q-item>
                     <q-item>
-                      <q-btn flat class="text-red" @click="resetPassword"
-                        >Reset Pass</q-btn
-                      ></q-item
-                    >
+                      <q-btn
+                        flat
+                        class="text-red"
+                        @click="resetPassword(props.row.id)"
+                      >
+                        Reset Pass
+                      </q-btn>
+                    </q-item>
                   </q-list>
                 </q-btn-dropdown>
               </q-td>
             </q-tr>
-          </template>
-          <template v-slot:top-left>
-            <q-input
-              borderless
-              dense
-              debounce="300"
-              v-model="filter"
-              placeholder="Search"
-            >
-              <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input>
-          </template>
-          <template v-slot:top-right>
-            <div style="display: flex">
-              <q-btn
-                class="bg-primary text-white q-mr-sm"
-                flat
-                label="Add Instructor"
-                no-caps
-                @click="addInstructor = true"
-              />
-
-              <q-btn
-                class="bg-primary text-white"
-                flat
-                icon-right="archive"
-                label="Export to csv"
-                no-caps
-                @click="exportTable"
-              />
-            </div>
-            <div>
-              <q-dialog v-model="addInstructor" persistent>
-                <q-card class="registration-container q-pa-xl">
-                  <q-form @submit.prevent="registerInstructor">
-                    <q-card-section>
-                      <div style="color: #4b4b4b; font-weight: 500">
-                        Add Instructor
-                      </div>
-                    </q-card-section>
-
-                    <q-card-section class="q-pl-none q-pb-none text-h5">
-                      <div style="color: #4b4b4b">
-                        <span style="color: #46af4b">*</span> Basic info
-                      </div>
-                    </q-card-section>
-                    <!-- First Name -->
-                    <q-card-section class="q-pl-none q-pb-xs">
-                      <div style="color: #6c7275">First Name</div>
-                    </q-card-section>
-                    <div class="registration-input q-px-sm">
-                      <q-input type="text" borderless v-model="firstName" />
-                    </div>
-                    <!-- Middle Name -->
-                    <q-card-section class="q-pl-none q-pb-xs">
-                      <div style="color: #6c7275">Middle Name</div>
-                    </q-card-section>
-                    <div class="registration-input q-px-sm">
-                      <q-input type="text" borderless v-model="middleName" />
-                    </div>
-                    <!-- Last Name -->
-                    <q-card-section class="q-pl-none q-pb-xs">
-                      <div style="color: #6c7275">Last Name</div>
-                    </q-card-section>
-                    <div class="registration-input q-px-sm">
-                      <q-input type="text" borderless v-model="lastName" />
-                    </div>
-                    <!-- prfile image -->
-                    <div class="registration-input q-mt-md">
-                      <q-file
-                        class="q-px-md"
-                        v-model="imageProfile"
-                        accept="image/*"
-                        borderless
-                        label="Upload Profile Image"
-                      >
-                        <template #append>
-                          <q-icon name="upload"></q-icon>
-                        </template>
-                      </q-file>
-                    </div>
-                    <q-card-section class="q-pl-none q-pb-none text-h5">
-                      <div style="color: #4b4b4b">
-                        <span style="color: #46af4b">*</span> Login info
-                      </div>
-                    </q-card-section>
-                    <q-card-section class="q-pl-none q-pb-xs">
-                      <div style="color: #6c7275">Username</div>
-                    </q-card-section>
-                    <!-- username -->
-                    <div class="registration-input q-px-sm">
-                      <q-input type="text" borderless v-model="username" />
-                    </div>
-                    <!-- Email -->
-                    <q-card-section class="q-pl-none q-pb-xs">
-                      <div style="color: #6c7275">Email</div>
-                    </q-card-section>
-                    <div class="registration-input q-px-sm">
-                      <q-input type="email" borderless v-model="email" />
-                    </div>
-                    <q-card-section class="q-pl-none q-pb-xs">
-                      <div style="color: #6c7275">Password</div>
-                    </q-card-section>
-                    <!-- Password -->
-                    <div class="registration-input q-px-sm">
-                      <q-input
-                        :type="isPwd ? 'password' : 'text'"
-                        borderless
-                        v-model="password"
-                      >
-                        <template v-slot:append>
-                          <q-icon
-                            :name="isPwd ? 'visibility_off' : 'visibility'"
-                            class="cursor-pointer"
-                            @click="isPwd = !isPwd"
-                          /> </template
-                      ></q-input>
-                    </div>
-                    <q-card-section class="q-pl-none q-pb-xs">
-                      <div style="color: #6c7275">Confirm Password</div>
-                    </q-card-section>
-                    <!-- Password -->
-                    <div class="registration-input q-px-sm">
-                      <q-input
-                        :type="isCPwd ? 'password' : 'text'"
-                        borderless
-                        v-model="confirmPassword"
-                      >
-                        <template v-slot:append>
-                          <q-icon
-                            :name="isCPwd ? 'visibility_off' : 'visibility'"
-                            class="cursor-pointer"
-                            @click="isCPwd = !isCPwd"
-                          />
-                        </template>
-                      </q-input>
-                    </div>
-
-                    <div
-                      style="width: 100%; border-radius: 14px"
-                      class="q-mt-md flex"
-                    >
-                      <!-- submit button -->
-                      <q-btn
-                        type="submit"
-                        flat
-                        label="Sign Up"
-                        :loading="loading"
-                        style="
-                          width: 45%;
-                          background-color: #46af4b;
-                          color: #ffffff;
-                          text-transform: capitalize;
-                          border-radius: 14px;
-                          padding: 14px 0px;
-                        "
-                      />
-                      <!-- cancel button -->
-                      <q-space />
-                      <q-btn
-                        flat
-                        label="Cancel"
-                        :loading="loading"
-                        @click="cancelRegister"
-                        style="
-                          width: 45%;
-                          border: 1px solid #46af4b;
-                          color: #46af4b;
-                          text-transform: capitalize;
-                          border-radius: 14px;
-                          padding: 14px 0px;
-                        "
-                      />
-                    </div>
-                  </q-form>
-                </q-card>
-              </q-dialog>
-            </div>
           </template>
         </q-table>
       </div>
@@ -259,7 +85,7 @@
 </style>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { Notify, exportFile } from "quasar";
 import axios from "axios";
 import { uploadToCloud } from "src/components/cloudinaryUtility";
@@ -280,40 +106,9 @@ const isArchived = ref(false);
 const loading = ref(false);
 const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/; // Regex for special char, number, and min 8 chars
 const imageProfile = ref(null);
+const allUser = ref("");
 
-const rows = ref([
-  {
-    id: 1,
-    firstName: "Kenneth",
-    lastName: "Doblon",
-    userName: "nnet",
-    email: "kennethdoblon@gmail.com",
-    role: "student",
-    status: "active",
-    enrolledCourse: "Course 5, Course 2",
-  },
-  {
-    id: 2,
-    firstName: "Jules",
-    lastName: "Barantes",
-    userName: "magister",
-    email: "julesbarantes@gmail.com",
-    role: "admin",
-    status: "inactive",
-    enrolledCourse: "Course 1, Course 3",
-  },
-  {
-    id: 3,
-    firstName: "Khris",
-    lastName: "Wahing",
-    userName: "kira",
-    email: "khriswahing@gmail.com",
-    role: "instructor",
-    status: "active",
-    enrolledCourse: "Course 1, Course 3",
-  },
-]);
-
+const rows = ref([]); // Initialize rows with an empty array
 const columns = ref([
   {
     sortable: true,
@@ -332,7 +127,7 @@ const columns = ref([
     name: "userName",
     label: "User Name",
     align: "left",
-    field: "userName",
+    field: "username", // Matches the field name from backend data
   },
   {
     name: "email",
@@ -350,14 +145,9 @@ const columns = ref([
     name: "status",
     label: "Status",
     align: "left",
-    field: "status",
+    field: "status", // Add this field to your backend data if necessary
   },
-  {
-    name: "enrolledCourse",
-    label: "Enrolled Course",
-    align: "left",
-    field: "enrolledCourse",
-  },
+
   {
     name: "actions",
     label: "Actions",
@@ -366,15 +156,96 @@ const columns = ref([
   },
 ]);
 
-async function resetPassword() {
+async function getUser() {
+  try {
+    const response = await axios.get(`${process.env.api_host}/users`);
+    rows.value = response.data.map((user) => ({
+      id: user._id,
+      lastName: user.lastName,
+      firstName: user.firstName,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      status: user.isArchived ? "archived" : "active", // Example: Determine status from backend data
+      button: user.isArchived ? "unarchive" : "archive",
+    }));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function resetPassword(userId) {
   console.log("reset pass");
+  try {
+    const token = localStorage.getItem("authToken");
+    const getUser = await axios.get(
+      `${process.env.api_host}/users?query=${userId}`
+    );
+    const newPassword =
+      getUser.data[0].lastName + "" + getUser.data[0].username;
+    console.log("new", newPassword);
+    const response = await axios.post(
+      `${process.env.api_host}/users/update/${userId}`,
+      {
+        password: newPassword,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "password reset successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went wrong",
+    });
+  }
 }
 async function editUser() {
   console.log("Edit User");
 }
 
-async function archiveUser() {
+async function archiveUser(userId) {
   console.log("Archived user");
+  try {
+    const token = localStorage.getItem("authToken");
+    const getUsers = await axios.get(
+      `${process.env.api_host}/users?query=${userId}`
+    );
+    const isArchived = !getUsers.data[0].isArchived;
+
+    console.log("new", isArchived);
+    const response = await axios.post(
+      `${process.env.api_host}/users/update/${userId}`,
+      {
+        isArchived: isArchived,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "archived user successfully",
+    });
+    getUser();
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went wrong",
+    });
+  }
 }
 
 function wrapCsvValue(val, formatFn, row) {
@@ -522,4 +393,8 @@ async function cancelRegister() {
   imageProfile.value = "";
   addInstructor.value = false;
 }
+
+onMounted(() => {
+  getUser();
+});
 </script>

@@ -70,8 +70,37 @@
             </q-card-section>
           </div>
 
+          <div v-if="isAdmin" style="">
+            <q-card-section class="active-pendingTask-container" v-if="isAdmin">
+              <div>
+                <q-icon name="library_books" color="primary" size="29px" />
+              </div>
+              <div class="q-ml-sm" v-if="adminCourseInfo">
+                <div class="text-h6">{{ adminCourseInfo.data.length }}</div>
+                <div class="text-body2">Active Courses</div>
+              </div>
+            </q-card-section>
+
+            <div
+              class="adminPieChart-container q-mt-sm"
+              style="
+                border: 1px solid #d9d9d9;
+                height: auto;
+                border-radius: 14px;
+              "
+            >
+              <div style="width: 80%">
+                <q-card-section>
+                  <div class="text-h6">User Statistics</div>
+                </q-card-section>
+              </div>
+              <div class="adminPieChart">
+                <pieChart />
+              </div>
+            </div>
+          </div>
           <!-- under sub content 1 -->
-          <div class="sub-content-1-2 q-mt-lg" v-if="!isAdmin">
+          <div class="sub-content-1-2 q-mt-lg">
             <q-card-section class="flex q-px-none" style="max-width: 929px">
               <div class="text-h6">Enrolled Courses</div>
               <q-space />
@@ -143,16 +172,16 @@
                     </div>
                   </div>
                   <div class="course-Schedule">
-                    <q-card-section class="q-pb-none" style="overflow: hidden">
+                    <!-- <q-card-section class="q-pb-none" style="overflow: hidden">
                       <div class="due-text">Due Today</div>
                       <div class="chapter-text">Chapter 1: Introduction</div>
-                    </q-card-section>
-                    <q-card-section style="overflow: hidden">
+                    </q-card-section> -->
+                    <!-- <q-card-section style="overflow: hidden">
                       <div class="due-text">Due Friday</div>
                       <div class="chapter-text">
                         Chapter 2: Review of Related Literature
                       </div>
-                    </q-card-section>
+                    </q-card-section> -->
                     <q-card-section
                       style="
                         display: flex;
@@ -171,22 +200,6 @@
                 </div>
               </div>
             </q-card-section>
-          </div>
-
-          <div
-            v-if="isAdmin"
-            style="height: auto; border: 1px solid #d9d9d9; border-radius: 14px"
-          >
-            <div class="adminPieChart-container">
-              <div style="width: 80%">
-                <q-card-section>
-                  <div class="text-h6">User Statistics</div>
-                </q-card-section>
-              </div>
-              <div class="adminPieChart">
-                <pieChart />
-              </div>
-            </div>
           </div>
         </div>
         <!-- notifcation side/ sub content 2 -->
@@ -353,6 +366,7 @@ const notifications = ref([]);
 const newDueDate = ref();
 const courseDetailInfo = ref("");
 const userCount = ref("");
+const adminCourseInfo = ref("");
 async function isLogin() {
   const token = localStorage.getItem("authToken");
 
@@ -469,7 +483,24 @@ async function getstudents() {
   }
 }
 
+async function courseAdmin() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const myUser = await viewViewerUser();
+    const response = await axios.get(
+      `${process.env.api_host}/courses?isArchived=false`,
+      {
+        headers: { authorization: token },
+      }
+    );
+    adminCourseInfo.value = response;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 onMounted(() => {
+  courseAdmin();
   getstudents();
   courseDetails();
   getNotifications();

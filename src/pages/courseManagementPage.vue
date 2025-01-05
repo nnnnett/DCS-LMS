@@ -23,12 +23,12 @@
         >
           <template #body="props">
             <q-tr key="id" :props="props">
-              <q-td>{{ props.row.courseTitle }}</q-td>
-              <q-td>{{ props.row.hubCode }}</q-td>
-              <q-td>{{ props.row.instructor }}</q-td>
-              <q-td>{{ props.row.status }}</q-td>
+              <q-td>{{ props.row.name }}</q-td>
+              <q-td>{{ props.row.id }}</q-td>
+              <q-td>{{ props.row.instructorName }}</q-td>
               <q-td>{{ props.row.noOfStudents }}</q-td>
-              <q-td>{{ props.row.dateCreated }}</q-td>
+              <q-td>{{ props.row.status }}</q-td>
+              <q-td>{{ props.row.createdAt }}</q-td>
 
               <q-td align="center">
                 <q-btn-dropdown dropdown-icon="more_vert" flat>
@@ -39,8 +39,11 @@
                       ></q-item
                     >
                     <q-item>
-                      <q-btn flat class="text-red" @click="archiveCourse"
-                        >Archive</q-btn
+                      <q-btn
+                        flat
+                        class="text-red"
+                        @click="archiveCourse(props.row.id)"
+                        >{{ props.row.button }}</q-btn
                       ></q-item
                     >
                   </q-list>
@@ -74,38 +77,11 @@
 </style>
 
 <script setup>
-import { ref } from "vue";
-
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import { Notify } from "quasar";
 const filter = ref("");
-const rows = ref([
-  {
-    id: 1,
-    courseTitle: "Kenneth",
-    hubCode: 20321,
-    instructor: "jules",
-    status: "active",
-    noOfStudents: 30,
-    dateCreated: "20-20-1090",
-  },
-  {
-    id: 2,
-    courseTitle: "Jules",
-    hubCode: 20321,
-    instructor: "jules",
-    status: "inactive",
-    noOfStudents: 35,
-    dateCreated: "20-20-2090",
-  },
-  {
-    id: 3,
-    courseTitle: "Khris",
-    hubCode: 81321,
-    instructor: "kira",
-    status: "active",
-    noOfStudents: 25,
-    dateCreated: "01-20-1090",
-  },
-]);
+const rows = ref([]);
 
 const columns = ref([
   {
@@ -116,16 +92,23 @@ const columns = ref([
     field: "courseTitle",
   },
   {
-    name: "hubCode",
+    name: "id",
     label: "Hub Code",
     align: "left",
-    field: "hubCode",
+    field: "id",
   },
   {
     name: "instructor",
     label: "Instructor",
     align: "left",
     field: "instructor",
+  },
+
+  {
+    name: "noOfStudents",
+    label: "No. of Students",
+    align: "left",
+    field: "noOfStudents",
   },
   {
     name: "status",
@@ -134,16 +117,10 @@ const columns = ref([
     field: "status",
   },
   {
-    name: "noOfStudents",
-    label: "No. of Students",
-    align: "left",
-    field: "noOfStudents",
-  },
-  {
-    name: "dateCreated",
+    name: "createdAt",
     label: "Date Created",
     align: "left",
-    field: "dateCreated",
+    field: "createdAt",
   },
   {
     name: "actions",
@@ -153,11 +130,65 @@ const columns = ref([
   },
 ]);
 
-async function archiveCourse() {
-  console.log("archived course");
-}
-
 async function editCourse() {
   console.log("edit course");
 }
+
+async function getCourses() {
+  try {
+    const response = await axios.get(`${process.env.api_host}/courses`);
+    console.log(response);
+    rows.value = response.data.map((user) => ({
+      id: user._id,
+      name: user.name,
+      instructorName: user.instructorName,
+      noOfStudents: user.students.length,
+      createdAt: user.createdAt,
+      role: user.role,
+      status: user.isArchived ? "archived" : "active", // Example: Determine status from backend data
+      button: user.isArchived ? "unarchive" : "archive",
+    }));
+  } catch (err) {
+    console.error(err);
+  }
+}
+async function archiveCourse(courseId) {
+  console.log("Archived user");
+  try {
+    const token = localStorage.getItem("authToken");
+    const getCourse = await axios.get(
+      `${process.env.api_host}/courses?query=${courseId}`
+    );
+    const isArchived = !getCourse.data[0].isArchived;
+
+    console.log("new", isArchived);
+    const response = await axios.post(
+      `${process.env.api_host}/courses/update/${courseId}`,
+      {
+        isArchived: isArchived,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "archived Courses successfully",
+    });
+    getCourses();
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "negative",
+      message: "Something went wrong",
+    });
+  }
+}
+
+onMounted(() => {
+  getCourses();
+});
 </script>

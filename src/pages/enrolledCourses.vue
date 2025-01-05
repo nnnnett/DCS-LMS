@@ -103,7 +103,7 @@
               </div>
             </div>
             <div class="course-Schedule">
-              <q-card-section class="q-pb-none" style="overflow: hidden">
+              <!-- <q-card-section class="q-pb-none" style="overflow: hidden">
                 <div class="due-text">Due Today</div>
                 <div class="chapter-text">Chapter 1: Introduction</div>
               </q-card-section>
@@ -112,14 +112,11 @@
                 <div class="chapter-text">
                   Chapter 2: Review of Related Literature
                 </div>
-              </q-card-section>
+              </q-card-section> -->
               <q-card-section
                 style="display: flex; justify-content: flex-end; padding: 8px"
               >
-                <q-btn
-                  :to="`/main/coursePage/` + course._id"
-                  style="border: 1px solid #4b4b4b"
-                >
+                <q-btn :to="`/main/coursePage/` + course._id" flat>
                   <q-icon name="chevron_right" />
                 </q-btn>
               </q-card-section>
