@@ -71,20 +71,22 @@
               }"
             >
               <!-- archived button -->
-              <q-btn-dropdown
-                flat
-                color="white"
-                dropdown-icon="more_vert"
-                style="position: absolute; top: 8px; right: 8px"
-              >
-                <q-list>
-                  <q-item clickable @click="archivedCourses(course._id)">
-                    <q-item-section>
-                      <q-item-label>Archive</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
+              <div v-if="!isStudent">
+                <q-btn-dropdown
+                  flat
+                  color="white"
+                  dropdown-icon="more_vert"
+                  style="position: absolute; top: 8px; right: 8px"
+                >
+                  <q-list>
+                    <q-item clickable @click="archivedCourses(course._id)">
+                      <q-item-section>
+                        <q-item-label>Archive</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-btn-dropdown>
+              </div>
               <div class="course-info">
                 <div>
                   <div class="course-title">

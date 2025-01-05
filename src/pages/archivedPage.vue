@@ -29,20 +29,22 @@
               overflow: 'hidden',
             }"
           >
-            <q-btn-dropdown
-              flat
-              color="white"
-              dropdown-icon="more_vert"
-              style="position: absolute; top: 8px; right: 8px"
-            >
-              <q-list>
-                <q-item clickable @click="unarchivedCourses(archived._id)">
-                  <q-item-section>
-                    <q-item-label>Unarchive Course</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
+            <div v-if="!isStudent">
+              <q-btn-dropdown
+                flat
+                color="white"
+                dropdown-icon="more_vert"
+                style="position: absolute; top: 8px; right: 8px"
+              >
+                <q-list>
+                  <q-item clickable @click="unarchivedCourses(archived._id)">
+                    <q-item-section>
+                      <q-item-label>Unarchive Course</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </div>
             <div class="course-info">
               <div>
                 <div class="course-title">
@@ -145,11 +147,27 @@ import { getArchivedCourses } from "src/components/course";
 import { Notify } from "quasar";
 import axios from "axios";
 import { useRoute } from "vue-router";
-
+import { viewViewerUser } from "src/components/user";
 const route = useRoute();
 const archivedCourses = ref(null);
 
+const roleValidation = ref("");
+const isStudent = ref("");
+const isInstructor = ref("");
+const isAdmin = ref("");
+
 // const courseId = route.params.courseId;
+async function displayUserInfo() {
+  const checkUser = await viewViewerUser();
+  roleValidation.value = checkUser.role;
+  if (roleValidation.value === "student") {
+    return (isStudent.value = true);
+  } else if (roleValidation.value === "instructor") {
+    return (isInstructor.value = true);
+  } else if (roleValidation.value === "admin") {
+    return (isAdmin.value = true);
+  }
+}
 
 async function getArchivedCourse() {
   try {
@@ -192,6 +210,7 @@ async function unarchivedCourses(courseId) {
 }
 
 onMounted(() => {
+  displayUserInfo();
   getArchivedCourse();
 });
 </script>

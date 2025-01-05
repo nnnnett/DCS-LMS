@@ -24,12 +24,12 @@
               <div>
                 <q-icon name="library_books" color="primary" size="29px" />
               </div>
-              <div class="q-ml-sm">
-                <div class="text-h6">6</div>
+              <div class="q-ml-sm" v-if="courseDetailInfo">
+                <div class="text-h6">{{ courseDetailInfo.data.length }}</div>
                 <div class="text-body2">Active Courses</div>
               </div>
             </q-card-section>
-            <q-card-section
+            <!-- <q-card-section
               class="active-pendingTask-container"
               v-if="isStudent"
             >
@@ -40,7 +40,7 @@
                 <div class="text-h6">6</div>
                 <div class="text-body2">Pending Task</div>
               </div>
-            </q-card-section>
+            </q-card-section> -->
 
             <!-- instructor -->
 
