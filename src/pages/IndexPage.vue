@@ -173,7 +173,21 @@
             </q-card-section>
           </div>
 
-          <div v-if="isAdmin"></div>
+          <div
+            v-if="isAdmin"
+            style="height: auto; border: 1px solid #d9d9d9; border-radius: 14px"
+          >
+            <div class="adminPieChart-container">
+              <div style="width: 80%">
+                <q-card-section>
+                  <div class="text-h6">User Statistics</div>
+                </q-card-section>
+              </div>
+              <div class="adminPieChart">
+                <pieChart />
+              </div>
+            </div>
+          </div>
         </div>
         <!-- notifcation side/ sub content 2 -->
         <div class="sub-content-2">
@@ -239,6 +253,13 @@
 .sub-content-1-2
   color: #4B4B4B
   height: auto
+.adminPieChart-container
+  width: 100%
+  display: flex
+  flex-direction: column
+  align-items: center
+.adminPieChart
+  width: 50%
 .enrolledCoursesContainer
   width: 290px
   height: auto
@@ -290,8 +311,9 @@
     flex-direction: column
   .sub-content-1
     width: 100%
+    margin-bottom: 15px
   .sub-content-2
-    width: 97%
+    width: 100%
 @media (max-width:500px)
   .sub-content-1-1
     display: flex
@@ -301,6 +323,8 @@
     margin-bottom: 10px
   .main-container
     padding: 0px
+  .adminPieChart
+    width: 100%
 </style>
 
 <script setup>
@@ -313,6 +337,8 @@ import {
   getMyClass,
 } from "src/components/course";
 import { viewViewerUser } from "src/components/user";
+
+import pieChart from "src/components/pieChart.vue";
 
 const loading = ref(true);
 const notifDate = ref("");
