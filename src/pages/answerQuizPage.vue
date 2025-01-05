@@ -1,39 +1,56 @@
 <template>
   <div class="quiz-answer">
-    <h1>{{ quiz.name }}</h1>
-    <form v-if="quiz.questions.length" @submit.prevent="submitAnswers">
+    <q-card-section
+      ><div class="text-h4">{{ quiz.name }}</div></q-card-section
+    >
+    <q-form v-if="quiz.questions.length" @submit.prevent="submitAnswers">
       <div
         v-for="(question, index) in quiz.questions"
         :key="index"
         class="question"
       >
-        <p>{{ index + 1 }}. {{ question.question }}</p>
-        <input
+        <q-card-section>
+          <div>{{ index + 1 }}. {{ question.question }}</div>
+        </q-card-section>
+        <q-input
           type="text"
           v-model="userAnswers[index]"
           :placeholder="'Enter your answer for question ' + (index + 1)"
         />
       </div>
-      <button type="submit">Submit Quiz</button>
-    </form>
+      <q-btn :loading="loading" type="submit" @click="quizResults = true"
+        >Submit Quiz</q-btn
+      >
+    </q-form>
 
     <div v-else-if="!loading && !error">
       <p>No questions available.</p>
     </div>
 
     <div v-if="results">
-      <h2>Results</h2>
-      <p>Score: {{ score }}/{{ quiz.questions.length }}</p>
-      <ul>
-        <li v-for="(result, index) in results" :key="index">
-          <strong>Q{{ index + 1 }}:</strong> {{ result.question }} <br />
-          <em>Your answer:</em> {{ result.userAnswer }} <br />
-          <em>Correct answer:</em> {{ result.correctAnswer }} <br />
-          <span :style="{ color: result.correct ? 'green' : 'red' }">
-            {{ result.correct ? "Correct" : "Wrong" }}
-          </span>
-        </li>
-      </ul>
+      <q-dialog v-model="quizResults" persistent>
+        <q-card>
+          <q-card-section>
+            <div class="text-h5">Results</div>
+          </q-card-section>
+          <q-card-section>
+            <div>Score: {{ score }}/{{ quiz.questions.length }}</div>
+          </q-card-section>
+          <!-- <ul>
+            <li v-for="(result, index) in results" :key="index">
+              <strong>Q{{ index + 1 }}:</strong> {{ result.question }} <br />
+              <em>Your answer:</em> {{ result.userAnswer }} <br />
+              <em>Correct answer:</em> {{ result.correctAnswer }} <br />
+              <span :style="{ color: result.correct ? 'green' : 'red' }">
+                {{ result.correct ? "Correct" : "Wrong" }}
+              </span>
+            </li>
+          </ul> -->
+          <q-card-section>
+            <q-btn label="Close" v-close-popup />
+          </q-card-section>
+        </q-card>
+      </q-dialog>
     </div>
 
     <div v-if="loading">Loading quiz...</div>
@@ -45,6 +62,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
+import { Notify } from "quasar";
 
 // Reactive data
 const route = useRoute();
@@ -55,6 +73,7 @@ const score = ref(0);
 const loading = ref(true);
 const error = ref("");
 const quizId = route.params.quizId;
+const quizResults = ref(false);
 // Fetch the quiz on mount
 const fetchQuiz = async (id) => {
   try {
@@ -72,14 +91,34 @@ const fetchQuiz = async (id) => {
 
 // // Submit answers
 async function submitAnswers() {
+  loading.value = true;
   try {
-    const response = await axios.post(`${process.env.api_host}/submit`, {
-      answers: userAnswers.value,
+    const token = localStorage.getItem("authToken");
+    const response = await axios.post(
+      `${process.env.api_host}/courses/answerQuiz/${quizId}`,
+      {
+        answers: userAnswers.value,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Quiz Submitted Successfully",
     });
     results.value = response.data.results;
     score.value = response.data.score;
   } catch (err) {
-    error.value = "Failed to submit the quiz.";
+    Notify.create({
+      type: "warning",
+      message: "Quiz already Submitted  ",
+    });
+  } finally {
+    loading.value = false;
   }
 }
 

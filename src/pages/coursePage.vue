@@ -18,7 +18,7 @@
         </div>
       </q-card-section>
       <!-- Main Content -->
-      <q-card-section class="q-pb-none" v-if="isStudent">
+      <q-card-section class="q-pb-none">
         <div class="headerNav q-px-md">
           <div class="q-px-xl" @click="showFeed">
             <q-card-section :class="{ active: feedLink }">Feed</q-card-section>
@@ -38,13 +38,6 @@
               >Quizes</q-card-section
             >
           </div>
-        </div>
-      </q-card-section>
-      <q-card-section class="q-pb-none" v-if="isInstructor">
-        <div class="headerNav q-px-md">
-          <div class="q-px-xl" @click="showFeed">
-            <q-card-section :class="{ active: feedLink }">Feed</q-card-section>
-          </div>
 
           <div class="q-px-xl" @click="showStudents">
             <q-card-section :class="{ active: studentList }"
@@ -58,6 +51,13 @@
           </div>
         </div>
       </q-card-section>
+      <!-- <q-card-section class="q-pb-none" v-if="isInstructor">
+        <div class="headerNav q-px-md">
+          <div class="q-px-xl" @click="showFeed">
+            <q-card-section :class="{ active: feedLink }">Feed</q-card-section>
+          </div>
+        </div>
+      </q-card-section> -->
       <q-separator />
 
       <q-card-section>
@@ -900,10 +900,6 @@
         <div v-if="studentList" class="studentList-container">
           <q-card-section style="display: flex; justify-content: space-between">
             <div style="color: #8f9bb3; font-size: 1.5em">List of Students</div>
-            <div style="color: #8f9bb3; font-size: 1.5em" class="q-pl-sm">
-              Hub Code:
-              <span style="color: #4b4b4b; font-weight: 600">022723</span>
-            </div>
           </q-card-section>
           <!-- list of students -->
           <div>
@@ -915,7 +911,10 @@
               :rows-per-page-options="[0, 5, 10, 15, 20, 25, 30]"
             >
               <template #body="props">
-                <q-tr key="id" :props="props">
+                <q-tr :key="props.row._id" :props="props">
+                  <q-td class="bg-green-1">
+                    {{ props.row.username }}
+                  </q-td>
                   <q-td class="bg-green-1">
                     {{ props.row.lastName }}
                   </q-td>
@@ -953,68 +952,33 @@
               :rows-per-page-options="[0, 5, 10, 15, 20, 25, 30]"
               separator="cell"
             >
+              <template #head="props">
+                <q-tr :props="props">
+                  <q-th
+                    v-for="col in gradeColumns"
+                    :key="col.name"
+                    :props="props"
+                    class="text-center"
+                  >
+                    {{ col.label }}
+                    <div
+                      v-if="col.gradeSummary"
+                      class="text-gray-6 text-caption"
+                    >
+                      {{ col.gradeSummary }}
+                    </div>
+                  </q-th>
+                </q-tr>
+              </template>
+
               <template #body="props">
-                <q-tr key="id" :pops="props">
-                  <q-td>
-                    {{ props.row.firstName }}
-                  </q-td>
-                  <q-td>
-                    {{ props.row.lastName }}
-                  </q-td>
-                  <q-td class="text-center text-gray-2">
-                    {{ props.row.oveRallGrade }}
-                  </q-td>
-                  <q-td class="text-center text-primary text-center">
-                    {{ props.row.assignment1 }}/100
-                    <q-btn-dropdown
-                      style="display: block; width: 15px"
-                      flat
-                      dropdown-icon="more_vert"
-                      class="absolute-right"
-                      ><q-list>
-                        <q-item clickable v-close-popup @click="openSubmission">
-                          <q-item-section>
-                            <q-item-label>View Submission</q-item-label>
-                          </q-item-section>
-                        </q-item></q-list
-                      >
-                    </q-btn-dropdown>
-                  </q-td>
-                  <q-td class="text-center text-primary">
-                    {{ props.row.assignment2 }}/100
-                    <q-btn-dropdown
-                      style="display: block; width: 15px"
-                      flat
-                      dropdown-icon="more_vert"
-                      class="absolute-right"
-                      ><q-list>
-                        <q-item clickable v-close-popup @click="openSubmission">
-                          <q-item-section>
-                            <q-item-label>View Submission</q-item-label>
-                          </q-item-section>
-                        </q-item></q-list
-                      >
-                    </q-btn-dropdown>
-                  </q-td>
-                  <q-td class="text-center text-primary">
-                    {{ props.row.assignment3 }}/100
-                    <q-btn-dropdown
-                      style="display: block; width: 15px"
-                      flat
-                      dropdown-icon="more_vert"
-                      class="absolute-right"
-                      ><q-list>
-                        <q-item clickable v-close-popup @click="openSubmission">
-                          <q-item-section>
-                            <q-item-label>View Submission</q-item-label>
-                          </q-item-section>
-                        </q-item></q-list
-                      >
-                    </q-btn-dropdown>
+                <q-tr :key="props.row.id" :props="props">
+                  <q-td v-for="col in gradeColumns" :key="col.name">
+                    {{ props.row[col.field] }}
                   </q-td>
                 </q-tr>
               </template>
-              <template v-slot:top-right>
+              <template v-slot:top-right v-if="!isStudent">
                 <q-btn
                   color="primary"
                   icon-right="archive"
@@ -1477,6 +1441,7 @@ const showGrades = () => {
   taskLink.value = false;
   myWorksLink.value = false;
   studentGrades.value = true;
+  quizLink.value = false;
 };
 
 const showStudents = () => {
@@ -1485,6 +1450,7 @@ const showStudents = () => {
   taskLink.value = false;
   myWorksLink.value = false;
   studentGrades.value = false;
+  quizLink.value = false;
 };
 const showAnnouncement = () => {
   announcementLink.value = true;
@@ -1515,17 +1481,16 @@ async function displayUserInfo() {
     return (isInstructor.value = true);
   }
 }
-
-const studentRows = ref([
-  {
-    id: 1,
-    firstName: "kenneth",
-    lastName: "Doblon",
-  },
-]);
-
+const studentRows = ref([]);
 const studentColumns = ref([
   {
+    name: "username",
+    label: "Student ID",
+    align: "left",
+    field: "username",
+    sortable: true,
+  },
+  {
     name: "lastName",
     label: "Surname",
     align: "left",
@@ -1540,84 +1505,131 @@ const studentColumns = ref([
   },
 ]);
 
-const gradeRows = ref([
+// Fetch the student data when the component mounts
+
+// Function to get the students from the API
+async function getStudents() {
+  const token = localStorage.getItem("authToken");
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/users?courseId=${courseId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    studentRows.value = response.data; // Assuming 'data' contains the user list
+  } catch (err) {
+    console.error("Error fetching students:", err);
+  }
+}
+
+const gradeColumns = ref([]);
+const gradeRows = ref([]);
+
+// Define base columns
+const baseColumns = [
   {
-    id: 1,
-    firstName: "Kenneth",
-    lastName: "Doblon",
-    oveRallGrade: "no grade",
-    assignment1: 23,
-    assignment2: 100,
-    assignment3: 0,
-  },
-  {
-    id: 1,
-    firstName: "Kenneth",
-    lastName: "Doblon",
-    oveRallGrade: "no grade",
-    assignment1: 23,
-    assignment2: 100,
-    assignment3: 0,
-  },
-  {
-    id: 1,
-    firstName: "Kenneth",
-    lastName: "Doblon",
-    oveRallGrade: "no grade",
-    assignment1: 23,
-    assignment2: 100,
-    assignment3: 0,
-  },
-  {
-    id: 1,
-    firstName: "Kenneth",
-    lastName: "Doblon",
-    oveRallGrade: "no grade",
-    assignment1: 23,
-    assignment2: 100,
-    assignment3: 0,
-  },
-]);
-const gradeColumns = ref([
-  {
-    name: "lastName",
-    label: "Surname",
+    name: "username",
+    label: "Username",
     align: "left",
-    field: "lastName",
+    field: "username",
     sortable: true,
   },
   {
-    name: "firstName",
-    label: "First Name",
-    align: "left",
-    field: "firstName",
+    name: "name",
+    label: "Name",
+    align: "center",
+    field: "name",
   },
+];
 
-  {
-    name: "oveRallGrade",
-    label: "Overall grade",
+// Fetch grades and assignments from API and adjust columns
+async function getGradesAndAssignments() {
+  const token = localStorage.getItem("authToken");
+  try {
+    // Replace with actual courseId
+    const response = await axios.get(
+      `${process.env.api_host}/courses/getGrade?courseId=${courseId}`,
+      {
+        headers: {
+          authorization: token,
+        },
+      }
+    );
+
+    const students = response.data;
+
+    // Generate dynamic columns for grades and assignments
+    gradeColumns.value = [...baseColumns, ...generateDynamicColumns(students)];
+
+    // Process rows for grades and assignments
+    gradeRows.value = students.map((student, index) => {
+      const gradeDetails = student.grades.reduce((acc, grade) => {
+        acc[grade.quizName] = grade.total ? `${grade.score} ` : grade.score; // Format as "score/total" if total exists
+        return acc;
+      }, {});
+
+      const assignmentDetails = student.assignments.reduce(
+        (acc, assignment) => {
+          acc[assignment.materialName] = assignment.score
+            ? `${assignment.score}/${assignment.total}`
+            : "Not graded";
+          return acc;
+        },
+        {}
+      );
+
+      return {
+        id: index + 1,
+        username: student.username,
+        name: student.name,
+        ...gradeDetails,
+        ...assignmentDetails, // Add dynamic fields for assignments
+      };
+    });
+  } catch (err) {
+    console.error("Error fetching grades and assignments:", err);
+  }
+}
+
+// Generate dynamic columns based on grades and assignments data
+function generateDynamicColumns(students) {
+  const dynamicFields = new Set();
+  const gradeSummaries = {};
+
+  students.forEach((student) => {
+    student.grades.forEach((grade) => {
+      dynamicFields.add(grade.quizName);
+
+      if (!gradeSummaries[grade.quizName]) {
+        gradeSummaries[grade.quizName] = {
+          total: 0,
+          count: 0,
+        };
+      }
+
+      if (grade.total) {
+        gradeSummaries[grade.quizName].total += parseInt(grade.total);
+        gradeSummaries[grade.quizName].count += parseInt(grade.score || 0);
+      }
+    });
+
+    student.assignments.forEach((assignment) => {
+      dynamicFields.add(assignment.materialName);
+    });
+  });
+
+  return Array.from(dynamicFields).map((fieldName) => ({
+    name: fieldName,
+    label: fieldName,
     align: "center",
-    field: "oveRallGrade",
-  },
-  {
-    name: "assignment1",
-    label: "Assignment 1 Grades",
-    align: "center",
-    field: "assignment1",
-  },
-  {
-    name: "assignment2",
-    label: "Assignment 2 Grades",
-    align: "center",
-    field: "assignment2",
-  },
-  {
-    name: "assignment3",
-    label: "Assignment 3 Grades",
-    align: "center",
-    field: "assignment3",
-  },
-]);
+    field: fieldName,
+    gradeSummary: gradeSummaries[fieldName]
+      ? `${gradeSummaries[fieldName].count}/${gradeSummaries[fieldName].total}`
+      : null,
+  }));
+}
+
 async function getCourses() {
   try {
     const response = await axios.get(
@@ -1943,6 +1955,7 @@ function exportStudentSubmission() {
     });
   }
 }
+
 function exportStudentList() {
   // Naive encoding to CSV format
   const content = [
@@ -1990,7 +2003,6 @@ async function getQuizes() {
       `${process.env.api_host}/courses/getQuiz?courseId=${courseId}`
     );
     quizes.value = response.data;
-    console.log("here", quizes.value);
   } catch (err) {
     console.error(err);
   }
@@ -2029,10 +2041,12 @@ function copyToClipboard(text) {
 
 async function goToQuizPage(quizId) {
   router.replace(`/main/answerQuizPage/` + quizId);
-  console.log("here");
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await getStudents();
+  getStudents();
+  getGradesAndAssignments();
   getQuizes();
   getMaterials();
   getCourses();
