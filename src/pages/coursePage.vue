@@ -24,7 +24,9 @@
             <q-card-section :class="{ active: feedLink }">Feed</q-card-section>
           </div>
           <div class="q-px-xl" @click="showTask">
-            <q-card-section :class="{ active: taskLink }">Task</q-card-section>
+            <q-card-section :class="{ active: taskLink }"
+              >Lessons</q-card-section
+            >
           </div>
           <div class="q-px-xl" @click="showMyWorks">
             <q-card-section :class="{ active: myWorksLink }"
@@ -724,14 +726,14 @@
             </q-dialog>
           </div>
         </div>
-        <!-- task tab -->
+        <!-- Lessons tab -->
         <div v-if="taskLink" class="task-container">
-          <!-- Course Assignment  -->
+          <!-- Course Lessons  -->
           <div v-if="materials">
             <div v-for="material in materials" :key="material._id">
               <q-card-section
                 class="flex flex-center courseAssignment"
-                v-if="material.type === 'assignment'"
+                v-if="material.type === 'material'"
               >
                 <q-card
                   class="assignmentContent q-px-lg"
@@ -741,7 +743,7 @@
                   <q-card-section class="row materialsAssignment-container">
                     <div class="col-1">
                       <q-img
-                        src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
+                        :src="material.instructorImage"
                         style="width: 50px; height: 50px; border-radius: 50%"
                       />
                     </div>
@@ -773,38 +775,62 @@
         </div>
         <!-- my works tab -->
         <div v-if="myWorksLink" class="myWorks-container">
-          <q-card-section class="q-ml-xl filter-container">
-            <div class="filterSelect">
-              <q-select
-                outlined
-                label="Filter"
-                v-model="filter"
-                :options="selectMyWorks.options"
-              />
-            </div>
-          </q-card-section>
-          <!-- Submitted status -->
-          <q-card-section class="flex flex-center courseMyWorks">
-            <q-card class="myWorksContent q-pr-lg">
-              <q-card-section class="row statusWorks-container q-px-md">
-                <div class="col-9">
-                  <div style="height: auto; text-align: justify">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Fuga itaque harum tempora quas dolores voluptatibus optio
-                    rem praesentium qui non deserunt maiores quam voluptas
-                    eveniet quasi, repellat voluptate, similique laudantium.
-                  </div>
-                  <div class="text-caption">December 12, 2024</div>
-                </div>
-                <q-space></q-space>
-                <div class="flex flex-center submittedStatus q-ml-md">
-                  Submitted
-                </div>
+          <div v-if="materials">
+            <q-card-section class="q-ml-xl filter-container">
+              <div class="filterSelect">
+                <q-select
+                  outlined
+                  label="Filter"
+                  v-model="filter"
+                  :options="selectMyWorks.options"
+                />
+              </div>
+            </q-card-section>
+            <div v-for="material in materials" :key="material._id">
+              <!-- Submitted status -->
+              <q-card-section
+                class="flex flex-center courseMyWorks"
+                v-if="material.type === 'assignment'"
+              >
+                <q-card
+                  class="assignmentContent q-pr-lg"
+                  clickable
+                  @click="gotoActivityPage(material._id)"
+                >
+                  <q-card-section class="row statusWorks-container q-px-md">
+                    <div class="col-1">
+                      <q-img
+                        :src="material.instructorImage"
+                        style="width: 50px; height: 50px; border-radius: 50%"
+                      />
+                    </div>
+                    <div class="col-9">
+                      <div style="height: auto; text-align: justify">
+                        Rosalina D. Lacuesta posted a new
+                        <span style="text-transform: capitalize"
+                          >{{ material.type }} : {{ material.name }}</span
+                        >
+                      </div>
+                      <div class="text-caption">{{ material.createdAt }}</div>
+                    </div>
+                    <q-space></q-space>
+                    <!-- <div class="flex flex-center submittedStatus q-ml-md">
+                      Submitted
+                    </div> -->
+                    <div class="flex flex-center pendingStatus q-ml-md">
+                      Pending
+                    </div>
+                    <!-- <div class="flex flex-center missingStatus q-ml-md">
+                      Missing
+                    </div> -->
+                  </q-card-section>
+                </q-card>
               </q-card-section>
-            </q-card>
-          </q-card-section>
+            </div>
+          </div>
           <!-- Pending status -->
-          <q-card-section class="flex flex-center courseMyWorks">
+          <!-- Missing Status -->
+          <!-- <q-card-section class="flex flex-center courseMyWorks">
             <q-card class="myWorksContent q-pr-lg">
               <q-card-section class="row statusWorks-container q-px-md">
                 <div class="col-9">
@@ -823,7 +849,7 @@
               </q-card-section>
             </q-card>
           </q-card-section>
-          <!-- Missing Status -->
+
           <q-card-section class="flex flex-center courseMyWorks">
             <q-card class="myWorksContent q-pr-lg">
               <q-card-section class="row statusWorks-container q-px-md">
@@ -842,7 +868,7 @@
                 </div>
               </q-card-section>
             </q-card>
-          </q-card-section>
+          </q-card-section> -->
         </div>
 
         <!-- for instructor show all students -->
