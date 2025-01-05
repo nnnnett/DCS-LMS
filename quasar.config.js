@@ -42,8 +42,8 @@ module.exports = configure(function (/* ctx */) {
       env: {
         // IMGBB_KEY: "c3638a233ed64fc771557fe2ed8c0df7",
         // api_host: "https://g188k323-3500.asse.devtunnels.ms",
-        // api_host: "https://g188k323-3000.asse.devtunnels.ms",
-        api_host: "https://dcslms.vercel.app",
+        api_host: "https://g188k323-3000.asse.devtunnels.ms",
+        // api_host: "https://dcslms.vercel.app",
       },
       target: {
         browser: ["es2019", "edge88", "firefox78", "chrome87", "safari13.1"],

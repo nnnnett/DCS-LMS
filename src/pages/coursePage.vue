@@ -154,12 +154,17 @@
               <div style="text-transform: uppercase; color: #46af4b">
                 UPCOMING assignment
               </div>
-              <q-scroll-area style="height: 150px; width: 100%">
-                <div v-for="n in 100" :key="n">
+              <q-scroll-area
+                style="height: 150px; width: 100%"
+                v-if="materials"
+              >
+                <div v-for="material in materials" :key="material">
                   <q-card-section>
-                    <div style="color: #8f9bb3; font-size: 1em">Due Today</div>
+                    <div style="color: #8f9bb3; font-size: 1em">
+                      {{ material.createdAt.split("T")[0] }}
+                    </div>
                     <div style="font-size: 1.2em; color: #4b4b4b">
-                      Chapter 1: Introduction
+                      {{ material.name }}
                     </div>
                   </q-card-section>
                 </div>
@@ -395,7 +400,7 @@
                 <!-- create quiz -->
                 <div class="newPost-container">
                   <q-dialog v-model="showCreateQuizPopup">
-                    <q-card>
+                    <q-card class="flex flex-center column">
                       <q-card-section>
                         Do you want to create a quiz?
                       </q-card-section>
@@ -434,7 +439,7 @@
                         <div>
                           <div>{{ material.instructorName }}</div>
                           <div class="text-caption">
-                            {{ material.createdAt }}
+                            {{ material.createdAt.split("T")[0] }}
                           </div>
                         </div>
                       </div>
@@ -560,7 +565,7 @@
                     <q-card-section>
                       <div>
                         <!-- might need q-form / type comments -->
-                        <q-form @submit.prevent="addCommentF(material._id)">
+                        <!-- <q-form @submit.prevent="addCommentF(material._id)">
                           <div>
                             <q-input
                               type="textarea"
@@ -573,12 +578,11 @@
                               :loading="loading"
                             />
                           </div>
-                        </q-form>
+                        </q-form> -->
 
                         <!-- shows comments -->
 
-                        <div style="text-align: justify">
-                          <!-- {{ getCommentsF() }} -->
+                        <!-- <div style="text-align: justify">
                           <q-card-section style="display: flex">
                             <q-img
                               src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
@@ -609,7 +613,7 @@
                             />
                             <div style="width: 90%" class="q-ml-sm"></div>
                           </q-card-section>
-                        </div>
+                        </div> -->
                       </div>
                     </q-card-section>
                   </q-card>
@@ -640,7 +644,9 @@
                           </span>
                           {{ material.name }}
                         </div>
-                        <div class="text-caption">{{ material.createdAt }}</div>
+                        <div class="text-caption">
+                          {{ material.createdAt.split("T")[0] }}
+                        </div>
                       </div>
                       <div
                         class="flex flex-center icon q-ml-md"
@@ -780,7 +786,9 @@
                           >{{ material.type }} : {{ material.name }}</span
                         >
                       </div>
-                      <div class="text-caption">{{ material.createdAt }}</div>
+                      <div class="text-caption">
+                        {{ material.createdAt.split("T")[0] }}
+                      </div>
                     </div>
                     <div
                       class="flex flex-center icon q-ml-md"
@@ -803,14 +811,14 @@
         <div v-if="myWorksLink" class="myWorks-container">
           <div v-if="materials">
             <q-card-section class="q-ml-xl filter-container">
-              <div class="filterSelect">
+              <!-- <div class="filterSelect">
                 <q-select
                   outlined
                   label="Filter"
                   v-model="filter"
                   :options="selectMyWorks.options"
                 />
-              </div>
+              </div> -->
             </q-card-section>
             <div v-for="material in materials" :key="material._id">
               <!-- Submitted status -->
@@ -837,15 +845,17 @@
                           >{{ material.type }} : {{ material.name }}</span
                         >
                       </div>
-                      <div class="text-caption">{{ material.createdAt }}</div>
+                      <div class="text-caption">
+                        {{ material.createdAt.split("T")[0] }}
+                      </div>
                     </div>
                     <q-space></q-space>
                     <!-- <div class="flex flex-center submittedStatus q-ml-md">
                       Submitted
                     </div> -->
-                    <div class="flex flex-center pendingStatus q-ml-md">
+                    <!-- <div class="flex flex-center pendingStatus q-ml-md">
                       Pending
-                    </div>
+                    </div> -->
                     <!-- <div class="flex flex-center missingStatus q-ml-md">
                       Missing
                     </div> -->
@@ -904,6 +914,7 @@
           <!-- list of students -->
           <div>
             <q-table
+              style="box-shadow: none"
               :rows="studentRows"
               :columns="studentColumns"
               separator="cell"
@@ -912,18 +923,18 @@
             >
               <template #body="props">
                 <q-tr :key="props.row._id" :props="props">
-                  <q-td class="bg-green-1">
+                  <q-td>
                     {{ props.row.username }}
                   </q-td>
-                  <q-td class="bg-green-1">
+                  <q-td>
                     {{ props.row.lastName }}
                   </q-td>
-                  <q-td class="bg-green-1">
+                  <q-td>
                     {{ props.row.firstName }}
                   </q-td>
                 </q-tr>
               </template>
-              <template v-slot:top-right>
+              <template v-slot:top-right v-if="isInstructor">
                 <q-btn
                   color="primary"
                   icon-right="archive"
@@ -1495,7 +1506,6 @@ const studentColumns = ref([
     label: "Surname",
     align: "left",
     field: "lastName",
-    sortable: true,
   },
   {
     name: "firstName",
@@ -1510,13 +1520,17 @@ const studentColumns = ref([
 // Function to get the students from the API
 async function getStudents() {
   const token = localStorage.getItem("authToken");
+  let response = null;
   try {
-    const response = await axios.get(
+    const user = await viewViewerUser();
+
+    response = await axios.get(
       `${process.env.api_host}/users?courseId=${courseId}`,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { authorization: token },
       }
     );
+
     studentRows.value = response.data; // Assuming 'data' contains the user list
   } catch (err) {
     console.error("Error fetching students:", err);
@@ -1538,7 +1552,7 @@ const baseColumns = [
   {
     name: "name",
     label: "Name",
-    align: "center",
+    align: "left",
     field: "name",
   },
 ];
@@ -1546,16 +1560,29 @@ const baseColumns = [
 // Fetch grades and assignments from API and adjust columns
 async function getGradesAndAssignments() {
   const token = localStorage.getItem("authToken");
+  let response = null;
   try {
-    // Replace with actual courseId
-    const response = await axios.get(
-      `${process.env.api_host}/courses/getGrade?courseId=${courseId}`,
-      {
-        headers: {
-          authorization: token,
-        },
-      }
-    );
+    const user = await viewViewerUser();
+    console.log(user.role);
+    if (user.role === "student") {
+      response = await axios.get(
+        `${process.env.api_host}/courses/getGrade?courseId=${courseId}&studentId=${user._id}`,
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+    } else {
+      response = await axios.get(
+        `${process.env.api_host}/courses/getGrade?courseId=${courseId}`,
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+    }
 
     const students = response.data;
 
@@ -1571,8 +1598,9 @@ async function getGradesAndAssignments() {
 
       const assignmentDetails = student.assignments.reduce(
         (acc, assignment) => {
-          acc[assignment.materialName] = assignment.score
-            ? `${assignment.score}/${assignment.total}`
+          console.log("ass", assignment);
+          acc[assignment.materialName] = assignment.grade
+            ? `${assignment.grade} `
             : "Not graded";
           return acc;
         },
@@ -1622,7 +1650,7 @@ function generateDynamicColumns(students) {
   return Array.from(dynamicFields).map((fieldName) => ({
     name: fieldName,
     label: fieldName,
-    align: "center",
+    align: "left",
     field: fieldName,
     gradeSummary: gradeSummaries[fieldName]
       ? `${gradeSummaries[fieldName].count}/${gradeSummaries[fieldName].total}`
@@ -2040,7 +2068,7 @@ function copyToClipboard(text) {
 }
 
 async function goToQuizPage(quizId) {
-  router.replace(`/main/answerQuizPage/` + quizId);
+  router.replace(`/main/answerQuizPage/` + courseId + "/" + quizId);
 }
 
 onMounted(async () => {

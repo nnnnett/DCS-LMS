@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hhh lpR fff">
-    <q-header class="q-py-md bg-white" bordered>
+    <q-header class="q-py-md bg-primary" bordered>
       <q-toolbar>
         <q-btn
           flat
@@ -17,7 +17,7 @@
             style="width: 50px"
           />
         </div>
-        <q-toolbar-title class="text-primary text-h6 text-weight-medium">
+        <q-toolbar-title class="text-white text-h6 text-weight-medium">
           DCS Pixel Hub
         </q-toolbar-title>
         <div>

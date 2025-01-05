@@ -51,8 +51,8 @@
               <div>
                 <q-icon name="library_books" color="primary" size="29px" />
               </div>
-              <div class="q-ml-sm">
-                <div class="text-h6">6</div>
+              <div class="q-ml-sm" v-if="courseDetailInfo">
+                <div class="text-h6">{{ courseDetailInfo.data.length }}</div>
                 <div class="text-body2">Active Courses</div>
               </div>
             </q-card-section>
@@ -63,8 +63,8 @@
               <div>
                 <q-icon name="library_books" color="primary" size="29px" />
               </div>
-              <div class="q-ml-sm">
-                <div class="text-h6">6</div>
+              <div class="q-ml-sm" v-if="userCount">
+                <div class="text-h6">{{ userCount.data.length }}</div>
                 <div class="text-body2">Student</div>
               </div>
             </q-card-section>
@@ -216,7 +216,7 @@
                   <div>{{ notification.message }}</div>
                   <!-- notif date -->
                   <div class="text-caption">
-                    {{ notification.createdAt }}
+                    {{ notification.createdAt.split("T")[0] }}
                   </div>
                 </div>
               </q-card-section>
@@ -351,6 +351,8 @@ const isAdmin = ref("");
 
 const notifications = ref([]);
 const newDueDate = ref();
+const courseDetailInfo = ref("");
+const userCount = ref("");
 async function isLogin() {
   const token = localStorage.getItem("authToken");
 
@@ -415,7 +417,7 @@ async function getNotifications() {
   try {
     const response = await axios.get(
       `${process.env.api_host}/courses/getNotification`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { authorization: token } }
     );
 
     response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -435,7 +437,41 @@ function formatDate(isoDate) {
   return `${month}-${day}-${year}`;
 }
 
+async function courseDetails() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const myUser = await viewViewerUser();
+    const response = await axios.get(
+      `${process.env.api_host}/courses?query=${myUser._id}&isArchived=false`,
+      {
+        headers: { authorization: token },
+      }
+    );
+    courseDetailInfo.value = response;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function getstudents() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const myUser = await viewViewerUser();
+    const response = await axios.get(
+      `${process.env.api_host}/users?filter=student`,
+      {
+        headers: { authorization: token },
+      }
+    );
+    userCount.value = response;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 onMounted(() => {
+  getstudents();
+  courseDetails();
   getNotifications();
   getUserCourses();
   displayUserInfo();

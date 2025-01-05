@@ -379,6 +379,7 @@
                 <div style="width: 100%">
                   <q-btn
                     @click="downloadFile(materials.file)"
+                    no-caps
                     target="_blank"
                     style="text-decoration: none; color: var(--q-primary)"
                   >
@@ -399,18 +400,19 @@
             </q-card-section>
 
             <q-separator />
-            <q-card-section>
+            <!-- comment -->
+            <!-- <q-card-section>
               <div>
                 <q-img
                   src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
                   style="width: 30px; height: 30px; border-radius: 50%"
                 />
-                <!-- might need q-form -->
+
                 <div>
                   <q-input type="textarea" label="Comment here..." />
                 </div>
               </div>
-            </q-card-section>
+            </q-card-section> -->
           </q-card>
         </q-card-section>
 
@@ -422,91 +424,91 @@
                 <div class="workStatusTxt">
                   <div class="text-h5 text-weight-medium">Your Work</div>
                   <!-- pending status -->
-                  <div
-                    v-if="isPending"
-                    class="text-weight-medium"
-                    style="color: #ffcf32; font-size: 1rem"
-                  >
-                    Pending
-                  </div>
-                  <!-- done status -->
-                  <div
-                    v-if="isDone"
-                    class="text-weight-medium"
-                    style="color: #46af4b; font-size: 1rem"
-                  >
-                    Done
+                  <div>
+                    {{ submittedStatus }}
                   </div>
                   <!-- missing status -->
-                  <div
-                    v-if="isMissing"
-                    class="text-weight-medium"
-                    style="color: #ff7070; font-size: 1rem"
-                  >
-                    Missing
-                  </div>
                 </div>
                 <!-- List of submitted Work -->
                 <div>
                   <div class="submittedWork-container q-mt-sm">
-                    <div>wewe</div>
+                    <div style="width: 100%">
+                      <q-btn
+                        v-if="isDone"
+                        @click="downloadFile(mySubmission.file)"
+                        target="_blank"
+                        flat
+                        no-caps
+                        style="
+                          text-decoration: none;
+                          width: 100%;
+                          color: var(--q-primary);
+                        "
+                      >
+                        {{ mySubmission.file.split("/").pop() }}
+                      </q-btn>
+                    </div>
                   </div>
                 </div>
                 <!-- file input and submit button -->
-                <div>
-                  <!-- file input for submit work -->
-                  <div
-                    class="q-mt-sm"
-                    style="border: 1px solid #46af4b; border-radius: 14px"
-                  >
-                    <q-file
-                      class="q-px-xl"
-                      borderless
-                      v-model="submitWork"
-                      label="Attach Activity"
-                      clearable
-                      icon="home"
+                <q-form @submit.prevent="submitAssignment">
+                  <div>
+                    <!-- file input for submit work -->
+                    <div
+                      class="q-mt-sm"
+                      style="border: 1px solid #46af4b; border-radius: 14px"
                     >
-                      <template v-slot:append>
-                        <q-icon name="attach_file" />
-                      </template>
-                    </q-file>
+                      <q-file
+                        v-if="!isDone"
+                        class="q-px-xl"
+                        borderless
+                        v-model="submitWork"
+                        label="Attach Activity"
+                        clearable
+                        icon="home"
+                      >
+                        <template v-slot:append>
+                          <q-icon name="attach_file" />
+                        </template>
+                      </q-file>
+                    </div>
+                    <!-- no unsubmit btn if no attach file * vice versa -->
+                    <!-- Submit button -->
+                    <div
+                      class="q-mt-sm"
+                      style="
+                        background-color: #46af4b;
+                        color: #ffffff;
+                        border-radius: 14px;
+                      "
+                    >
+                      <q-btn
+                        v-if="!isDone"
+                        type="submit"
+                        :disable="!submitWork"
+                        :loading="loading"
+                        flat
+                        label="Submit"
+                        style="width: 100%; text-transform: capitalize"
+                      />
+                    </div>
+                    <!-- Unsubmit Button -->
+                    <!-- <div
+                      class="q-mt-sm"
+                      style="
+                        background-color: #d9d9d9;
+                        color: #ffffff;
+                        border-radius: 14px;
+                      "
+                    >
+                      <q-btn
+                        flat
+                        label="Unsubmit"
+                        style="width: 100%; text-transform: capitalize"
+                      />
+                    </div> -->
                   </div>
-                  <!-- no unsubmit btn if no attach file * vice versa -->
-                  <!-- Submit button -->
-                  <div
-                    class="q-mt-sm"
-                    style="
-                      background-color: #46af4b;
-                      color: #ffffff;
-                      border-radius: 14px;
-                    "
-                  >
-                    <q-btn
-                      v-model="subBtn"
-                      :disable="!submitWork"
-                      flat
-                      label="Submit"
-                      style="width: 100%; text-transform: capitalize"
-                    />
-                  </div>
-                  <!-- Unsubmit Button -->
-                  <div
-                    class="q-mt-sm"
-                    style="
-                      background-color: #d9d9d9;
-                      color: #ffffff;
-                      border-radius: 14px;
-                    "
-                  >
-                    <q-btn
-                      :disable="!subBtn"
-                      flat
-                      label="Unsubmit"
-                      style="width: 100%; text-transform: capitalize"
-                    />
-                  </div>
-                </div>
+                </q-form>
               </q-card-section>
             </q-card>
           </div>
@@ -555,14 +557,49 @@
                 </div>
               </template>
               <template #body="props">
-                <q-tr key="id" :props="props">
+                <q-tr :key="props.row.id" :props="props">
+                  <q-td>{{ props.row.studentId }}</q-td>
                   <q-td> {{ props.row.name }}</q-td>
-                  <q-td> {{ props.row.submissions }}</q-td>
-                  <q-td> {{ props.row.status }}</q-td>
                   <q-td>
-                    <div style="width: 20%">
-                      <q-form @submit.prevent="gradeSubmission">
-                        <q-input v-model="gradeInput" type="number" />
+                    <q-btn
+                      @click="downloadFile(props.row.submissions)"
+                      target="_blank"
+                      flat
+                      no-caps
+                      style="
+                        text-decoration: none;
+                        width: 100%;
+                        color: var(--q-primary);
+                      "
+                    >
+                      {{ props.row.submissions.split("/").pop() }}
+                    </q-btn>
+                  </q-td>
+                  <q-td>
+                    <div style="width: 100%">
+                      <q-form
+                        @submit.prevent="
+                          gradeSubmission(props.row.id, props.row.gradeInput)
+                        "
+                      >
+                        <div style="display: flex; align-items: center">
+                          <div style="width: 50px">
+                            <q-input
+                              v-model="props.row.gradeInput"
+                              name=""
+                              type="number"
+                            />
+                          </div>
+                          <div class="q-ml-sm">
+                            <q-btn
+                              no-caps
+                              :loading="loading"
+                              type="submit"
+                              class="bg-primary text-white"
+                              label="enter"
+                            />
+                          </div>
+                        </div>
                       </q-form>
                     </div>
                   </q-td>
@@ -575,144 +612,6 @@
     </div>
   </q-page>
 </template>
-<style lang="sass" scoped>
-.main-container
-  height: auto
-.headerNavAssign
-  width: 100%
-  color: #4B4B4B
-.backBtn
-  width: 80vw
-  display: flex
-  align-items: center
-.assignment-Submit-Container
-  display: flex
-.courseAssignment
-  height: auto
-.assignemntContent
-  border: 1px solid #D9D9D9
-  border-radius: 14px
-  box-shadow: none
-  width: 50vw
-  height: auto
-.submitWork
-  height: auto
-  align-self: flex-start
-.submitWorkContent
-  border: 1px solid #D9D9D9
-  border-radius: 14px
-  box-shadow: none
-  width: 20vw
-  height: auto
-.submittedWork-container
-  border: 1px solid #D9D9D9
-  border-radius: 14px
-  display: flex
-  justify-content: center
-  align-items: center
-  height: 50px
-.workStatusTxt
-  display: flex
-  justify-content: space-between
-  align-items: center
-  color: #4B4B4B
-.contentHeader
-  align-items: center
-  display: flex
-  color: #4b4b4b
-  width: 100%
-.imgInstructor
-  display: flex
-  align-items: center
-  width: 50%
-.dueDateTxtBtn
-  display: flex
-  justify-content: flex-end
-  width: 50%
-.dueDateGrade-container
-  display: flex
-  justify-content: flex-end
-  column-gap: 14px
-.dueDateGrade
-  background-color: #f3f3f3
-  border: 1px solid #d9d9d9
-.materialNav
-  width: 70vw
-  display: flex
-.materialNav div
-  cursor: pointer
-  position: relative
-.materialNav .active
-  color: #28a745
-.materialNav .active::after
-  content: ''
-  position: absolute
-  bottom: 0
-  left: 0
-  right: 0
-  height: 3px
-  background-color: #28a745
-.submissionDetails
-  width: 70vw
-  display: flex
-  height: 100px
-  align-items: center
-.submissionAnalytics
-  display: flex
-  flex-direction: column
-  border-left: 1px solid black
-  height: 90px
-  justify-content: space-evenly
-@media (max-width:1004px)
-  .assignemntContent
-    width: 90vw
-  .assignment-Submit-Container
-    display: flex
-    flex-direction: column
-  .submitWork
-    justify-content: center
-    display: flex
-    width: 100vw
-  .submitWorkContent
-    width: 90vw
-@media (max-width:574px)
-  .assignmentContentTxt
-    padding: 0px
-  .assignmentFile
-    padding: 14px 0px
-    max-height: 50px
-    overflow: hidden
-    text-overflow: ellipsis
-    width: 100%
-    white-space: nowrap
-  .contentHeader
-    display: flex
-    flex-direction: column
-  .imgInstructor
-    width: 100%
-  .dueDateTxtBtn
-    width: 100%
-    margin-top: 10px
-    display: flex
-    justify-content: flex-start
-    margin-top: 15px
-  .dueDateGrade-container
-    display: flex
-    flex-direction: column
-    align-items: flex-end
-    row-gap: 14px
-    width: 100%
-  .materialNav
-    display: flex
-    flex-direction: column
-  .dueDateGrade
-    max-width: 120px
-    display: flex
-    flex-direction: column
-    justify-content: flex-end
-    row-gap: 14px
-    width: 100%
-</style>
 
 <script setup>
 import { ref, onMounted } from "vue";
@@ -732,7 +631,6 @@ const canvasContainer = ref(null);
 const route = useRoute();
 const router = useRouter();
 const submitWork = ref("");
-const subBtn = ref("");
 
 // const editDueTimeAssignment = ref("");
 const editTitleAssignment = ref("");
@@ -749,8 +647,8 @@ const roleValidation = ref("");
 const isStudent = ref("");
 const isInstructor = ref("");
 // submitted status
-const submittedStatus = ref("done");
-const isDone = ref("");
+const submittedStatus = ref("");
+const isDone = ref(false);
 const isMissing = ref("");
 const isPending = ref("");
 
@@ -770,6 +668,8 @@ const deleteMaterials = ref(false);
 const assgnmentDetails = ref(true);
 const studentSubmission = ref(false);
 
+const user = ref("");
+const mySubmission = ref("");
 const newDueDate = ref();
 
 async function showAssignmentDetails() {
@@ -799,13 +699,30 @@ const allowedExtensionImage = [
 // checks if its user, instructor, admin
 
 // check the users submitted assignment status
+
 async function checkSubmitted() {
-  if (submittedStatus.value === "done") {
-    return (isDone.value = true);
-  } else if (submittedStatus.value === "pending") {
-    return (isPending.value = true);
-  } else {
-    return (isMissing.value = true);
+  try {
+    const token = localStorage.getItem("authToken");
+    user.value = await viewViewerUser();
+
+    const response = await axios.get(
+      `${process.env.api_host}/courses/getSubmission?studentId=${user.value._id}&materialId=${materialId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    mySubmission.value = response.data[0];
+    if (response.data.length >= 1) {
+      submittedStatus.value = "done";
+      isDone.value = true;
+    } else {
+      submittedStatus.value = "pending";
+    }
+  } catch (err) {
+    console.error(err);
   }
 }
 
@@ -826,30 +743,42 @@ async function assignmentChecker() {
   }
 }
 
-const rows = ref([
-  { id: 1, name: "John", submissions: "M", status: "submitted", grade: "100" },
-  {
-    id: 2,
-    name: "Kenneth",
-    submissions: "A.",
-    status: "submitted",
-    grade: "90",
-  },
-  { id: 3, name: "Jules", submissions: "L", status: "pending", grade: "90" },
-  { id: 4, name: "Khris", submissions: "U", status: "missing", grade: "90" },
-  { id: 5, name: "Brt", submissions: "N", status: "missing", grade: "70" },
-]);
+const rows = ref([]); // Starts as an empty array
+
 const columns = ref([
-  { name: "name", label: "Full name ", align: "left", field: "name" },
+  { name: "studentId", label: "Student Id", align: "left", field: "studentId" },
+  { name: "name", label: "Full name", align: "left", field: "name" },
   {
     name: "submissions",
     label: "Submissions",
     align: "left",
     field: "submissions",
   },
-  { name: "status", label: "Status", align: "left", field: "status" },
-  { name: "grade", label: "grade", align: "left", field: "grade" },
+  { name: "grade", label: "Grade", align: "left", field: "grade" },
 ]);
+
+async function getSubmittedAssignment() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${process.env.api_host}/courses/getSubmission?materialId=${materialId}`,
+      {
+        headers: {
+          authorization: token,
+        },
+      }
+    );
+    rows.value = response.data.map((item) => ({
+      id: item._id,
+      studentId: item.studentUsername,
+      name: item.studentName,
+      submissions: item.file,
+      grade: item.grade,
+    }));
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 async function displayUserInfo() {
   const checkUser = await viewViewerUser();
@@ -862,8 +791,49 @@ async function displayUserInfo() {
     return (isAdmin.value = true);
   }
 }
-async function gradeSubmission() {
-  console.log("submited");
+
+async function gradeSubmission(submissionId, grade) {
+  loading.value = true;
+  try {
+    const token = localStorage.getItem("authToken");
+    if (!grade) {
+      Notify.create({
+        type: "warning",
+        message: "Grade must not less than to 0",
+      });
+      return;
+    } else if (grade > 100) {
+      Notify.create({
+        type: "warning",
+        message: "Grade must not exced to 100",
+      });
+      return;
+    }
+    const response = await axios.post(
+      `${process.env.api_host}/courses/submission/grade/${submissionId}`,
+      {
+        grade: grade,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Graded Successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "warning",
+      message: "Student Graded Already",
+    });
+  } finally {
+    loading.value = false;
+  }
 }
 async function fileExtension(file) {
   // Check if the file contains an extension
@@ -1139,7 +1109,41 @@ async function deleteCurrentMaterials(materialId) {
   }
 }
 
+async function submitAssignment() {
+  loading.value = true;
+  try {
+    const token = localStorage.getItem("authToken");
+    const submitFile = await uploadToCloud(submitWork.value);
+    const response = await axios.post(
+      `${process.env.api_host}/courses/submission/${materialId}`,
+      {
+        file: submitFile,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      }
+    );
+    Notify.create({
+      type: "positive",
+      message: "Submitted Successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    Notify.create({
+      type: "Negative",
+      message: "Something went wrong",
+    });
+  } finally {
+    loading.value = false;
+    location.reload();
+  }
+}
+
 onMounted(() => {
+  getSubmittedAssignment();
   displayMaterialsInfoAssignment();
   displayMaterialsInfoMaterial();
   assignmentChecker();
@@ -1147,3 +1151,142 @@ onMounted(() => {
   checkSubmitted();
 });
 </script>
+
+<style lang="sass" scoped>
+.main-container
+  height: auto
+.headerNavAssign
+  width: 100%
+  color: #4B4B4B
+.backBtn
+  width: 80vw
+  display: flex
+  align-items: center
+.assignment-Submit-Container
+  display: flex
+.courseAssignment
+  height: auto
+.assignemntContent
+  border: 1px solid #D9D9D9
+  border-radius: 14px
+  box-shadow: none
+  width: 50vw
+  height: auto
+.submitWork
+  height: auto
+  align-self: flex-start
+.submitWorkContent
+  border: 1px solid #D9D9D9
+  border-radius: 14px
+  box-shadow: none
+  width: 20vw
+  height: auto
+.submittedWork-container
+  border: 1px solid #D9D9D9
+  border-radius: 14px
+  display: flex
+  justify-content: center
+  align-items: center
+  height: 50px
+.workStatusTxt
+  display: flex
+  justify-content: space-between
+  align-items: center
+  color: #4B4B4B
+.contentHeader
+  align-items: center
+  display: flex
+  color: #4b4b4b
+  width: 100%
+.imgInstructor
+  display: flex
+  align-items: center
+  width: 50%
+.dueDateTxtBtn
+  display: flex
+  justify-content: flex-end
+  width: 50%
+.dueDateGrade-container
+  display: flex
+  justify-content: flex-end
+  column-gap: 14px
+.dueDateGrade
+  background-color: #f3f3f3
+  border: 1px solid #d9d9d9
+.materialNav
+  width: 70vw
+  display: flex
+.materialNav div
+  cursor: pointer
+  position: relative
+.materialNav .active
+  color: #28a745
+.materialNav .active::after
+  content: ''
+  position: absolute
+  bottom: 0
+  left: 0
+  right: 0
+  height: 3px
+  background-color: #28a745
+.submissionDetails
+  width: 70vw
+  display: flex
+  height: 100px
+  align-items: center
+.submissionAnalytics
+  display: flex
+  flex-direction: column
+  border-left: 1px solid black
+  height: 90px
+  justify-content: space-evenly
+@media (max-width:1004px)
+  .assignemntContent
+    width: 90vw
+  .assignment-Submit-Container
+    display: flex
+    flex-direction: column
+  .submitWork
+    justify-content: center
+    display: flex
+    width: 100vw
+  .submitWorkContent
+    width: 90vw
+@media (max-width:574px)
+  .assignmentContentTxt
+    padding: 0px
+  .assignmentFile
+    padding: 14px 0px
+    max-height: 50px
+    overflow: hidden
+    text-overflow: ellipsis
+    width: 100%
+    white-space: nowrap
+  .contentHeader
+    display: flex
+    flex-direction: column
+  .imgInstructor
+    width: 100%
+  .dueDateTxtBtn
+    width: 100%
+    margin-top: 10px
+    display: flex
+    justify-content: flex-start
+    margin-top: 15px
+  .dueDateGrade-container
+    display: flex
+    flex-direction: column
+    align-items: flex-end
+    row-gap: 14px
+    width: 100%
+  .materialNav
+    display: flex
+    flex-direction: column
+  .dueDateGrade
+    max-width: 120px
+    display: flex
+    flex-direction: column
+    justify-content: flex-end
+    row-gap: 14px
+    width: 100%
+</style>

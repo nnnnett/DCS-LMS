@@ -46,7 +46,7 @@ const routes = [
         component: () => import("src/pages/quizPage.vue"),
       },
       {
-        path: "answerQuizPage/:quizId",
+        path: "answerQuizPage/:courseId/:quizId",
         component: () => import("src/pages/answerQuizPage.vue"),
       },
     ],
