@@ -58,6 +58,15 @@
               </q-td>
             </q-tr>
           </template>
+          <template v-slot:top-right>
+            <q-btn
+              color="primary"
+              icon-right="archive"
+              label="Export to csv"
+              no-caps
+              @click="exportTable"
+            />
+          </template>
         </q-table>
       </div>
     </div>
@@ -392,6 +401,33 @@ async function cancelRegister() {
   isArchived.value = "";
   imageProfile.value = "";
   addInstructor.value = false;
+}
+
+function exportUserManagement() {
+  const content = [
+    gradeColumns.value.map((col) => wrapCsvValue(col.label)).join(","), // Header row
+    ...gradeRows.value.map((row) =>
+      gradeColumns.value
+        .map((col) =>
+          wrapCsvValue(
+            typeof col.field === "function" ? col.field(row) : row[col.field],
+            col.format,
+            row
+          )
+        )
+        .join(",")
+    ),
+  ].join("\r\n");
+
+  const status = exportFile("Student-Submissions.csv", content, "text/csv");
+
+  if (status !== true) {
+    Notify.create({
+      message: "Browser denied file download...",
+      color: "negative",
+      icon: "warning",
+    });
+  }
 }
 
 onMounted(() => {

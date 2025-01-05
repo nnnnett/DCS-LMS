@@ -64,6 +64,15 @@
               </template>
             </q-input>
           </template>
+          <template v-slot:top-right>
+            <q-btn
+              color="primary"
+              icon-right="archive"
+              label="Export to csv"
+              no-caps
+              @click="exportTable"
+            />
+          </template>
         </q-table>
       </div>
     </div>
@@ -79,7 +88,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { Notify } from "quasar";
+import { Notify, exportFile } from "quasar";
 const filter = ref("");
 const rows = ref([]);
 
@@ -184,6 +193,54 @@ async function archiveCourse(courseId) {
     Notify.create({
       type: "negative",
       message: "Something went wrong",
+    });
+  }
+}
+
+function wrapCsvValue(val, formatFn, row) {
+  let formatted = formatFn !== void 0 ? formatFn(val, row) : val;
+
+  formatted =
+    formatted === void 0 || formatted === null ? "" : String(formatted);
+
+  formatted = formatted.split('"').join('""');
+  /**
+   * Excel accepts \n and \r in strings, but some other CSV parsers do not
+   * Uncomment the next two lines to escape new lines
+   */
+  // .split('\n').join('\\n')
+  // .split('\r').join('\\r')
+
+  return `"${formatted}"`;
+}
+
+function exportTable() {
+  // Naive encoding to CSV format
+  const content = [columns.value.map((col) => wrapCsvValue(col.label))]
+    .concat(
+      rows.value.map((row) =>
+        columns.value
+          .map((col) =>
+            wrapCsvValue(
+              typeof col.field === "function"
+                ? col.field(row)
+                : row[col.field === void 0 ? col.name : col.field],
+              col.format,
+              row
+            )
+          )
+          .join(",")
+      )
+    )
+    .join("\r\n");
+
+  const status = exportFile("courses-data.csv", content, "text/csv");
+
+  if (status !== true) {
+    Notify.create({
+      message: "Browser denied file download...",
+      color: "negative",
+      icon: "warning",
     });
   }
 }
