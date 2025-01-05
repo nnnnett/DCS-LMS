@@ -41,6 +41,14 @@ const routes = [
         path: "courseManagementPage",
         component: () => import("pages/courseManagementPage.vue"),
       },
+      {
+        path: "quizPage/:courseId",
+        component: () => import("src/pages/quizPage.vue"),
+      },
+      {
+        path: "answerQuizPage/:quizId",
+        component: () => import("src/pages/answerQuizPage.vue"),
+      },
     ],
   },
   {
@@ -54,10 +62,6 @@ const routes = [
       {
         path: "registerPage",
         component: () => import("pages/registerPage.vue"),
-      },
-      {
-        path: "testPage",
-        component: () => import("pages/testPage.vue"),
       },
     ],
   },

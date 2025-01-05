@@ -30,7 +30,12 @@
           </div>
           <div class="q-px-xl" @click="showMyWorks">
             <q-card-section :class="{ active: myWorksLink }"
-              >My Works</q-card-section
+              >Task</q-card-section
+            >
+          </div>
+          <div class="q-px-xl" @click="showQuizes">
+            <q-card-section :class="{ active: quizLink }"
+              >Quizes</q-card-section
             >
           </div>
         </div>
@@ -183,6 +188,9 @@
                   <q-card-section :class="{ active: assignmentLink }"
                     >Assignment</q-card-section
                   >
+                </div>
+                <div class="PostnavBar" @click="showCreateQuizPopup = true">
+                  <q-card-section>Quiz</q-card-section>
                 </div>
               </q-card-section>
               <q-card-section>
@@ -384,6 +392,24 @@
                     </q-card-section>
                   </div>
                 </q-form>
+                <!-- create quiz -->
+                <div class="newPost-container">
+                  <q-dialog v-model="showCreateQuizPopup">
+                    <q-card>
+                      <q-card-section>
+                        Do you want to create a quiz?
+                      </q-card-section>
+
+                      <div>
+                        <q-btn
+                          :to="`../quizPage/` + courseId"
+                          label="Yes"
+                        ></q-btn>
+                        <q-btn label="Cancel" v-close-popup></q-btn>
+                      </div>
+                    </q-card>
+                  </q-dialog>
+                </div>
               </q-card-section>
             </q-card>
           </q-card-section>
@@ -870,7 +896,6 @@
             </q-card>
           </q-card-section> -->
         </div>
-
         <!-- for instructor show all students -->
         <div v-if="studentList" class="studentList-container">
           <q-card-section style="display: flex; justify-content: space-between">
@@ -999,6 +1024,43 @@
                 />
               </template>
             </q-table>
+          </div>
+        </div>
+        <!-- show quizes for students -->
+        <div v-if="quizLink">
+          <q-card-section>
+            <div class="text-subtitle1 text-primary text-weight-medium">
+              Quizes
+            </div>
+          </q-card-section>
+          <div v-if="quizes">
+            <q-card
+              style="
+                border: 1px solid #d9d9d9;
+                border-radius: 14px;
+                column-gap: 14px;
+                box-shadow: none;
+                display: flex;
+              "
+              v-for="quiz in quizes"
+              :key="quiz"
+              class="q-mb-md"
+            >
+              <q-card-section
+                clickable
+                @click="goToQuizPage(quiz._id)"
+                class="q-py-md"
+                style="width: 100%; display: flex; align-items: center"
+              >
+                <div class="q-mr-md"><q-icon name="quiz" size="24px" /></div>
+                <div>
+                  <div>{{ quiz.name }}</div>
+                  <div>
+                    Total Number of Questions: {{ quiz.questions.length }}
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
           </div>
         </div>
       </q-card-section>
@@ -1184,6 +1246,7 @@
   background-color: #f3f3f3
   border: 1px solid #d9d9d9
   width: 120px
+
 @media (max-width:1004px)
   .courseDescUpcoming
     display: flex
@@ -1231,7 +1294,7 @@
     row-gap: 14px
     width: 100%
     align-items: flex-end
-@media (max-width:547px)
+@media (max-width:650px)
   .main-container
     width: 100%
     padding: 0px
@@ -1329,7 +1392,7 @@ const taskLink = ref(false);
 const myWorksLink = ref(false);
 const studentList = ref(false);
 const studentGrades = ref(false);
-
+const quizLink = ref(false);
 const announcementLink = ref(true);
 const materialsLink = ref(false);
 const assignmentLink = ref(false);
@@ -1362,12 +1425,17 @@ const selectMyWorks = ref({
   options: ["All", "Submitted", "Missing", "Pending"],
 });
 
+// quiz
+
 // update/edit course
 const courseImage = ref("");
 const courseName = ref("");
 const courseSection = ref("");
 const courseDescription = ref("");
 
+// quizz
+const quizes = ref("");
+const showCreateQuizPopup = ref(false);
 const isoDate = ref();
 const showFeed = () => {
   feedLink.value = true;
@@ -1375,6 +1443,7 @@ const showFeed = () => {
   myWorksLink.value = false;
   studentList.value = false;
   studentGrades.value = false;
+  quizLink.value = false;
 };
 const showTask = () => {
   feedLink.value = false;
@@ -1382,6 +1451,7 @@ const showTask = () => {
   myWorksLink.value = false;
   studentList.value = false;
   studentGrades.value = false;
+  quizLink.value = false;
 };
 const showMyWorks = () => {
   feedLink.value = false;
@@ -1389,6 +1459,16 @@ const showMyWorks = () => {
   myWorksLink.value = true;
   studentList.value = false;
   studentGrades.value = false;
+  quizLink.value = false;
+};
+
+const showQuizes = () => {
+  feedLink.value = false;
+  taskLink.value = false;
+  myWorksLink.value = false;
+  studentList.value = false;
+  studentGrades.value = false;
+  quizLink.value = true;
 };
 
 const showGrades = () => {
@@ -1903,6 +1983,19 @@ async function addCommentF(materialId) {
   }
 }
 
+async function getQuizes() {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${process.env.api_host}/courses/getQuiz?courseId=${courseId}`
+    );
+    quizes.value = response.data;
+    console.log("here", quizes.value);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 // async function getCommentsF(materialId) {
 //   try {
 //     const response = await axios.get(
@@ -1934,7 +2027,13 @@ function copyToClipboard(text) {
   );
 }
 
+async function goToQuizPage(quizId) {
+  router.replace(`/main/answerQuizPage/` + quizId);
+  console.log("here");
+}
+
 onMounted(() => {
+  getQuizes();
   getMaterials();
   getCourses();
   displayUserInfo();
