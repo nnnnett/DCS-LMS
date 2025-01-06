@@ -22,7 +22,7 @@
             </div>
           </q-card-section>
           <q-card-section class="q-pl-none q-pb-xs">
-            <div style="color: #6c7275">Username</div>
+            <div style="color: #6c7275">Student ID</div>
           </q-card-section>
           <!-- username -->
           <div class="login-input q-px-sm">

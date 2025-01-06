@@ -13,6 +13,7 @@
       <!-- user details table -->
       <div>
         <q-table
+          :filter="filter"
           :rows="rows"
           :columns="columns"
           row-key="id"
@@ -31,11 +32,6 @@
               <q-td>
                 <q-btn-dropdown dropdown-icon="more_vert" flat>
                   <q-list>
-                    <q-item>
-                      <q-btn flat class="text-primary" @click="editUser"
-                        >Edit</q-btn
-                      >
-                    </q-item>
                     <q-item>
                       <q-btn
                         flat
@@ -58,14 +54,255 @@
               </q-td>
             </q-tr>
           </template>
+          <template v-slot:top-left>
+            <q-input
+              borderless
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Search"
+            >
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </template>
           <template v-slot:top-right>
-            <q-btn
-              color="primary"
-              icon-right="archive"
-              label="Export to csv"
-              no-caps
-              @click="exportTable"
-            />
+            <div
+              style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: flex-start;
+                align-items: center;
+              "
+            >
+              <div class="q-mr-sm" style="flex: 1 1 auto; text-align: center">
+                <q-btn
+                  color="primary"
+                  label="Add instructor"
+                  no-caps
+                  @click="addInstructor = true"
+                />
+              </div>
+              <div style="flex: 1 1 auto; text-align: center">
+                <q-btn
+                  color="primary"
+                  icon-right="archive"
+                  label="Export to csv"
+                  no-caps
+                  @click="exportTable"
+                />
+              </div>
+            </div>
+
+            <!-- register instructor -->
+            <div>
+              <q-dialog v-model="addInstructor" persistent>
+                <q-card style="width: 80vw">
+                  <q-form @submit.prevent="registerInstructor">
+                    <div style="color: #6c7275" class="q-px-md">
+                      <q-card-section class="text-h6 q-pb-none q-pl-none">
+                        Register Instructor
+                      </q-card-section>
+                      <q-card-section>
+                        <div>
+                          <q-card-section class="q-py-none q-pl-none text-h6">
+                            Basic Info
+                          </q-card-section>
+                          <q-card-section class="q-pb-none q-pl-none">
+                            First Name
+                          </q-card-section>
+                          <q-input
+                            class="q-px-md"
+                            style="
+                              width: 100%;
+                              justify-self: center;
+                              border: 1px solid #6c7275;
+                              border-radius: 14px;
+                            "
+                            type="text"
+                            borderless
+                            v-model="firstName"
+                          />
+                        </div>
+                        <div>
+                          <q-card-section class="q-pb-none q-pl-none">
+                            Middle Name
+                          </q-card-section>
+                          <q-input
+                            class="q-px-md"
+                            style="
+                              width: 100%;
+                              justify-self: center;
+                              border: 1px solid #6c7275;
+                              border-radius: 14px;
+                            "
+                            type="text"
+                            borderless
+                            v-model="middleName"
+                          />
+                        </div>
+                        <div>
+                          <q-card-section class="q-pb-none q-pl-none">
+                            Last Name
+                          </q-card-section>
+                          <q-input
+                            class="q-px-md"
+                            style="
+                              width: 100%;
+                              justify-self: center;
+                              border: 1px solid #6c7275;
+                              border-radius: 14px;
+                            "
+                            type="text"
+                            borderless
+                            v-model="lastName"
+                          />
+                        </div>
+                        <div>
+                          <q-card-section class="q-pb-none q-pl-none text-h6">
+                            Account Info
+                          </q-card-section>
+                          <q-file
+                            class="q-px-md"
+                            v-model="imageProfile"
+                            accept="image/*"
+                            borderless
+                            label="Upload Profile Image"
+                            style="
+                              width: 100%;
+                              justify-self: center;
+                              border: 1px solid #6c7275;
+                              border-radius: 14px;
+                            "
+                          >
+                            <template #append>
+                              <q-icon name="upload"></q-icon>
+                            </template>
+                          </q-file>
+                          <div>
+                            <q-card-section class="q-pb-none q-pl-none">
+                              Employee ID
+                            </q-card-section>
+                            <q-input
+                              class="q-px-md"
+                              style="
+                                width: 100%;
+                                justify-self: center;
+                                border: 1px solid #6c7275;
+                                border-radius: 14px;
+                              "
+                              type="text"
+                              borderless
+                              v-model="username"
+                            />
+                          </div>
+                          <div>
+                            <q-card-section class="q-pb-none q-pl-none">
+                              Email
+                            </q-card-section>
+                            <q-input
+                              class="q-px-md"
+                              style="
+                                width: 100%;
+                                justify-self: center;
+                                border: 1px solid #6c7275;
+                                border-radius: 14px;
+                              "
+                              type="email"
+                              borderless
+                              v-model="email"
+                            />
+                          </div>
+
+                          <!-- Password -->
+                          <div>
+                            <q-card-section class="q-pb-none q-pl-none">
+                              Password
+                            </q-card-section>
+                            <q-input
+                              class="q-px-md"
+                              :type="isPwd ? 'password' : 'text'"
+                              borderless
+                              v-model="password"
+                              style="
+                                width: 100%;
+                                justify-self: center;
+                                border: 1px solid #6c7275;
+                                border-radius: 14px;
+                              "
+                            >
+                              <template v-slot:append>
+                                <q-icon
+                                  :name="
+                                    isPwd ? 'visibility_off' : 'visibility'
+                                  "
+                                  class="cursor-pointer"
+                                  @click="isPwd = !isPwd"
+                                /> </template
+                            ></q-input>
+                          </div>
+                          <div>
+                            <q-card-section class="q-pb-none q-pl-none">
+                              Password
+                            </q-card-section>
+                            <q-input
+                              class="q-px-md"
+                              :type="isCPwd ? 'password' : 'text'"
+                              borderless
+                              v-model="confirmPassword"
+                              style="
+                                width: 100%;
+                                justify-self: center;
+                                border: 1px solid #6c7275;
+                                border-radius: 14px;
+                              "
+                            >
+                              <template v-slot:append>
+                                <q-icon
+                                  :name="
+                                    isCPwd ? 'visibility_off' : 'visibility'
+                                  "
+                                  class="cursor-pointer"
+                                  @click="isCPwd = !isCPwd"
+                                />
+                              </template>
+                            </q-input>
+                          </div>
+                        </div>
+                      </q-card-section>
+                      <q-card-section
+                        style="
+                          width: 100%;
+                          display: flex;
+                          justify-content: flex-end;
+                        "
+                      >
+                        <div class="q-mr-sm">
+                          <q-btn
+                            :loading="loading"
+                            type="submit"
+                            label="Register"
+                            no-caps
+                            flat
+                            style="background-color: #46af4b; color: #ffffff"
+                          />
+                        </div>
+                        <div>
+                          <q-btn
+                            label="Cancel"
+                            no-caps
+                            flat
+                            @click="cancelRegister"
+                          />
+                        </div>
+                      </q-card-section>
+                    </div>
+                  </q-form>
+                </q-card>
+              </q-dialog>
+            </div>
           </template>
         </q-table>
       </div>
@@ -110,7 +347,7 @@ const email = ref("");
 const firstName = ref("");
 const lastName = ref("");
 const middleName = ref("");
-const role = ref("instructor");
+// const role = ref("instructor");
 const isArchived = ref(false);
 const loading = ref(false);
 const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/; // Regex for special char, number, and min 8 chars
@@ -134,7 +371,7 @@ const columns = ref([
   },
   {
     name: "userName",
-    label: "User Name",
+    label: "User ID",
     align: "left",
     field: "username", // Matches the field name from backend data
   },
@@ -354,8 +591,7 @@ async function registerInstructor() {
         firstName: firstName.value,
         middleName: middleName.value,
         lastName: lastName.value,
-        role: role.value,
-        isArchived: isArchived.value,
+        role: "instructor",
         file: imageUrl,
       },
       {
@@ -369,8 +605,6 @@ async function registerInstructor() {
     firstName.value = "";
     middleName.value = "";
     lastName.value = "";
-    role.value = "";
-    isArchived.value = "";
     imageProfile.value = "";
     Notify.create({
       type: "positive",
@@ -397,8 +631,6 @@ async function cancelRegister() {
   firstName.value = "";
   middleName.value = "";
   lastName.value = "";
-  role.value = "";
-  isArchived.value = "";
   imageProfile.value = "";
   addInstructor.value = false;
 }

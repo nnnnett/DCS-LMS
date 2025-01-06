@@ -374,16 +374,22 @@
             </div>
 
             <!-- download file -->
-            <div v-if="isDocuFile">
+            <div v-if="isDocuFile" class="q-py-sm">
               <q-card-section class="q-px-xl assignmentFile">
                 <div style="width: 100%">
                   <q-btn
                     @click="downloadFile(materials.file)"
                     no-caps
+                    flat
                     target="_blank"
-                    style="text-decoration: none; color: var(--q-primary)"
+                    style="
+                      text-decoration: none;
+                      color: var(--q-primary);
+                      width: auto;
+                      border: 1px solid #46af4b;
+                    "
                   >
-                    Download File
+                    {{ materials.name }}
                   </q-btn>
                 </div>
               </q-card-section>
@@ -394,7 +400,14 @@
               style="color: #4b4b4b"
             >
               <div class="text-h6 q-mb-sm">Description</div>
-              <div style="text-align: justify; font-size: 1.2em">
+              <div
+                style="
+                  text-align: left;
+                  font-size: 1.2em;
+                  line-height: 1.6;
+                  white-space: pre-wrap;
+                "
+              >
                 {{ materials.description }}
               </div>
             </q-card-section>
@@ -516,7 +529,7 @@
       </div>
       <!-- student submission -->
       <div class="studentSubmission-container" v-if="studentSubmission">
-        <q-card-section class="flex flex-center">
+        <!-- <q-card-section class="flex flex-center">
           <div class="submissionDetails">
             <div class="q-px-md submissionAnalytics">
               <div>4</div>
@@ -531,7 +544,7 @@
               <div>Graded</div>
             </div>
           </div>
-        </q-card-section>
+        </q-card-section> -->
         <q-card-section class="flex flex-center">
           <div style="width: 70vw">
             <q-table

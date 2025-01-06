@@ -68,6 +68,7 @@
                 position: 'relative',
                 borderRadius: '14px 14px 0px 0px',
                 overflow: 'hidden',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' /* Add this line */,
               }"
             >
               <!-- archived button -->
@@ -95,6 +96,9 @@
                   <div class="course-instructor">
                     {{ course.instructorName }}
                   </div>
+                  <div class="course-instructor">
+                    {{ course.section }}
+                  </div>
                 </div>
                 <q-img
                   :src="course.instructorImage"
@@ -116,7 +120,7 @@
               <q-card-section
                 style="display: flex; justify-content: flex-end; padding: 8px"
               >
-                <q-btn :to="`/main/coursePage/` + course._id" flat>
+                <q-btn :to="`/main/coursePage/` + course._id">
                   <q-icon name="chevron_right" />
                 </q-btn>
               </q-card-section>

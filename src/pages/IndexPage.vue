@@ -119,9 +119,9 @@
                 flex-wrap: wrap;
                 column-gap: 20px;
                 width: 100%;
-                row-gap: 150px;
-                height: 420px;
-                max-height: 500px;
+                row-gap: 190px;
+                height: 350px;
+                max-height: 350px;
                 overflow: hidden;
               "
               class="q-px-none row"
@@ -137,6 +137,8 @@
                       height: '180px',
                       backgroundImage: `url(${course.file})`,
                       backgroundSize: 'cover',
+                      boxShadow:
+                        '0 4px 8px rgba(0, 0, 0, 0.2)' /* Add this line */,
                       backgroundPosition: 'center',
                       position: 'relative',
                       borderRadius: '14px 14px 0px 0px',
@@ -164,6 +166,9 @@
                         <div class="course-instructor">
                           {{ course.instructorName }}
                         </div>
+                        <div class="course-instructor">
+                          {{ course.section }}
+                        </div>
                       </div>
                       <q-img
                         :src="course.instructorImage"
@@ -189,10 +194,7 @@
                         padding: 8px;
                       "
                     >
-                      <q-btn
-                        :to="`/main/coursePage/` + course._id"
-                        style="border: 1px solid #4b4b4b"
-                      >
+                      <q-btn :to="`/main/coursePage/` + course._id">
                         <q-icon name="chevron_right" />
                       </q-btn>
                     </q-card-section>

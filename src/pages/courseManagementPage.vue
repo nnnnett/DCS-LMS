@@ -33,11 +33,11 @@
               <q-td align="center">
                 <q-btn-dropdown dropdown-icon="more_vert" flat>
                   <q-list>
-                    <q-item>
+                    <!-- <q-item>
                       <q-btn flat class="text-primary" @click="editCourse"
                         >Edit</q-btn
                       ></q-item
-                    >
+                    > -->
                     <q-item>
                       <q-btn
                         flat

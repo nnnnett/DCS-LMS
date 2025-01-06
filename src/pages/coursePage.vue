@@ -162,16 +162,16 @@
           <!-- course Description -->
           <q-card-section class="flex courseDescUpcoming">
             <div class="courseDescription q-px-md" v-if="courses">
-              <div class="text-subtitle1">Course Description</div>
+              <div class="text-subtitle1" style="color: #46af4b">
+                Course Description
+              </div>
               <div style="text-indent: 20px">
                 {{ courses.description }}
               </div>
             </div>
 
             <div class="upcomingAssign q-px-sm">
-              <div style="text-transform: uppercase; color: #46af4b">
-                UPCOMING assignment
-              </div>
+              <div style="color: #46af4b">Assignments</div>
               <q-scroll-area
                 style="height: 150px; width: 100%"
                 v-if="materials"
@@ -1612,7 +1612,7 @@ async function getGradesAndAssignments() {
     console.log(user.role);
     if (user.role === "student") {
       response = await axios.get(
-        `${process.env.api_host}/courses/getGrade?courseId=${courseId}&studentId=${user._id}`,
+        `${process.env.api_host}/courses/getGrade?courseId=${courseId}&studentId=${user._id}&isArchived=false`,
         {
           headers: {
             authorization: token,
@@ -1621,7 +1621,7 @@ async function getGradesAndAssignments() {
       );
     } else {
       response = await axios.get(
-        `${process.env.api_host}/courses/getGrade?courseId=${courseId}`,
+        `${process.env.api_host}/courses/getGrade?courseId=${courseId}&isArchived=false`,
         {
           headers: {
             authorization: token,

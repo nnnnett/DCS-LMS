@@ -36,7 +36,7 @@ export async function getAllCourses() {
 export async function getMyCourses(studentId) {
   try {
     const response = await axios.get(
-      `${process.env.api_host}/courses?studentId=${studentId}`
+      `${process.env.api_host}/courses?studentId=${studentId}&isArchived=false`
     );
 
     return response.data;
@@ -48,7 +48,31 @@ export async function getMyCourses(studentId) {
 export async function getMyClass(instructorId) {
   try {
     const response = await axios.get(
-      `${process.env.api_host}/courses?instructorId=${instructorId}`
+      `${process.env.api_host}/courses?instructorId=${instructorId}&isArchived=false`
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function getMyCoursesArchived(studentId) {
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/courses?studentId=${studentId}&isArchived=true`
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function getMyClassArchived(instructorId) {
+  try {
+    const response = await axios.get(
+      `${process.env.api_host}/courses?instructorId=${instructorId}&isArchived=true`
     );
 
     return response.data;

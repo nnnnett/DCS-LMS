@@ -23,6 +23,7 @@
               height: '180px',
               backgroundImage: `url(${archived.file})`,
               backgroundSize: 'cover',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' /* Add this line */,
               backgroundPosition: 'center',
               position: 'relative',
               borderRadius: '14px 14px 0px 0px',
@@ -50,7 +51,12 @@
                 <div class="course-title">
                   {{ archived.name }} - {{ archived.section }}
                 </div>
-                <div class="course-instructor">Rosalina D. Lacuesta</div>
+                <div class="course-instructor">
+                  {{ archived.instructorName }}
+                </div>
+                <div class="course-instructor">
+                  {{ archived.section }}
+                </div>
               </div>
               <q-img
                 src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702947/assets/egs1cglp5qdtkg5ra7dj.png"
@@ -62,12 +68,8 @@
             <q-card-section
               style="display: flex; justify-content: flex-end; padding: 8px"
             >
-              <div style="align-self: center">See your works</div>
               <q-space></q-space>
-              <q-btn
-                :to="`/main/coursePage/` + archived._id"
-                style="border: 1px solid #46af4b"
-              >
+              <q-btn :to="`/main/coursePage/` + archived._id">
                 <q-icon name="chevron_right" />
               </q-btn>
             </q-card-section>
@@ -117,7 +119,7 @@
   border-radius: 0px 0px 14px 14px
   overflow: hidden
   padding: 8px
-  color: #46AF4B
+
 
 .due-text,
 .chapter-text
@@ -143,7 +145,11 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getArchivedCourses } from "src/components/course";
+import {
+  getArchivedCourses,
+  getMyClassArchived,
+  getMyCoursesArchived,
+} from "src/components/course";
 import { Notify } from "quasar";
 import axios from "axios";
 import { useRoute } from "vue-router";
@@ -155,7 +161,7 @@ const roleValidation = ref("");
 const isStudent = ref("");
 const isInstructor = ref("");
 const isAdmin = ref("");
-
+const courses = ref("");
 // const courseId = route.params.courseId;
 async function displayUserInfo() {
   const checkUser = await viewViewerUser();
@@ -171,10 +177,21 @@ async function displayUserInfo() {
 
 async function getArchivedCourse() {
   try {
-    const getCourseDetails = await getArchivedCourses();
-    archivedCourses.value = getCourseDetails;
+    const myUser = await viewViewerUser();
+    console.log("user", myUser.role);
+    if (myUser.role === "student") {
+      const getCourseDetails = await getMyCoursesArchived(myUser._id);
+      archivedCourses.value = getCourseDetails;
+    } else if (myUser.role === "instructor") {
+      const getCourseDetails = await getMyClassArchived(myUser._id);
+      archivedCourses.value = getCourseDetails;
+    } else {
+      const getCourseDetails = await getArchivedCourses();
+      archivedCourses.value = getCourseDetails;
+    }
+
     archivedCourses.value.forEach((course, index) => {
-      archivedCourses.value.name;
+      course.file;
     });
   } catch (err) {
     console.error(err);
