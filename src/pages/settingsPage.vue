@@ -63,7 +63,7 @@
                     </q-card-section>
                     <div style="width: 100%">
                       <q-card-section class="q-px-none q-pb-xs">
-                        Username
+                        Student ID
                       </q-card-section>
                       <q-input
                         class="q-pl-md"

@@ -18,7 +18,7 @@
         </div>
       </q-card-section>
       <!-- Main Content -->
-      <q-card-section class="q-pb-none">
+      <q-card-section class="q-py-none">
         <div class="headerNav q-px-md">
           <div class="q-px-xl" @click="showFeed">
             <q-card-section :class="{ active: feedLink }">Feed</q-card-section>
@@ -35,10 +35,9 @@
           </div>
           <div class="q-px-xl" @click="showQuizes">
             <q-card-section :class="{ active: quizLink }"
-              >Quizes</q-card-section
+              >Quizzes</q-card-section
             >
           </div>
-
           <div class="q-px-xl" @click="showStudents">
             <q-card-section :class="{ active: studentList }"
               >Students</q-card-section
@@ -60,7 +59,7 @@
       </q-card-section> -->
       <q-separator />
 
-      <q-card-section>
+      <q-card-section class="q-pr-none">
         <!-- feed tab -->
         <div v-if="feedLink" class="feed-container">
           <q-card-section class="flex flex-center" v-if="courses">
@@ -79,6 +78,10 @@
                   borderRadius: '14px',
                   overflow: 'hidden',
                   display: 'flex',
+                  flexDirection: 'column', // Adjusts for better stacking on mobile
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '1rem',
                 }"
               >
                 <!-- Edit course button -->
@@ -100,39 +103,54 @@
                     @click="editCoursePopup = true"
                   />
                 </div>
+
                 <div class="courseInstructor">
+                  <!-- Instructor Image -->
                   <q-img
                     :src="courses.instructorImage"
                     style="
                       width: 70px;
                       height: 70px;
                       border-radius: 50%;
-                      min-width: 50px;
-                      min-height: 50px;
+                      min-width: 30px;
+                      min-height: 30px;
                     "
+                    class="q-mb-sm instructorImg"
                   />
+
+                  <!-- Course Title -->
                   <div
+                    class="q-pb-xs text-center"
                     style="
-                      font-size: 1.5em;
+                      font-size: 1.2em;
                       font-weight: 500;
                       text-transform: capitalize;
                     "
                   >
                     {{ courses.name }} - {{ courses.section }}
                   </div>
-                  <div style="font-size: 1em" class="q-py-sm">
+
+                  <!-- Instructor Name -->
+                  <div
+                    style="font-size: 1em"
+                    class="q-py-sm text-center instructorImg"
+                  >
                     {{ courses.instructorName }}
                   </div>
+
+                  <!-- Copy Button -->
                   <q-btn
                     icon-right="content_paste"
                     @click="copyToClipboard(courses._id)"
                     no-caps
+                    flat
                     style="
-                      font-size: 1em;
+                      font-size: 0.9em;
                       font-weight: 500;
-                      color: inherit;
                       cursor: pointer;
-                      text-align: left;
+                      color: inherit;
+                      text-align: center;
+                      display: block;
                     "
                   >
                     Class: {{ courses._id }}
@@ -143,14 +161,14 @@
           </q-card-section>
           <!-- course Description -->
           <q-card-section class="flex courseDescUpcoming">
-            <div class="courseDescription q-px-xl" v-if="courses">
+            <div class="courseDescription q-px-md" v-if="courses">
               <div class="text-subtitle1">Course Description</div>
               <div style="text-indent: 20px">
                 {{ courses.description }}
               </div>
             </div>
 
-            <div class="upcomingAssign q-px-xl">
+            <div class="upcomingAssign q-px-sm">
               <div style="text-transform: uppercase; color: #46af4b">
                 UPCOMING assignment
               </div>
@@ -1049,10 +1067,14 @@
 .headerNav
   font-size: 1rem
   display: flex
+
+  align-items: center
+  flex-wrap: wrap
 .headerNav div
   padding: 8px 16px
   cursor: pointer
   position: relative
+  text-align: center
 .headerNav .active
   color: #28a745
 .headerNav .active::after
@@ -1063,7 +1085,7 @@
   right: 0
   height: 3px
   background-color: #28a745
-  // feed container
+
 .feed-container
   height: auto
 .courseInstructor
@@ -1269,10 +1291,30 @@
     row-gap: 14px
     width: 100%
     align-items: flex-end
+  .headerNav
+    font-size: 0.9rem
+    flex-direction: column
+    align-items: flex-start
+  .headerNav div
+    padding: 8px
+    width: 100%
+  .headerNav .active::after
+    height: 2px
 @media (max-width:650px)
   .main-container
     width: 100%
     padding: 0px
+  .instructorImg
+    visibility: hidden
+    position: absolute
+  .courseInstructor div
+    font-size: 1em !important
+  .courseInstructor q-img
+    width: 30px !important
+    height: 30px !important
+    visibility: hidden
+  .q-btn
+    font-size: 0.8em !important
   .feed-container
     width: 80vw
     margin: 20px
@@ -1310,8 +1352,6 @@
   .sampleCoursetxt
     font-size: 1rem
     margin-left: 20px
-  .headerNav
-    padding: 0px
   .filter-container
     margin-left: 0px
   .filterSelect
@@ -1341,6 +1381,12 @@
     display: flex
     justify-content: flex-end
     margin-top: 15px
+@media (max-width: 480px)
+  .headerNav
+    font-size: 0.8rem
+    padding: 0
+  .headerNav div
+    padding: 6px
 </style>
 
 <script setup>

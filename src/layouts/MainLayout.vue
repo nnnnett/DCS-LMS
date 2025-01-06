@@ -13,6 +13,8 @@
         />
         <div class="q-mx-md">
           <q-img
+            clickable
+            @click="backToHomepage"
             src="https://res.cloudinary.com/dqaw6ndtn/image/upload/v1734702951/assets/fjqfqywlp4zvtxv5rkau.png"
             style="width: 50px"
           />
@@ -44,9 +46,16 @@
 import { ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import userProfie from "src/components/userProfie.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 defineOptions({
   name: "MainLayout",
 });
+
+function backToHomepage() {
+  router.replace(`/main`);
+}
 
 const leftDrawerOpen = ref(false);
 
