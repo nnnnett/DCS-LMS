@@ -49,6 +49,10 @@ const routes = [
         path: "answerQuizPage/:courseId/:quizId",
         component: () => import("src/pages/answerQuizPage.vue"),
       },
+      {
+        path: "studentGrade/:courseId/:studentId",
+        component: () => import("src/pages/studentGrade.vue"),
+      },
     ],
   },
   {

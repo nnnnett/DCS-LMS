@@ -100,10 +100,10 @@
                     {{ course.section }}
                   </div>
                 </div>
-                <q-img
+                <!-- <q-img
                   :src="course.instructorImage"
                   style="width: 50px; height: 50px; border-radius: 50%"
-                />
+                /> -->
               </div>
             </div>
             <div class="course-Schedule">

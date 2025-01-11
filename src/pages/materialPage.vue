@@ -592,7 +592,10 @@
                     <div style="width: 100%">
                       <q-form
                         @submit.prevent="
-                          gradeSubmission(props.row.id, props.row.gradeInput)
+                          gradeSubmission(
+                            props.row.student_Id,
+                            props.row.gradeInput
+                          )
                         "
                       >
                         <div style="display: flex; align-items: center">
@@ -653,7 +656,7 @@ const editGrade = ref("");
 const editDescriptionAssignment = ref("");
 const newFileAssignment = ref(null);
 const currentAssignmentFile = ref("");
-const gradeInput = ref("");
+const gradeInput = ref();
 const isAssignment = ref("");
 // role validation
 const roleValidation = ref("");
@@ -783,11 +786,13 @@ async function getSubmittedAssignment() {
     );
     rows.value = response.data.map((item) => ({
       id: item._id,
+      student_Id: item.studentId,
       studentId: item.studentUsername,
       name: item.studentName,
       submissions: item.file,
       grade: item.grade,
     }));
+    console.log("ge", rows.value);
   } catch (err) {
     console.error(err);
   }
@@ -805,7 +810,7 @@ async function displayUserInfo() {
   }
 }
 
-async function gradeSubmission(submissionId, grade) {
+async function gradeSubmission(studentId, grade) {
   loading.value = true;
   try {
     const token = localStorage.getItem("authToken");
@@ -822,10 +827,12 @@ async function gradeSubmission(submissionId, grade) {
       });
       return;
     }
+    let newGrade = parseInt(grade, 10);
     const response = await axios.post(
-      `${process.env.api_host}/courses/submission/grade/${submissionId}`,
+      `${process.env.api_host}/courses/submission/grade/${studentId}`,
       {
-        grade: grade,
+        grade: newGrade,
+        materialId: materialId,
       },
       {
         headers: {

@@ -391,6 +391,7 @@
                           style="width: auto"
                           label="Upload File"
                           clearable
+                          hint="pdf, docx, excel file"
                         >
                           <template v-slot:prepend>
                             <q-icon name="attach_file" />
@@ -973,41 +974,44 @@
           </q-card-section>
 
           <div>
+            <!-- view student grades(instructor) -->
             <q-table
               style="box-shadow: none"
-              :rows="gradeRows"
-              :columns="gradeColumns"
+              :rows="studentRow"
+              :columns="studentColumn"
               row-key="id"
               :rows-per-page-options="[0, 5, 10, 15, 20, 25, 30]"
               separator="cell"
             >
-              <template #head="props">
-                <q-tr :props="props">
-                  <q-th
-                    v-for="col in gradeColumns"
-                    :key="col.name"
-                    :props="props"
-                    class="text-center"
-                  >
-                    {{ col.label }}
-                    <div
-                      v-if="col.gradeSummary"
-                      class="text-gray-6 text-caption"
-                    >
-                      {{ col.gradeSummary }}
-                    </div>
-                  </q-th>
-                </q-tr>
-              </template>
-
               <template #body="props">
                 <q-tr :key="props.row.id" :props="props">
-                  <q-td v-for="col in gradeColumns" :key="col.name">
-                    {{ props.row[col.field] }}
+                  <!-- Iterate over columns -->
+                  <q-td v-for="col in studentColumn" :key="col.name">
+                    <div>{{ props.row[col.field] }}</div>
+                  </q-td>
+
+                  <!-- Add View Grades button -->
+                  <q-td style="border: 1px solid #d9d9d9">
+                    <q-btn
+                      style="background-color: #46af4b; color: #ffffff"
+                      label="View Grades"
+                      @click="
+                        {
+                          {
+                            router.replace(
+                              `../studentGrade/` + courseId + '/' + props.row.id
+                            );
+                          }
+                        }
+                      "
+                      flat
+                      no-caps
+                    />
                   </q-td>
                 </q-tr>
               </template>
-              <template v-slot:top-right v-if="!isStudent">
+
+              <!-- <template v-slot:top-right>
                 <q-btn
                   color="primary"
                   icon-right="archive"
@@ -1015,8 +1019,10 @@
                   no-caps
                   @click="exportStudentSubmission"
                 />
-              </template>
+              </template> -->
             </q-table>
+
+            <!-- view my grades (student) -->
           </div>
         </div>
         <!-- show quizes for students -->
@@ -1381,6 +1387,7 @@
     display: flex
     justify-content: flex-end
     margin-top: 15px
+
 @media (max-width: 480px)
   .headerNav
     font-size: 0.8rem
@@ -1538,6 +1545,43 @@ async function displayUserInfo() {
     return (isInstructor.value = true);
   }
 }
+
+// show my grades(student)
+const myGradesRow = ref([
+  {
+    id: 1,
+    username: "202110021",
+    name: "Kenneth",
+    lastName: "Doblon",
+  },
+]);
+
+const myGradesColumn = ref([
+  {
+    name: "username",
+    label: "Student ID",
+    align: "left",
+    field: "username",
+  },
+  {
+    name: "name",
+    label: "Name",
+    align: "left",
+    field: "name",
+  },
+  {
+    name: "action",
+    label: "Action",
+    align: "left",
+    field: "action",
+  },
+]);
+
+async function viewStudentGrade() {
+  router.replace(`/main/coursePage/studentGrade/` + courseId + "/" + id);
+}
+
+// show grades for instructor
 const studentRows = ref([]);
 const studentColumns = ref([
   {
@@ -1583,8 +1627,8 @@ async function getStudents() {
   }
 }
 
-const gradeColumns = ref([]);
-const gradeRows = ref([]);
+const studentRow = ref([]);
+const studentColumn = ref([]);
 
 // Define base columns
 const baseColumns = [
@@ -1603,13 +1647,13 @@ const baseColumns = [
   },
 ];
 
-// Fetch grades and assignments from API and adjust columns
+// Fetch students' names and usernames from API
 async function getGradesAndAssignments() {
   const token = localStorage.getItem("authToken");
   let response = null;
+
   try {
     const user = await viewViewerUser();
-    console.log(user.role);
     if (user.role === "student") {
       response = await axios.get(
         `${process.env.api_host}/courses/getGrade?courseId=${courseId}&studentId=${user._id}&isArchived=false`,
@@ -1629,80 +1673,23 @@ async function getGradesAndAssignments() {
         }
       );
     }
-
     const students = response.data;
 
-    // Generate dynamic columns for grades and assignments
-    gradeColumns.value = [...baseColumns, ...generateDynamicColumns(students)];
+    // Update rows and columns
+    studentRow.value = students.map((student) => ({
+      id: student.studentId,
 
-    // Process rows for grades and assignments
-    gradeRows.value = students.map((student, index) => {
-      const gradeDetails = student.grades.reduce((acc, grade) => {
-        acc[grade.quizName] = grade.total ? `${grade.score} ` : grade.score; // Format as "score/total" if total exists
-        return acc;
-      }, {});
-
-      const assignmentDetails = student.assignments.reduce(
-        (acc, assignment) => {
-          console.log("ass", assignment);
-          acc[assignment.materialName] = assignment.grade
-            ? `${assignment.grade} `
-            : "Not graded";
-          return acc;
-        },
-        {}
-      );
-
-      return {
-        id: index + 1,
-        username: student.username,
-        name: student.name,
-        ...gradeDetails,
-        ...assignmentDetails, // Add dynamic fields for assignments
-      };
-    });
+      username: student.username,
+      name: student.name,
+    }));
+    console.log("", studentRow.value);
+    studentColumn.value = baseColumns;
   } catch (err) {
     console.error("Error fetching grades and assignments:", err);
   }
 }
 
-// Generate dynamic columns based on grades and assignments data
-function generateDynamicColumns(students) {
-  const dynamicFields = new Set();
-  const gradeSummaries = {};
-
-  students.forEach((student) => {
-    student.grades.forEach((grade) => {
-      dynamicFields.add(grade.quizName);
-
-      if (!gradeSummaries[grade.quizName]) {
-        gradeSummaries[grade.quizName] = {
-          total: 0,
-          count: 0,
-        };
-      }
-
-      if (grade.total) {
-        gradeSummaries[grade.quizName].total += parseInt(grade.total);
-        gradeSummaries[grade.quizName].count += parseInt(grade.score || 0);
-      }
-    });
-
-    student.assignments.forEach((assignment) => {
-      dynamicFields.add(assignment.materialName);
-    });
-  });
-
-  return Array.from(dynamicFields).map((fieldName) => ({
-    name: fieldName,
-    label: fieldName,
-    align: "left",
-    field: fieldName,
-    gradeSummary: gradeSummaries[fieldName]
-      ? `${gradeSummaries[fieldName].count}/${gradeSummaries[fieldName].total}`
-      : null,
-  }));
-}
+// Call the function to populate the table
 
 async function getCourses() {
   try {
@@ -2003,32 +1990,32 @@ function wrapCsvValue(val, formatFn, row) {
   return `"${formatted}"`;
 }
 
-function exportStudentSubmission() {
-  const content = [
-    gradeColumns.value.map((col) => wrapCsvValue(col.label)).join(","), // Header row
-    ...gradeRows.value.map((row) =>
-      gradeColumns.value
-        .map((col) =>
-          wrapCsvValue(
-            typeof col.field === "function" ? col.field(row) : row[col.field],
-            col.format,
-            row
-          )
-        )
-        .join(",")
-    ),
-  ].join("\r\n");
+// function exportStudentSubmission() {
+//   const content = [
+//     studentColumn.value.map((col) => wrapCsvValue(col.label)).join(","), // Header row
+//     ...studentRow.value.map((row) =>
+//       studentColumn.value
+//         .map((col) =>
+//           wrapCsvValue(
+//             typeof col.field === "function" ? col.field(row) : row[col.field],
+//             col.format,
+//             row
+//           )
+//         )
+//         .join(",")
+//     ),
+//   ].join("\r\n");
 
-  const status = exportFile("Student-Submissions.csv", content, "text/csv");
+//   const status = exportFile("Student-Submissions.csv", content, "text/csv");
 
-  if (status !== true) {
-    Notify.create({
-      message: "Browser denied file download...",
-      color: "negative",
-      icon: "warning",
-    });
-  }
-}
+//   if (status !== true) {
+//     Notify.create({
+//       message: "Browser denied file download...",
+//       color: "negative",
+//       icon: "warning",
+//     });
+//   }
+// }
 
 function exportStudentList() {
   // Naive encoding to CSV format
@@ -2058,17 +2045,17 @@ function exportStudentList() {
   }
 }
 
-async function addCommentF(materialId) {
-  try {
-    loading.value = true;
-    await addCommentMaterials(materialId, addComment.value);
-    addComment.value = "";
-  } catch (err) {
-    console.error(err);
-  } finally {
-    loading.value = false;
-  }
-}
+// async function addCommentF(materialId) {
+//   try {
+//     loading.value = true;
+//     await addCommentMaterials(materialId, addComment.value);
+//     addComment.value = "";
+//   } catch (err) {
+//     console.error(err);
+//   } finally {
+//     loading.value = false;
+//   }
+// }
 
 async function getQuizes() {
   try {
