@@ -53,6 +53,10 @@ const routes = [
         path: "studentGrade/:courseId/:studentId",
         component: () => import("src/pages/studentGrade.vue"),
       },
+      {
+        path: "testPage",
+        component: () => import("pages/testPage.vue"),
+      },
     ],
   },
   {

@@ -9,69 +9,67 @@
             :to="`/main/coursePage/` + courseId"
           />
         </q-card-section>
-        <q-card-section class="q-pl-none"
-          ><div class="text-h4">{{ quiz.name }}</div></q-card-section
-        >
-        <q-form v-if="quiz.questions.length" @submit.prevent="submitAnswers">
-          <div
-            v-for="(question, index) in quiz.questions"
-            :key="index"
-            class="question"
-          >
-            <q-card-section class="q-px-none">
-              <div>{{ index + 1 }}. {{ question.question }}</div>
-            </q-card-section>
-            <div style="width: 100%" class="">
-              <q-input
-                type="text"
-                outlined
-                v-model="userAnswers[index]"
-                :placeholder="'Enter your answer for question ' + (index + 1)"
-              />
+        <div>
+          <!-- Fetch Quizzes -->
+          <q-card-section class="q-py-none">
+            <div v-for="quiz in quizzes" :key="quiz._id">
+              <div class="text-h5 q-mb-md">{{ quiz.name }}</div>
+
+              <q-btn :loading="loading" no-caps @click="selectQuiz(quiz)"
+                >Answer Quiz</q-btn
+              >
             </div>
-          </div>
-          <div align="right">
-            <q-btn
-              :loading="loading"
-              flat
-              type="submit"
-              class="bg-primary text-white"
-              no-caps
-              @click="quizResults = true"
-              >Submit Quiz</q-btn
-            >
-          </div>
-        </q-form>
-        <div v-else-if="!loading && !error">
-          <p>No questions available.</p>
+          </q-card-section>
+
+          <!-- Answer Quiz -->
+          <q-card-section v-if="selectedQuiz">
+            <q-card-section class="q-pl-none">
+              <div class="text-h6">Answer the following;</div>
+            </q-card-section>
+            <form @submit.prevent="answerQuiz">
+              <div
+                v-for="(question, index) in selectedQuiz.questions"
+                :key="index"
+              >
+                <q-card-section class="q-pl-none">
+                  <div class="text-subtitle1">{{ question.question }}</div>
+                </q-card-section>
+                <div v-if="question.type === 'mcq'">
+                  <div class="text-weight-bold">Choose correct anwser</div>
+                  <q-card-section
+                    v-for="(option, idx) in question.options"
+                    :key="idx"
+                  >
+                    <q-radio
+                      :name="'question-' + index"
+                      :val="option"
+                      v-model="answers[index]"
+                      q-btn
+                      :label="option"
+                    />
+                  </q-card-section>
+                </div>
+                <div v-else>
+                  <q-input
+                    v-model="answers[index]"
+                    type="text"
+                    outlined
+                    hint="Input your answer"
+                  />
+                </div>
+              </div>
+              <div align="right" class="q-mt-sm">
+                <q-btn
+                  :loading="loading"
+                  type="submit"
+                  class="bg-primary text-white"
+                  no-caps
+                  >Submit Answers</q-btn
+                >
+              </div>
+            </form>
+          </q-card-section>
         </div>
-        <div v-if="results">
-          <q-dialog v-model="quizResults" persistent>
-            <q-card style="width: 20vw" class="flex flex-center column">
-              <q-card-section>
-                <div class="text-h5">Results</div>
-              </q-card-section>
-              <q-card-section>
-                <div>Score: {{ score }}/{{ quiz.questions.length }}</div>
-              </q-card-section>
-              <!-- <ul>
-                <li v-for="(result, index) in results" :key="index">
-                  <strong>Q{{ index + 1 }}:</strong> {{ result.question }} <br />
-                  <em>Your answer:</em> {{ result.userAnswer }} <br />
-                  <em>Correct answer:</em> {{ result.correctAnswer }} <br />
-                  <span :style="{ color: result.correct ? 'green' : 'red' }">
-                    {{ result.correct ? "Correct" : "Wrong" }}
-                  </span>
-                </li>
-              </ul> -->
-              <q-card-section>
-                <q-btn label="Close" :to="`/main/coursePage/` + courseId" />
-              </q-card-section>
-            </q-card>
-          </q-dialog>
-        </div>
-        <div v-if="loading">Loading quiz...</div>
-        <div v-if="error">{{ error }}</div>
       </div>
     </div>
   </q-page>
@@ -80,70 +78,90 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { Notify } from "quasar";
 
 // Reactive data
+const router = useRouter();
 const route = useRoute();
 const quiz = ref({ name: "", questions: [] });
-const userAnswers = ref([]);
-const results = ref(null);
-const score = ref(0);
-const loading = ref(true);
-const error = ref("");
+
+const loading = ref(false);
+const quizzes = ref([]);
+const selectedQuiz = ref(null);
+const answers = ref([]);
+const searchQuery = ref("");
+
 const quizId = route.params.quizId;
 const courseId = route.params.courseId;
-const quizResults = ref(false);
-// Fetch the quiz on mount
-const fetchQuiz = async (id) => {
+
+// Fetch quizzes function
+const fetchQuizzes = async () => {
+  const token = localStorage.getItem("authToken");
   try {
     const response = await axios.get(
-      `${process.env.api_host}/courses/getQuizQuestions/${quizId}`
+      `${process.env.api_host}/courses/getQuiz?query=${quizId}&${courseId}`,
+      {
+        headers: {
+          authorization: token,
+        },
+      }
     );
-    quiz.value = response.data;
-    userAnswers.value = Array(quiz.value.questions.length).fill("");
-    loading.value = false;
+    quizzes.value = response.data; // Assuming response contains the quizzes
+  } catch (error) {
+    console.error("Error fetching quizzes:", error);
+    alert("Failed to fetch quizzes.");
+  }
+};
+// Automatically fetch quizzes on component mount
+onMounted(() => {
+  fetchQuizzes();
+});
+
+const selectQuiz = (quiz) => {
+  loading.value = true;
+  try {
+    selectedQuiz.value = quiz;
+    answers.value = Array(quiz.questions.length).fill("");
   } catch (err) {
-    error.value = "Failed to load the quiz.";
+    console.error(err);
+  } finally {
     loading.value = false;
   }
 };
 
-// // Submit answers
-async function submitAnswers() {
+const answerQuiz = async () => {
   loading.value = true;
+  const token = localStorage.getItem("authToken");
   try {
-    const token = localStorage.getItem("authToken");
+    const quizId = selectedQuiz.value._id;
     const response = await axios.post(
       `${process.env.api_host}/courses/answerQuiz/${quizId}`,
       {
-        answers: userAnswers.value,
+        answers: answers.value,
       },
       {
         headers: {
-          "Content-Type": "application/json",
           authorization: token,
         },
       }
     );
     Notify.create({
       type: "positive",
-      message: "Quiz Submitted Successfully",
+      message: `Quiz submitted! Your grade: ${response.data.totalGrade}%`,
     });
-    results.value = response.data.results;
-    score.value = response.data.score;
-  } catch (err) {
+    selectedQuiz.value = null; // Reset selected quiz
+    router.replace(`/main/coursePage/` + courseId);
+  } catch (error) {
+    console.error("Error answering quiz:", error);
     Notify.create({
       type: "warning",
-      message: "Quiz already Submitted  ",
+      message: "Quiz Already Taken",
     });
   } finally {
     loading.value = false;
   }
-}
-
-// Fetch quiz with a sample ID (Replace with dynamic ID)
-onMounted(() => fetchQuiz("YOUR_QUIZ_ID_HERE"));
+};
 </script>
 
 <style lang="sass" scoped>
@@ -151,12 +169,6 @@ onMounted(() => fetchQuiz("YOUR_QUIZ_ID_HERE"));
   width: 100vw
   height: auto
   margin: auto
-.question
-  font-size: 1.2em
-  height: auto
-  margin-bottom: 20px
-  width: 80%
-  justify-self: center
 .quiz-container
   border: 1px solid #d9d9d9
   border-radius: 14px

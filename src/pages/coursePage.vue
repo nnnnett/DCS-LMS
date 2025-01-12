@@ -240,7 +240,12 @@
                       <q-card-section class="q-px-none uploadAndBtn">
                         <!-- Cancel Button -->
                         <q-space />
-                        <q-btn flat label="Cancel" class="q-mr-sm" />
+                        <q-btn
+                          flat
+                          label="Clear"
+                          @click="clearAnnouncement"
+                          class="q-mr-sm"
+                        />
                         <!-- Post Button -->
                         <q-btn
                           type="submit"
@@ -299,6 +304,7 @@
                           style="width: auto"
                           label="Upload File"
                           clearable
+                          hint="Accepts: pdf, docx, excel, and glb file"
                         >
                           <template v-slot:prepend>
                             <q-icon name="attach_file" />
@@ -306,7 +312,12 @@
                         </q-file>
                         <!-- Cancel Button -->
                         <q-space />
-                        <q-btn flat label="Cancel" class="q-mr-sm" />
+                        <q-btn
+                          flat
+                          label="Clear"
+                          @click="clearMaterial"
+                          class="q-mr-sm"
+                        />
                         <!-- Post Button -->
                         <q-btn
                           type="submit"
@@ -391,7 +402,7 @@
                           style="width: auto"
                           label="Upload File"
                           clearable
-                          hint="pdf, docx, excel file"
+                          hint="Accepts: pdf, docx, excel, and glb file"
                         >
                           <template v-slot:prepend>
                             <q-icon name="attach_file" />
@@ -399,7 +410,12 @@
                         </q-file>
                         <!-- Cancel Button -->
                         <q-space />
-                        <q-btn flat label="Cancel" class="q-mr-sm" />
+                        <q-btn
+                          flat
+                          label="Clear"
+                          @click="clearAssignment"
+                          class="q-mr-sm"
+                        />
                         <!-- Post Button -->
                         <q-btn
                           flat
@@ -2102,6 +2118,24 @@ function copyToClipboard(text) {
 
 async function goToQuizPage(quizId) {
   router.replace(`/main/answerQuizPage/` + courseId + "/" + quizId);
+}
+
+async function clearAnnouncement() {
+  createAnnouncement.value = "";
+}
+
+async function clearMaterial() {
+  materialTitle.value = "";
+  materialDescription.value = "";
+  materialsFile.value = "";
+}
+
+async function clearAssignment() {
+  assignemntTitle.value = "";
+  assignemntDescription.value = "";
+  grade.value = "";
+  assignemntFile.value = "";
+  dueDate.value = "";
 }
 
 onMounted(async () => {

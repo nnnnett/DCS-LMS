@@ -118,7 +118,7 @@ async function getGrades() {
   const token = localStorage.getItem("authToken");
   try {
     const response = await axios.get(
-      `${process.env.api_host}/courses/grades/totalGrades/${studentId}`
+      `${process.env.api_host}/courses/grades/totalGrades/${studentId}/${courseId}`
     );
 
     // Process response to populate table
